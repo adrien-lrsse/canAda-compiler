@@ -69,7 +69,7 @@
 
 ## About The Project
 
-PCL is a project developed in Java by a team of engineering students. It is a compiler designed specifically for the "canAda" language, which is based on Ada but with simplified features. This project aims to provide a reliable and efficient tool for compiling and executing Canada programming code.
+PCL is a project developed in Java by a team of engineering students. It is a compiler designed specifically for the "canAda" language, which is based on Ada but with simplified features. This project aims to provide a reliable and efficient tool for compiling and executing canAda programming code.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -129,9 +129,9 @@ TODO
 
 ## Roadmap
 
-- [] LEXER
+- [ ] LEXER
   - [x] TODO
-- [] PARSER
+- [ ] PARSER
   - [x] TODO
 
 See the [open issues](https://gitlab.telecomnancy.univ-lorraine.fr/Stanislas.Mezureux/mezureux1u/-/issues) for a full list of proposed features (and known issues).
