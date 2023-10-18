@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class LexerTest {
     public LexerTest() throws IOException {
-        Lexer lex = new Lexer();
+        Lexer lex = new Lexer("tests.txt");
         Token test = lex.scan();
     }
 }

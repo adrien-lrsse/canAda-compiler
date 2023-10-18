@@ -1,5 +1,6 @@
 package lexer;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -8,14 +9,12 @@ public class Lexer {
     public int line = 1;
     private char currentChar = ' ';
     private final Hashtable<String, Word> words = new Hashtable<>();
-    void reserve(Word t) {  
+    void reserve(Word t) {
         words.put(t.lexeme, t);
     }
-
-
-    FileReader fileReader = new FileReader(fileName);
+    FileReader fileReader;
     int character;
-    public Lexer() {
+    public Lexer(String fileName) throws FileNotFoundException {
         // keywords
         reserve(new Word(Tag.ACCESS, "access"));
         reserve(new Word(Tag.BEGIN, "begin"));
@@ -66,42 +65,48 @@ public class Lexer {
         reserve(new Word('?', "?"));
         reserve(new Word(',', ","));
         reserve(new Word('.', "."));
+
+
+        this.fileReader = new FileReader(fileName);
     }
     public Token scan() throws IOException {
+        // handle whitespaces
         while ((character = fileReader.read()) != -1) {
-            char currentChar = (char) character;
-            if (!((currentChar == ' ') || currentChar == '\n')) {
+            currentChar = (char) character;
+            if (currentChar == '\n') {
+                line++;
+            }
+            if ((currentChar != ' ') && (currentChar != '\n') && (currentChar != '\t')) {
                 System.out.print(currentChar);
-                // handle numbers
-                if( Character.isDigit(currentChar)) {
-                    int v = 0;
-                    do {
-                        v = 10*v + Character.digit(currentChar, 10);
-                        character = fileReader.read();
-                        currentChar = (char) character;
-                    } while(Character.isDigit(currentChar));
-                    return new Num(v);
-                }
-                // handle reserved words
-                if(Character.isLetter(currentChar)) {
-                    StringBuilder b = new StringBuilder();
-                    do {
-                        b.append(currentChar);
-                        character = fileReader.read();
-                        currentChar = (char) character;
-                    } while(Character.isLetterOrDigit(currentChar) || currentChar == '_');
-                    String s = b.toString();
-                    Word w = words.get(s);
-                    if (w != null) return w;
-                    w = new Word(Tag.ID, s);
-                    words.put(s, w);
-                    return w;
-                }
+                break;
             }
         }
-        Token t = new Token(currentChar);
+        // handle numbers
+        if( Character.isDigit(currentChar)) {
+            int v = 0;
+            do {
+                v = 10*v + Character.digit(currentChar, 10);
+                character = fileReader.read();
+                currentChar = (char) character;
+            } while(Character.isDigit(currentChar));
+            return new Num(v);
+        }
+        // handle reserved words
+        if(Character.isLetter(currentChar)) {
+            StringBuilder b = new StringBuilder();
+            do {
+                b.append(currentChar);
+                character = fileReader.read();
+                currentChar = (char) character;
+            } while(Character.isLetterOrDigit(currentChar) || currentChar == '_');
+            String s = b.toString();
+            Word w = words.get(s);
+            if (w != null) return w;
+            w = new Word(Tag.ID, s);
+            words.put(s, w);
+            return w;
+        }
         currentChar = ' ';
-        return t;
-
+        return new Token(currentChar);
     }
 }
