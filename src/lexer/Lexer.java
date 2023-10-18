@@ -93,18 +93,30 @@ public class Lexer {
         }
         // handle reserved words
         if(Character.isLetter(currentChar)) {
-            StringBuilder b = new StringBuilder();
-            do {
-                b.append(currentChar);
+            StringBuilder reading_word = new StringBuilder();
+            boolean identifierStartsWithUppercase = Character.isUpperCase(currentChar);
+
+            do {  // identifiers are only made of letters / digit / _
+                reading_word.append(currentChar);
                 character = fileReader.read();
                 currentChar = (char) character;
             } while(Character.isLetterOrDigit(currentChar) || currentChar == '_');
-            String s = b.toString();
-            Word w = words.get(s);
-            if (w != null) return w;
-            w = new Word(Tag.ID, s);
-            words.put(s, w);
-            return w;
+
+            String s = reading_word.toString();
+
+            if (words.containsKey(s.toLowerCase())) { // checking if the identifier is a reserved word
+                return words.get(s.toLowerCase());
+            }
+            else {
+                if (identifierStartsWithUppercase) { // identifier must start with a lowercase letter
+                    return new Word(Tag.ERROR_TOKEN,s);
+                }
+                else {
+                    Word w = new Word(Tag.ID, s);
+                    words.put(s, w);
+                    return w;
+                }
+            }
         }
         currentChar = ' ';
         return new Token(currentChar);
