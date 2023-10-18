@@ -15,8 +15,6 @@
 # AWS User-specific
 .idea/**/aws.xml
 .timetracker
-.idea/
-mezureux1u.iml
 # Generated files
 .idea/**/contentModel.xml
 
