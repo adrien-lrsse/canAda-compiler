@@ -1,20 +1,15 @@
 package lexer;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 
 public class Lexer {
     public int line = 1;
-    private char currentChar = ' ';
+    private char peek = ' ';
     private final Hashtable<String, Word> words = new Hashtable<>();
     void reserve(Word t) {
         words.put(t.lexeme, t);
     }
-
-    FileReader fileReader = new FileReader(fileName);
-    int character;
-    int line = 0;
     public Lexer() {
         // keywords
         reserve(new Word(Tag.ACCESS, "access"));
@@ -68,41 +63,37 @@ public class Lexer {
         reserve(new Word('.', "."));
     }
     public Token scan() throws IOException {
-        boolean find_token = false
-        while (((character = fileReader.read()) != -1) && (!find_token)) {
-            char currentChar = (char) character;
-            if (!((currentChar == ' ') || currentChar == '\n')) {
-                System.out.print(currentChar);
-                // handle numbers
-                if( Character.isDigit(currentChar)) {
-                    int v = 0;
-                    do {
-                        v = 10*v + Character.digit(currentChar, 10);
-                        currentChar = (char)System.in.read();
-                    } while(Character.isDigit(currentChar));
-                    find_token = true;
-                    return new Num(v);
-                }
-                // handle reserved words
-                if(Character.isLetter(currentChar)) {
-                    StringBuilder b = new StringBuilder();
-                    do {
-                        b.append(currentChar);
-                        currentChar = (char)System.in.read();
-                    } while(Character.isLetterOrDigit(currentChar) || currentChar == '_');
-                    String s = b.toString();
-                    Word w = words.get(s);
-                    if (w != null) return w;
-                    w = new Word(Tag.ID, s);
-                    words.put(s, w);
-                    find_token = true;
-                    return w;
-                }
-            }
+        // skip white space
+        for ( ; ; peek = (char)System.in.read()) {
+            if(peek == ' ' || peek == '\t') continue;
+            else if (peek == '\n') line++;
+            else break;
         }
-        Token t = new Token(currentChar);
-        currentChar = ' ';
+        // handle numbers
+        if( Character.isDigit(peek)) {
+            int v = 0;
+            do {
+                v = 10*v + Character.digit(peek, 10);
+                peek = (char)System.in.read();
+            } while(Character.isDigit(peek));
+            return new Num(v);
+        }
+        // handle reserved words
+        if(Character.isLetter(peek)) {
+            StringBuilder b = new StringBuilder();
+            do {
+                b.append(peek);
+                peek = (char)System.in.read();
+            } while(Character.isLetterOrDigit(peek) || peek == '_');
+            String s = b.toString();
+            Word w = words.get(s);
+            if (w != null) return w;
+            w = new Word(Tag.ID, s);
+            words.put(s, w);
+            return w;
+        }
+        Token t = new Token(peek);
+        peek = ' ';
         return t;
-
     }
 }
