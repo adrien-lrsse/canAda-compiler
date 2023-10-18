@@ -78,8 +78,7 @@ public class Lexer {
                     int v = 0;
                     do {
                         v = 10*v + Character.digit(currentChar, 10);
-                        character = fileReader.read();
-                        currentChar = (char) character;
+                        currentChar = (char)System.in.read();
                     } while(Character.isDigit(currentChar));
                     find_token = true;
                     return new Num(v);
@@ -89,8 +88,7 @@ public class Lexer {
                     StringBuilder b = new StringBuilder();
                     do {
                         b.append(currentChar);
-                        character = fileReader.read();
-                        currentChar = (char) character;
+                        currentChar = (char)System.in.read();
                     } while(Character.isLetterOrDigit(currentChar) || currentChar == '_');
                     String s = b.toString();
                     Word w = words.get(s);
