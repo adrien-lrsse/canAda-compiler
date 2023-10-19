@@ -164,7 +164,6 @@ public class Lexer {
         // handle reserved words
         if(Character.isLetter(currentChar)) {
             StringBuilder reading_word = new StringBuilder();
-            boolean identifierStartsWithUppercase = Character.isUpperCase(currentChar);
 
             do {  // identifiers are only made of letters / digit / _
                 reading_word.append(currentChar);
@@ -178,16 +177,11 @@ public class Lexer {
                 return words.get(s.toLowerCase());
             }
             else {
-                if (identifierStartsWithUppercase) { // identifier must start with a lowercase letter
-                    return new Word(Tag.ERROR_TOKEN,s);
-                }
-                else {
-                    Word w = new Word(Tag.ID, s);
-                    words.put(s, w);
-                    return w;
+                Word w = new Word(Tag.ID, s);
+                words.put(s, w);
+                return w;
                 }
             }
-        }
         // handle invalid characters
         if (words.get(Character.toString(currentChar)) == null) {
             throw new InvalidCharacterException(currentChar, line);
