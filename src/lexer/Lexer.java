@@ -82,7 +82,75 @@ public class Lexer {
             }
         }
         // handle simple and double character tokens
-        // TODO: switch case
+        // switch case
+        switch (currentChar) {
+            case '=' : {
+                return words.get("=");
+            }
+            case '/' : {
+                char nextChar = (char) fileReader.read();
+                if (nextChar == '=') return words.get("not");
+                else if (nextChar == ' ') return words.get("/");
+                else throw new InvalidCharacterException(nextChar, line);
+            }
+            case '<' : {
+                char nextChar = (char) fileReader.read();
+                if (nextChar == '=') return words.get("<=");
+                else if (nextChar == ' ') return words.get("<");
+                else throw new InvalidCharacterException(nextChar, line);
+            }
+            case '>' : {
+                char nextChar = (char) fileReader.read();
+                if (nextChar == '=') return words.get(">=");
+                else if (nextChar == ' ') return words.get(">");
+                else throw new InvalidCharacterException(nextChar, line);
+            }
+            case '(' : {
+                return words.get("(");
+            }
+            case ')' : {
+                return words.get(")");
+            }
+            case '\'' : {
+                return words.get("'");
+            }
+            case ';' : {
+                return words.get(";");
+            }
+            case ':' : {
+                char nextChar = (char) fileReader.read();
+                if (nextChar == '=') return words.get(":=");
+                else if (nextChar == ' ') return words.get(":");
+                else throw new InvalidCharacterException(nextChar, line);
+            }
+            case '?' : {
+                return words.get("?");
+            }
+            case ',' : {
+                return words.get(",");
+            }
+            case '.' : {
+                return words.get(".");
+            }
+            case '+' : {
+                return words.get("+");
+            }
+            case '*' : {
+                return words.get("*");
+            }
+            case '-' : {
+                char nextChar = (char) fileReader.read();
+                if (nextChar != '-') return words.get("-");
+                else {
+                    do {
+                        character = fileReader.read();
+                        currentChar = (char) character;
+                        System.out.println(currentChar);
+                    } while (currentChar != '\n');
+                    return scan();
+                }
+            }
+        }
         // handle numbers
         if( Character.isDigit(currentChar)) {
             int v = 0;
