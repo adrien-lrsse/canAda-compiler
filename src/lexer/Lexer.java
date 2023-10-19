@@ -171,10 +171,10 @@ public class Lexer {
                 currentChar = (char) character;
             } while(Character.isLetterOrDigit(currentChar) || currentChar == '_');
 
-            String s = reading_word.toString();
+            String s = reading_word.toString().toLowerCase();  // case-insensitive language
 
-            if (words.containsKey(s.toLowerCase())) { // checking if the identifier is a reserved word
-                return words.get(s.toLowerCase());
+            if (words.containsKey(s)) { // checking if the identifier is a reserved word
+                return words.get(s);
             }
             else {
                 Word w = new Word(Tag.ID, s);
