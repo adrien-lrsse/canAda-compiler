@@ -41,12 +41,13 @@ public class Lexer {
         reserve(new Word(Tag.USE, "use"));
         reserve(new Word(Tag.WHILE, "while"));
         reserve(new Word(Tag.WITH, "with"));
+        reserve(new Word(Tag.NOT, "not"));
         // operators
         reserve(new Word('>', ">"));
         reserve(new Word('<', "<"));
         reserve(new Word(Tag.GEQ, ">="));
         reserve(new Word(Tag.LEQ, "<="));
-        reserve(new Word(Tag.NOT, "not"));
+        reserve(new Word(Tag.DIFFERENT, "/="));
         reserve(new Word('=', "="));
         reserve(new Word('+', "+"));
         reserve(new Word('-', "-"));
@@ -89,7 +90,7 @@ public class Lexer {
             }
             case '/' : {
                 char nextChar = (char) fileReader.read();
-                if (nextChar == '=') return words.get("not");
+                if (nextChar == '=') return words.get("/=");
                 else return words.get("/");
             }
             case '<' : {

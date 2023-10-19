@@ -40,5 +40,6 @@ public class Tag {
         ID = 288,
         // constants
         NUM = 289,
-        ERROR_TOKEN = 290; // help to raise an error
+        ERROR_TOKEN = 290, // help to raise an error
+        DIFFERENT = 291;
 }
