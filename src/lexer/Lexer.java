@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 public class Lexer {
-    public int line = 1;
+    private int line = 1;
     private char currentChar = ' ';
     private final Hashtable<String, Word> words = new Hashtable<>();
     void reserve(Word t) {
@@ -69,7 +69,7 @@ public class Lexer {
 
         this.fileReader = new FileReader(fileName);
     }
-    public Token scan() throws IOException {
+    public Token scan() throws IOException, InvalidCharacterException {
         // handle whitespaces
         while ((character = fileReader.read()) != -1) {
             currentChar = (char) character;
@@ -81,6 +81,8 @@ public class Lexer {
                 break;
             }
         }
+        // handle simple and double character tokens
+        // TODO: switch case
         // handle numbers
         if( Character.isDigit(currentChar)) {
             int v = 0;
@@ -117,6 +119,10 @@ public class Lexer {
                     return w;
                 }
             }
+        }
+        // handle invalid characters
+        if (words.get(Character.toString(currentChar)) == null) {
+            throw new InvalidCharacterException(currentChar, line);
         }
         currentChar = ' ';
         return new Token(currentChar);
