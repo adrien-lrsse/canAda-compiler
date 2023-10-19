@@ -90,8 +90,7 @@ public class Lexer {
             case '/' : {
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '=') return words.get("not");
-                else if (nextChar == ' ') return words.get("/");
-                else throw new InvalidCharacterException(nextChar, line);
+                else return words.get("/");
             }
             case '<' : {
                 char nextChar = (char) fileReader.read();
