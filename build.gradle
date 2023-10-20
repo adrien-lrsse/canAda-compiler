@@ -20,7 +20,7 @@ sourceSets {
     }
     test {
         java {
-            srcDirs = ['test']
+            srcDirs = ['tests']
             excludes = [
                     // Liste des fichiers de test à exclure
             ]
