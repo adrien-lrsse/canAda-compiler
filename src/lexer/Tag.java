@@ -41,5 +41,7 @@ public class Tag {
         // constants
         NUM = 289,
         ERROR_TOKEN = 290, // help to raise an error
-        DIFFERENT = 291;
+        DIFFERENT = 291,
+        // End of file
+        EOF = 292;
 }

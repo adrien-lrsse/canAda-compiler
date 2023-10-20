@@ -78,9 +78,13 @@ public class Lexer {
                 line++;
             }
             if ((currentChar != ' ') && (currentChar != '\n') && (currentChar != '\t')) {
-                System.out.print(currentChar);
+                // System.out.print(currentChar);
                 break;
             }
+        }
+        // handle end of file
+        if (character == -1) {
+            return new Token(Tag.EOF);
         }
         // handle simple and double character tokens
         // switch case
@@ -145,7 +149,7 @@ public class Lexer {
                     do {
                         character = fileReader.read();
                         currentChar = (char) character;
-                        System.out.println(currentChar);
+                        // System.out.println(currentChar);
                     } while (currentChar != '\n');
                     return scan();
                 }

@@ -7,4 +7,10 @@ public class Num extends Token {
         super(Tag.NUM);
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+
+        return "Num<" + tag + ", " + value + ">";
+    }
 }

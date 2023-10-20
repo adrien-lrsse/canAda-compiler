@@ -1,14 +1,18 @@
 package lexer;
 
 public class Token {
-    public final int tag;
+    protected final int tag;
 
     public Token(int tag) {
         this.tag = tag;
     }
 
+    public int getTag() {
+        return tag;
+    }
+
     @Override
     public String toString() {
-        return "" + (char) tag;
+        return "<" + tag + ">";
     }
 }

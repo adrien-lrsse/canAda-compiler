@@ -1,0 +1,11 @@
+image: openjdk:11
+
+stages:
+  - test
+
+test:
+  stage: test
+  script:
+    - chmod +x ./gradlew          # Make Gradle wrapper executable
+    - ./gradlew cleanTest test    # Run clean and then run tests
+
