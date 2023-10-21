@@ -39,8 +39,8 @@ public class Tag {
         // identifiers
         ID = 288,
         // constants
-        NUM = 289,
-        ERROR_TOKEN = 290, // help to raise an error
+        NUMCONST = 289,
+        CHARCONST = 290,
         DIFFERENT = 291,
         // End of file
         EOF = 292;

@@ -10,6 +10,6 @@ public class Word extends Token {
 
     @Override
     public String toString() {
-        return "Word<" + tag + ", " + lexeme + ">";
+        return "Word{" + tag + ", " + lexeme + "}";
     }
 }
