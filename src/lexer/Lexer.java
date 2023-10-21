@@ -72,7 +72,7 @@ public class Lexer {
     }
     public Token scan() throws IOException, InvalidCharacterException {
         // handle whitespaces
-        while ((character = fileReader.read()) != -1) {
+        while (((currentChar == ' ') || (currentChar == '\n') || (currentChar == '\t')) && ((character = fileReader.read()) != -1)) {
             currentChar = (char) character;
             if (currentChar == '\n') {
                 line++;
@@ -88,63 +88,94 @@ public class Lexer {
         }
         // handle simple and double character tokens
         // switch case
+        boolean isCharacter = false;
+        Word w = null;
         switch (currentChar) {
             case '=' : {
-                return words.get("=");
+                isCharacter = true;
+                w = words.get("=");
+                break;
             }
             case '/' : {
+                isCharacter = true;
                 char nextChar = (char) fileReader.read();
-                if (nextChar == '=') return words.get("/=");
-                else return words.get("/");
+                if (nextChar == '=') w=words.get("/=");
+                else w=words.get("/");
+                break;
             }
             case '<' : {
+                isCharacter = true;
                 char nextChar = (char) fileReader.read();
-                if (nextChar == '=') return words.get("<=");
-                else if (nextChar == ' ') return words.get("<");
+                if (nextChar == '=') w=words.get("<=");
+                else if (nextChar == ' ') w=words.get("<");
                 else throw new InvalidCharacterException(nextChar, line);
+                break;
             }
             case '>' : {
+                isCharacter = true;
                 char nextChar = (char) fileReader.read();
-                if (nextChar == '=') return words.get(">=");
-                else if (nextChar == ' ') return words.get(">");
+                if (nextChar == '=') w=words.get(">=");
+                else if (nextChar == ' ') w=words.get(">");
                 else throw new InvalidCharacterException(nextChar, line);
+                break;
             }
             case '(' : {
-                return words.get("(");
+                isCharacter = true;
+                w=words.get("(");
+                break;
             }
             case ')' : {
-                return words.get(")");
+                isCharacter = true;
+                w=words.get(")");
+                break;
             }
             case '\'' : {
-                return words.get("'");
+                isCharacter = true;
+                w=words.get("'");
+                break;
             }
             case ';' : {
-                return words.get(";");
+                isCharacter = true;
+                w=words.get(";");
+                break;
             }
             case ':' : {
+                isCharacter = true;
                 char nextChar = (char) fileReader.read();
-                if (nextChar == '=') return words.get(":=");
-                else if (nextChar == ' ') return words.get(":");
+                if (nextChar == '=') w=words.get(":=");
+                else if (nextChar == ' ') w=words.get(":");
                 else throw new InvalidCharacterException(nextChar, line);
+                break;
             }
             case '?' : {
-                return words.get("?");
+                isCharacter = true;
+                w=words.get("?");
+                break;
             }
             case ',' : {
-                return words.get(",");
+                isCharacter = true;
+                w=words.get(",");
+                break;
             }
             case '.' : {
-                return words.get(".");
+                isCharacter = true;
+                w=words.get(".");
+                break;
             }
             case '+' : {
-                return words.get("+");
+                isCharacter = true;
+                w=words.get("+");
+                break;
             }
             case '*' : {
-                return words.get("*");
+                isCharacter = true;
+                w=words.get("*");
+                break;
             }
             case '-' : {
+                isCharacter = true;
                 char nextChar = (char) fileReader.read();
-                if (nextChar != '-') return words.get("-");
+                if (nextChar != '-') w=words.get("-");
                 else {
                     do {
                         character = fileReader.read();
@@ -153,8 +184,14 @@ public class Lexer {
                     } while (currentChar != '\n');
                     return scan();
                 }
+                break;
             }
         }
+        if (isCharacter) {
+            currentChar = ' ';
+            return w;
+        }
+
         // handle numbers
         if( Character.isDigit(currentChar)) {
             int v = 0;
@@ -181,9 +218,9 @@ public class Lexer {
                 return words.get(s);
             }
             else {
-                Word w = new Word(Tag.ID, s);
-                words.put(s, w);
-                return w;
+                Word w2 = new Word(Tag.ID, s);
+                words.put(s, w2);
+                return w2;
                 }
             }
         // handle invalid characters
