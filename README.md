@@ -129,8 +129,8 @@ TODO
 
 ## Roadmap
 
-- [ ] LEXER
-  - [x] TODO
+- [X] LEXER
+
 - [ ] PARSER
   - [x] TODO
 
