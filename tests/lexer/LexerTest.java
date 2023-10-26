@@ -9,7 +9,7 @@ class LexerTest {
 
     @org.junit.jupiter.api.Test
     void scan() throws IOException {
-        Lexer lexer = new Lexer("tests/unDebut.txt");
+        Lexer lexer = new Lexer("tests/unDebut.adb");
         Token token;
         do {
             token = lexer.scan();

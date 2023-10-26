@@ -6,6 +6,6 @@ stages:
 test:
   stage: test
   script:
-    - chmod +x ./gradlew          # Make Gradle wrapper executable
-    - ./gradlew cleanTest test    # Run clean and then run tests
+    - chmod +x ./gradlew                # Make Gradle wrapper executable
+    - ./gradlew cleanTest test clean    # Run cleanTest and test then clean
 
