@@ -1,0 +1,86 @@
+<fichier> -> with Ada.Text_IO; use Ada.Text_IO;
+             procedure <ident> is <decl*>
+             begin <instr+> end <ident?> ; EOF
+<decl*> -> <decl> <decl*>
+<decl*> -> ' '
+<decl> -> type <ident> ;
+<decl> -> type <ident> is access <ident> ;
+<decl> -> type <ident> is recors <champs+> end record ;
+<decl> -> <ident,+> : <type> <:=expr?> ;
+<decl> -> procedure <ident> <params?> is <decl*>
+          begin <instr+> end <ident?> ;
+<decl> function <ident> <params?> return <type> is <decl*>
+       begin <instr+> end <ident?> ;
+<champs+> -> <champs> <champs+>
+<champs+> -> <champs>
+<champs> -> <ident,+> : <type> ;
+<type> -> <ident>
+<type> -> access <ident>
+<params?> -> <params>
+<params?> -> ' '
+<param;+> -> <param> ; <param;+>
+<param;+> -> <param>
+<params> -> ( <param;+> )
+<param> -> <ident,+> : <mode?> <type>
+<mode?> -> <mode>
+<mode?> -> ' '
+<mode> -> in
+<mode> -> in out
+<:=expr?> -> := <expr>
+<:=expr?> -> ' '
+<expr,+> -> <expr> , <expr,+>
+<expr,+> -> <expr>
+<expr?> -> <expr>
+<expr?> -> ' '
+<expr> -> <entier>
+<expr> -> <caractere> 
+<expr> -> true
+<expr> -> false
+<expr> -> null
+<expr> -> ( <expr> )
+<expr> -> <acces>
+<expr> -> <expr> <operateur> <expr>
+<expr> -> not <expr>
+<expr> -> - <expr>
+<expr> -> new <ident>
+<expr> -> <ident> ( <expr,+> )
+<expr> -> character ' val ( <expr> )
+<instr+> -> <instr> <instr+>
+<instr+> -> <instr>
+<instr> -> <acces> := <expr> ;
+<instr> -> <ident> ;
+<instr> -> <ident> ( <expr,+> ) ;
+<instr> -> return <expr?> ;
+<instr> -> begin <instr+> end ;
+<instr> -> if <expr> then <instr+> <elsifexprtheninstr+*>
+           <elseinstr+?> end if ;
+<instr> -> for <ident> in <reverse?> <expr> . . <expr>
+           loop <instr+> end loop ;
+<instr> -> while <expr> loop <instr+> end loop ;
+<operateur> -> =
+<operateur> -> /=
+<operateur> -> <
+<operateur> -> <=
+<operateur> -> >
+<operateur> -> >=
+<operateur> -> +
+<operateur> -> -
+<operateur> -> *
+<operateur> -> /
+<operateur> -> rem
+<operateur> -> and
+<operateur> -> and then
+<operateur> -> or
+<operateur> -> or else
+<acces> -> <ident>
+<acces> -> <expr> . <ident>
+<ident?> -> <ident>
+<ident?> -> ' '
+<ident,+> -> <ident> , <ident,+>
+<ident,+> -> <ident>
+<elsifexprtheninstr+*> -> elsif <expr> then <instr+> <elsifexprtheninstr+*>
+<elsifexprtheninstr+*> -> ' '
+<elseinstr+?> -> else <instr+>
+<elseinstr+?> -> ' '
+<reverse?> -> <reverse>
+<reverse?> -> ' '
