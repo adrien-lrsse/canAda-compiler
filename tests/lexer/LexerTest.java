@@ -22,16 +22,30 @@ class LexerTest {
     }
 
     @org.junit.jupiter.api.Test
+    void testLexerIgnoresCommentsAndWhitespace() throws IOException{
+        Lexer lexer = new Lexer("tests/src/commentsAndWhitespace.adb");
+        Token token;
+
+        String[] expectedTokens = {"x", ":=", "42", ";", "y", ":=", "7", ";", ""};
+
+        for (String expectedToken : expectedTokens) {
+            token = lexer.scan();
+            Assertions.assertNotNull(token, "Token is null");
+            Assertions.assertEquals(expectedToken, token.getStringValue(), "Token mismatch");
+        }
+    }
+
+    @org.junit.jupiter.api.Test
     void testLexerRecognizesCorrectTags() throws IOException {
         Lexer lexer = new Lexer("tests/src/tag.adb");
         Token token;
 
-        List<Integer> tagList = new ArrayList<>();
+        List<Integer> expectedTags = new ArrayList<>();
         for (int i = 256; i <= 292; i++) {
-            tagList.add(i);
+            expectedTags.add(i);
         }
 
-        for (int expectedTag : tagList) {
+        for (int expectedTag : expectedTags) {
             token = lexer.scan();
             Assertions.assertNotNull(token, "Token is null");
             Assertions.assertEquals(expectedTag, token.getTag(), "Tag mismatch");

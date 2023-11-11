@@ -8,6 +8,7 @@ public class Char extends Token {
         this.value = value;
     }
 
+    @Override
     public String getStringValue() {
         return String.valueOf(value);
     }

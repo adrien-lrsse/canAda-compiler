@@ -8,6 +8,7 @@ public class Word extends Token {
         this.lexeme = lexeme;
     }
 
+    @Override
     public String getStringValue() {
         return lexeme;
     }
