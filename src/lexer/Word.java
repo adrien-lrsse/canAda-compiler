@@ -8,6 +8,10 @@ public class Word extends Token {
         this.lexeme = lexeme;
     }
 
+    public String getStringValue() {
+        return lexeme;
+    }
+
     @Override
     public String toString() {
         return "Word{" + tag + ", " + lexeme + "}";

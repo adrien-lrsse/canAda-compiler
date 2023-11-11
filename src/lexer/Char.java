@@ -8,6 +8,10 @@ public class Char extends Token {
         this.value = value;
     }
 
+    public String getStringValue() {
+        return String.valueOf(value);
+    }
+
     @Override
     public String toString() {
 
