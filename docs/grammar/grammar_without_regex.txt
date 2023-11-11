@@ -67,11 +67,15 @@ INSTR -> ACCESS := EXPR ; |
 	 while EXPR loop PLUS_INSTR end loop ;	 
 
 
-NEXT_IF -> end if ; | else PLUS_INSTR end if ; | elsif ELSIF
+NEXT_IF -> end if ; | else ELSE | elsif ELSIF
+
+ELSE -> PLUS_INSTR END_ELSE
+
+END_ELSE -> else ELSE | end if ;
 
 ELSIF -> EXPR then PLUS_INSTR END_ELSIF 
 
-END_ELSIF -> end if ; | elsif ELSIF
+END_ELSIF -> end if ; | elsif ELSIF | else ELSE
 	 
 	 
 OPERATEUR -> = | /= | < | <= | > | >= 
