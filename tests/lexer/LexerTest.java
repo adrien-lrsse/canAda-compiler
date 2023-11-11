@@ -8,6 +8,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class LexerTest {
 
     @org.junit.jupiter.api.Test
+    void testFileDoesNotExistException() {
+        assertThrows(FileNotFoundException.class, () -> new Lexer("tests/lexer/doesNotExist.adb"));
+    }
+
+
+    @org.junit.jupiter.api.Test
     void scan() throws IOException {
         Lexer lexer = new Lexer("tests/unDebut.adb");
         Token token;
