@@ -1,0 +1,83 @@
+FICHIER -> with Ada.Text_IO use Ada.Text_IO;
+	   PROCEDURE 
+	   BEGIN_INSTR ; EOF
+	   
+PROCEDURE -> procedure <ident> is | procedure <ident> is PLUS_DECL
+
+BEGIN_INSTR -> begin PLUS_INSTR end <ident> | begin PLUS_INSTR end
+
+PLUS_DECL -> DECL PLUS_DECL | DECL
+
+PLUS_INSTR -> INSTR PLUS_INSTR | INSTR
+
+DECL -> type <ident> ; |
+	type <ident> is access <ident> ; |
+	type <ident> is record MANY_CHAMPS end record ; |
+	PLUS_IDENT : TYPE (:= EXPR) ; |
+	PLUS_IDENT : TYPE ; |
+	procedure <ident> IS_DECL
+	BEGIN_INSTR ; |
+	procedure <ident> PARAMS IS_DECL
+	BEGIN_INSTR ; |
+	function <ident> return TYPE IS_DECL
+	BEGIN_INSTR ; |
+	function <ident> PARAMS return TYPE IS_DECL
+	BEGIN_INSTR ; |
+	
+PLUS_IDENT -> <ident> , PLUS_IDENT | <ident>
+
+IS_DECL -> is PLUS_DECL | is
+
+CHAMPS -> <ident> : TYPE ; | PLUS_IDENT : TYPE ;
+	
+TYPE -> <ident> | access <ident>
+
+PARAMS -> (PARAM 
+
+PARAM -> PLUS_IDENT : TYPE END_PARAM | PLUS_IDENT : MODE TYPE END_PARAM
+
+END_PARAM -> ) | ; PARAM
+
+MODE -> in | in out
+
+EXPR -> <entier> | <caractère> | true | false | null |
+	( EXPR ) |
+	ACCES |
+	EXPR OPERATEUR EXPR |
+	not EXPR | - EXPR |
+	new <ident> |
+	<ident> ( PLUS_EXPR |
+	character ' val ( EXPR )
+	
+PLUS_EXPR -> EXPR END_EXPR
+
+END_EXPR -> ) | , EXPR
+
+INSTR -> ACCESS := EXPR ; |
+	 <ident> ;
+	 <ident> ( PLUS_EXPR ; |
+	 return ; |
+	 return EXPR ; |
+	 begin PLUS_INSTR end ; |
+	 if EXPR then PLUS_INSTR NEXT_IF |
+	 for <ident> in EXPR .. EXPR
+	 loop PLUS_INSR end loop ; |
+	 for <ident> in reverse EXPR .. EXPR
+	 loop PLUS_INSR end loop ; |
+	 while EXPR loop PLUS_INSTR end loop ;	 
+
+
+NEXT_IF -> end if ; | else PLUS_INSTR end if ; | elsif ELSIF
+
+ELSIF -> EXPR then PLUS_INSTR END_ELSIF 
+
+END_ELSIF -> end if ; | elsif ELSIF
+	 
+	 
+OPERATEUR -> = | /= | < | <= | > | >= 
+	     + | - | * | / | rem
+	     and | and then | or | or else
+
+ACCES -> <ident> | EXPR . <ident>
+	
+	
