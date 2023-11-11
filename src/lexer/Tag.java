@@ -36,12 +36,12 @@ public class Tag {
         GEQ= 285,
         LEQ = 286,
         ASSIGNMENT = 287,
+        DIFFERENT = 288,
         // identifiers
-        ID = 288,
+        ID = 289,
         // constants
-        NUMCONST = 289,
-        CHARCONST = 290,
-        DIFFERENT = 291,
+        NUMCONST = 290,
+        CHARCONST = 291,
         // End of file
         EOF = 292;
 }
