@@ -126,24 +126,30 @@ public class Lexer {
         }
 
         // handle numbers
-        if( Character.isDigit(currentChar)) {
+        if( AsciiPrintableCharacters.isDigit(currentChar)) {
             int v = 0;
             do {
                 v = 10*v + Character.digit(currentChar, 10);
                 character = fileReader.read();
                 currentChar = (char) character;
-            } while(Character.isDigit(currentChar));
+            } while(AsciiPrintableCharacters.isDigit(currentChar));
+            if (character == '\n') {
+                line++;
+            }
             return new Num(v);
         }
         // handle reserved words
-        if(Character.isLetter(currentChar)) {
+        if(AsciiPrintableCharacters.isLetter(currentChar)) {
             StringBuilder reading_word = new StringBuilder();
 
             do {  // identifiers are only made of letters / digit / _
                 reading_word.append(currentChar);
                 character = fileReader.read();
                 currentChar = (char) character;
-            } while(Character.isLetterOrDigit(currentChar) || currentChar == '_');
+            } while(AsciiPrintableCharacters.isLetterOrDigit(currentChar) || currentChar == '_');
+            if (character == '\n') {
+                line++;
+            }
 
             String s = reading_word.toString().toLowerCase();  // case-insensitive language
 
@@ -157,7 +163,7 @@ public class Lexer {
                 }
             }
         // handle characters
-        if (currentChar >= 33 && currentChar <= 126) {
+        if (AsciiPrintableCharacters.isAsciiPrintable(currentChar)) {
             Token tmp = new Char(currentChar);
             currentChar = ' ';
             return tmp;
