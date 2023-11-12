@@ -22,7 +22,7 @@ DECL -> type <ident> ; |
 	function <ident> return TYPE IS_DECL
 	BEGIN_INSTR ; |
 	function <ident> PARAMS return TYPE IS_DECL
-	BEGIN_INSTR ; |
+	BEGIN_INSTR ; 
 	
 PLUS_IDENT -> <ident> , PLUS_IDENT | <ident>
 
@@ -43,7 +43,7 @@ MODE -> in | in out
 EXPR -> <entier> | <caractère> | true | false | null |
 	( EXPR ) |
 	<ident> |
-	EXPR . <ident>
+	EXPR . <ident> |
 	EXPR OPERATEUR EXPR |
 	not EXPR | - EXPR |
 	new <ident> |
