@@ -41,7 +41,8 @@ public class Tag {
         ID = 289,
         // constants
         NUMCONST = 290,
-        CHARCONST = 291,
         // End of file
-        EOF = 292;
+        EOF = 291,
+        // temp
+        CHARCONST = 292;
 }

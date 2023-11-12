@@ -41,7 +41,7 @@ class LexerTest {
         Token token;
 
         List<Integer> expectedTags = new ArrayList<>();
-        for (int i = 256; i <= 292; i++) {
+        for (int i = 256; i <= 291; i++) {
             expectedTags.add(i);
         }
 

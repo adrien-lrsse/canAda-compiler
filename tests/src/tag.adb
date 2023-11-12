@@ -1,4 +1,3 @@
--- keywords
 access
 and
 begin
@@ -28,15 +27,9 @@ TYPE
 USE
 WHILE
 WITH
--- operators
 >=
 <=
 :=
 /=
--- identifiers
 ID
--- constants
 1
-a
--- End of file
-EOF
