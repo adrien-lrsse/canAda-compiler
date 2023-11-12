@@ -1,5 +1,8 @@
 procedure TestIdentifiers is
-   x : Integer := 42;
+   x : Integer;
+   x := 42;
+   1y : Integer;
+   1y := 43;
 begin
    if x > 0 then
       null;

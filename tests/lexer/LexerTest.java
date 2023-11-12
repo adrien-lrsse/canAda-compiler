@@ -202,7 +202,7 @@ class LexerTest {
             }
             Assertions.fail("Lexer should have thrown an InvalidCharacterException");
         } catch (InvalidCharacterException e) {
-            Assertions.assertEquals("Invalid character: 字 at line 5", e.toString(), "InvalidCharacterException mismatch");
+            Assertions.assertEquals("lexer.InvalidCharacterException: Invalid character: 字 at line 5", e.toString(), "InvalidCharacterException mismatch");
         }
     }
 }
