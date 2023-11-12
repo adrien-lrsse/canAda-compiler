@@ -192,4 +192,17 @@ class LexerTest {
             Assertions.assertEquals(expectedLexicalUnit, token.toString(), "Lexical unit mismatch");
         }
     }
+
+    @org.junit.jupiter.api.Test
+    void testLexerThrowsInvalidCharacterException() throws IOException {
+        try {
+            Lexer lexer = new Lexer("tests/src/invalidCharacter.adb");
+            for (int i = 0; i < 100; i++) {
+                lexer.scan();
+            }
+            Assertions.fail("Lexer should have thrown an InvalidCharacterException");
+        } catch (InvalidCharacterException e) {
+            Assertions.assertEquals("Invalid character: 字 at line 5", e, "InvalidCharacterException mismatch");
+        }
+    }
 }
