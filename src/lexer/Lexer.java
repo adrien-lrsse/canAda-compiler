@@ -53,7 +53,7 @@ public class Lexer {
 
         this.fileReader = new FileReader(fileName);
     }
-    public Token scan() throws IOException, InvalidCharacterException {
+    public Token scan() throws IOException, InvalidCharacterException, IntegerOverflowException {
         // handle whitespaces
         while (((currentChar == ' ') || (currentChar == '\n') || (currentChar == '\t')) && ((character = fileReader.read()) != -1)) {
             currentChar = (char) character;
@@ -115,6 +115,7 @@ public class Lexer {
                         currentChar = (char) character;
                         // System.out.println(currentChar);
                     } while (currentChar != '\n');
+                    line++;
                     return scan();
                 }
                 break;
@@ -128,10 +129,15 @@ public class Lexer {
         // handle numbers
         if( AsciiPrintableCharacters.isDigit(currentChar)) {
             int v = 0;
+            int v_tmp;
             do {
-                v = 10*v + Character.digit(currentChar, 10);
+                v_tmp = 10*v + Character.digit(currentChar, 10);
+                if (v_tmp < v) {
+                    throw new IntegerOverflowException(line);
+                }
                 character = fileReader.read();
                 currentChar = (char) character;
+                v = v_tmp;
             } while(AsciiPrintableCharacters.isDigit(currentChar));
             if (character == '\n') {
                 line++;

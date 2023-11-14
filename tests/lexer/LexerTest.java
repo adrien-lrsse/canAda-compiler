@@ -205,4 +205,17 @@ class LexerTest {
             Assertions.assertEquals("lexer.InvalidCharacterException: Invalid character: 字 at line 5", e.toString(), "InvalidCharacterException mismatch");
         }
     }
+
+    @org.junit.jupiter.api.Test
+    void testLexerThrowsIntegerOverflowException() throws IOException {
+        try {
+            Lexer lexer = new Lexer("tests/src/integerOverflow.adb");
+            for (int i = 0; i < 100; i++) {
+                lexer.scan();
+            }
+            Assertions.fail("Lexer should have thrown an IntegerOverflowException");
+        } catch (IntegerOverflowException e) {
+            Assertions.assertEquals("lexer.IntegerOverflowException: Integer overflow at line 21", e.toString(), "IntegerOverflowException mismatch");
+        }
+    }
 }
