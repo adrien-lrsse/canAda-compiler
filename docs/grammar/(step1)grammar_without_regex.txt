@@ -1,4 +1,4 @@
-FICHIER -> with Ada.Text_IO use Ada.Text_IO;
+FICHIER -> with Ada.Text_IO ; use Ada.Text_IO;
 	   PROCEDURE 
 	   BEGIN_INSTR ; EOF
 	   
