@@ -12,7 +12,7 @@ PLUS_INSTR -> INSTR PLUS_INSTR | INSTR
 
 DECL -> type <ident> ; |
 	type <ident> is access <ident> ; |
-	type <ident> is record MANY_CHAMPS end record ; |
+	type <ident> is record PLUS_CHAMPS end record ; |
 	PLUS_IDENT : TYPE (:= EXPR) ; |
 	PLUS_IDENT : TYPE ; |
 	procedure <ident> IS_DECL
@@ -29,6 +29,8 @@ PLUS_IDENT -> <ident> , PLUS_IDENT | <ident>
 IS_DECL -> is PLUS_DECL | is
 
 CHAMPS -> <ident> : TYPE ; | PLUS_IDENT : TYPE ;
+
+PLUS_CHAMPS -> CHAMPS PLUS_CHAMPS | CHAMPS
 	
 TYPE -> <ident> | access <ident>
 
