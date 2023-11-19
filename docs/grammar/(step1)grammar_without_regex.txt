@@ -42,14 +42,33 @@ END_PARAM -> ) | ; PARAM
 
 MODE -> in | in out
 
-EXPR -> <entier> | <caractère> | true | false | null |
-	( EXPR ) |
-	ACCES |
-	EXPR OPERATEUR EXPR |
-	not EXPR | - EXPR |
+EXPR -> // <entier> | <caractère> | true | false | null |
+	// ( EXPR ) |
+	// ACCES |
+	// EXPR OPERATEUR EXPR |
+	EXPR or EXPR1 | EXPR or else EXPR1 | EXPR1
+	// not EXPR | - EXPR |
 	new <ident> |
 	<ident> ( PLUS_EXPR |
 	character ' val ( EXPR )
+
+EXPR1 -> EXPR1 and EXPR2 | EXPR1 and then EXPR2 | EXPR2
+
+EXPR2 -> not EXPR2 | EXPR3
+
+EXPR3 -> EXPR3 = EXPR4 | EXPR3 /= EXPR4 | EXPR4
+
+EXPR4 -> EXPR4 > EXPR5 | EXPR4 >= EXPR5 | EXPR4 < EXPR5 | EXPR4 <= EXPR5 | EXPR5
+
+EXPR5 -> EXPR5 + EXPR6 | EXPR5 - EXPR6 | EXPR6
+
+EXPR6 -> EXPR6 * EXPR7 | EXPR6 / EXPR7 | EXPR6 rem EXPR7 | EXPR7
+
+EXPR7 -> - EXPR7 | EXPR8
+
+EXPR8 -> EXPR8 . <ident> | EXPR9
+
+EXPR9 -> <entier> | <caractère> | <ident> | true | false | null | ( EXPR )
 	
 PLUS_EXPR -> EXPR END_EXPR
 
