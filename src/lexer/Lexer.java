@@ -72,43 +72,61 @@ public class Lexer {
         // handle simple and double character tokens
         // switch case
         boolean isCharacter = false;
+        boolean moinsUnaireCase = false;
         Token t = null;
         switch (currentChar) {
             case '/' : {
                 isCharacter = true;
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '=') t = words.get("/=");
-                else t = new Char(currentChar);
+                else {
+                    t = new Char(currentChar);
+                    moinsUnaireCase = true;
+                    currentChar = nextChar;
+                }
                 break;
             }
             case '<' : {
                 isCharacter = true;
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '=') t = words.get("<=");
-                else if (nextChar == ' ') t = new Char(currentChar);
-                else throw new InvalidCharacterException(nextChar, line);
+                else {
+                    t = new Char(currentChar);
+                    moinsUnaireCase = true;
+                    currentChar = nextChar;
+                }
                 break;
             }
             case '>' : {
                 isCharacter = true;
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '=') t = words.get(">=");
-                else if (nextChar == ' ') t = new Char(currentChar);
-                else throw new InvalidCharacterException(nextChar, line);
+                else {
+                    t = new Char(currentChar);
+                    moinsUnaireCase = true;
+                    currentChar = nextChar;
+                }
                 break;
             }
             case ':' : {
                 isCharacter = true;
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '=') t = words.get(":=");
-                else if (nextChar == ' ') t = new Char(currentChar);
-                else throw new InvalidCharacterException(nextChar, line);
+                else {
+                    t = new Char(currentChar);
+                    moinsUnaireCase = true;
+                    currentChar = nextChar;
+                }
                 break;
             }
             case '-' : {
                 isCharacter = true;
                 char nextChar = (char) fileReader.read();
-                if (nextChar != '-') t = new Char(currentChar);
+                if (nextChar != '-') {
+                    t = new Char(currentChar);
+                    moinsUnaireCase = true;
+                    currentChar = nextChar;
+                }
                 else {
                     do {
                         character = fileReader.read();
@@ -122,7 +140,9 @@ public class Lexer {
             }
         }
         if (isCharacter) {
-            currentChar = ' ';
+            if (!moinsUnaireCase) {
+                currentChar = ' ';
+            }
             return t;
         }
 
