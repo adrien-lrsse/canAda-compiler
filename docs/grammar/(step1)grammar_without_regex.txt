@@ -54,7 +54,7 @@ EXPR -> // <entier> | <caractère> | true | false | null |
 
 EXPR1 -> EXPR1 and EXPR2 | EXPR1 and then EXPR2 | EXPR2
 
-EXPR2 -> not EXPR2 | EXPR3
+EXPR2 -> not EXPR2 | not EXPR3 | EXPR3
 
 EXPR3 -> EXPR3 = EXPR4 | EXPR3 /= EXPR4 | EXPR4
 
@@ -64,7 +64,7 @@ EXPR5 -> EXPR5 + EXPR6 | EXPR5 - EXPR6 | EXPR6
 
 EXPR6 -> EXPR6 * EXPR7 | EXPR6 / EXPR7 | EXPR6 rem EXPR7 | EXPR7
 
-EXPR7 -> - EXPR7 | EXPR8
+EXPR7 -> - EXPR7 | - EXPR8 | EXPR8
 
 EXPR8 -> EXPR8 . <ident> | EXPR9
 
