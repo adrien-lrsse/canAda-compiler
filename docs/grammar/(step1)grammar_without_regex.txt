@@ -75,6 +75,8 @@ PLUS_EXPR -> EXPR END_EXPR
 END_EXPR -> ) | , EXPR
 
 INSTR -> ACCESS := EXPR ; |
+	 <ident> := EXPR ; |
+	 EXPR.<ident> := EXPR ; |
 	 <ident> ;
 	 <ident> ( PLUS_EXPR ; |
 	 return ; |
