@@ -2,8 +2,10 @@ package lexer;
 
 import org.junit.jupiter.api.Assertions;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,7 @@ class LexerTest {
         Token token;
 
         List<Integer> expectedTags = new ArrayList<>();
-        for (int i = 256; i <= 292; i++) {
+        for (int i = 256; i <= 293; i++) {
             expectedTags.add(i);
         }
 
@@ -183,7 +185,7 @@ class LexerTest {
                 "Word{261, end}",
                 "Word{289, undebut}",
                 "Char{290, ;}",
-                "<292>"
+                "<293>"
         };
 
         for (String expectedLexicalUnit : expectedLexicalUnits) {
@@ -194,28 +196,37 @@ class LexerTest {
     }
 
     @org.junit.jupiter.api.Test
-    void testLexerThrowsInvalidCharacterException() throws IOException {
-        try {
-            Lexer lexer = new Lexer("tests/src/invalidCharacter.adb");
-            for (int i = 0; i < 100; i++) {
-                lexer.scan();
-            }
-            Assertions.fail("Lexer should have thrown an InvalidCharacterException");
-        } catch (InvalidCharacterException e) {
-            Assertions.assertEquals("lexer.InvalidCharacterException: Invalid character: 字 at line 5", e.toString(), "InvalidCharacterException mismatch");
+    void testLexerHandlesInvalidCharacters() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        Lexer lexer = new Lexer("tests/src/invalidCharacter.adb");
+        for (int i = 0; i < 100; i++) {
+            lexer.scan();
         }
+
+        String expectedOutput = "Invalid character: 字 at line 5\n" +
+                "Invalid character: 字 at line 8\n" +
+                "Invalid character: 字 at line 17\n" +
+                "Invalid character: 字 at line 21\n" +
+                "Invalid character: 字 at line 22\n";
+
+        Assertions.assertEquals(expectedOutput, outputStream.toString(), "Output mismatch");
     }
 
+
     @org.junit.jupiter.api.Test
-    void testLexerThrowsIntegerOverflowException() throws IOException {
-        try {
-            Lexer lexer = new Lexer("tests/src/integerOverflow.adb");
-            for (int i = 0; i < 100; i++) {
-                lexer.scan();
-            }
-            Assertions.fail("Lexer should have thrown an IntegerOverflowException");
-        } catch (IntegerOverflowException e) {
-            Assertions.assertEquals("lexer.IntegerOverflowException: Integer overflow at line 21", e.toString(), "IntegerOverflowException mismatch");
+    void testLexerHandlesIntegerOverflow() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        Lexer lexer = new Lexer("tests/src/integerOverflow.adb");
+        for (int i = 0; i < 100; i++) {
+            lexer.scan();
         }
+
+        String expectedOutput = "Integer overflow at line 21\n";
+
+        Assertions.assertEquals(expectedOutput, outputStream.toString(), "Output mismatch");
     }
 }

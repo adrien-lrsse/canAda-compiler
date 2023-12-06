@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class LexerDemo {
     public static void main(String[] args) throws IOException {
-        Lexer lexer = new Lexer("tests/src/identifiersTest.adb");
+        Lexer lexer = new Lexer("tests/src/integerOverflow.adb");
         Token token;
         do {
             token = lexer.scan();
