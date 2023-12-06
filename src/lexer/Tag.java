@@ -43,7 +43,10 @@ public class Tag {
         CHARCONST = 290,
         NUMCONST = 291,
         // End of file
-        EOF = 292;
+        CHARACTERVAL = 292,
+        // character'val
+        EOF = 293;
         // temp
+
 
 }

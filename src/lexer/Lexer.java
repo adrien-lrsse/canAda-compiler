@@ -42,6 +42,7 @@ public class Lexer {
         reserve(new Word(Tag.WHILE, "while"));
         reserve(new Word(Tag.WITH, "with"));
         reserve(new Word(Tag.NOT, "not"));
+        reserve(new Word(Tag.CHARACTERVAL, "character'val"));
         // operators
         reserve(new Word(Tag.GEQ, ">="));
         reserve(new Word(Tag.LEQ, "<="));
@@ -138,6 +139,21 @@ public class Lexer {
                 }
                 break;
             }
+            case '\'' : {
+                isCharacter = true;
+                char nextChar = (char) fileReader.read();
+                if (AsciiPrintableCharacters.isLetter(nextChar)) {
+                    t = new Char(nextChar);
+                    character = fileReader.read();
+                    currentChar = (char) character;
+                    if (currentChar != '\'') {
+                        System.out.println("Invalid character: " + currentChar + " at line " + line);
+                    }
+                }
+                else {
+                    System.out.println("Invalid character: " + nextChar + " at line " + line);
+                }
+            }
         }
         if (isCharacter) {
             if (!moinsUnaireCase) {
@@ -178,6 +194,47 @@ public class Lexer {
             }
 
             String s = reading_word.toString().toLowerCase();  // case-insensitive language
+
+            if (s.equals("character")) {
+                if (currentChar == '\'') {
+                    reading_word.append(currentChar);
+                    character = fileReader.read();
+                    currentChar = (char) character;
+                    if (currentChar == 'v') {
+                        reading_word.append(currentChar);
+                        character = fileReader.read();
+                        currentChar = (char) character;
+                        if (currentChar == 'a') {
+                            reading_word.append(currentChar);
+                            character = fileReader.read();
+                            currentChar = (char) character;
+                            if (currentChar == 'l') {
+                                reading_word.append(currentChar);
+                                currentChar = ' ';
+                                s = reading_word.toString().toLowerCase();
+                                return words.get(s);
+                            }
+                            else {
+                                s = reading_word.toString().toLowerCase();
+                                System.out.println("Invalid identifier or reserved word: " + s + " at line " + line);
+                            }
+                        }
+                        else {
+                            s = reading_word.toString().toLowerCase();
+                            System.out.println("Invalid identifier or reserved word: " + s + " at line " + line);
+                        }
+                    }
+                    else {
+                        s = reading_word.toString().toLowerCase();
+                        System.out.println("Invalid identifier or reserved word: " + s + " at line " + line);
+                    }
+                }
+                else {
+                    Word w2 = new Word(Tag.ID, s);
+                    words.put(s, w2);
+                    return w2;
+                }
+            }
 
             if (words.containsKey(s)) { // checking if the identifier is a reserved word
                 return words.get(s);

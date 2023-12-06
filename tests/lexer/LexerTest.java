@@ -43,7 +43,7 @@ class LexerTest {
         Token token;
 
         List<Integer> expectedTags = new ArrayList<>();
-        for (int i = 256; i <= 292; i++) {
+        for (int i = 256; i <= 293; i++) {
             expectedTags.add(i);
         }
 
@@ -185,7 +185,7 @@ class LexerTest {
                 "Word{261, end}",
                 "Word{289, undebut}",
                 "Char{290, ;}",
-                "<292>"
+                "<293>"
         };
 
         for (String expectedLexicalUnit : expectedLexicalUnits) {
