@@ -15,26 +15,22 @@ DECL -> type <ident> ; |
 	type <ident> is record PLUS_CHAMPS end record ; |
 	PLUS_IDENT : TYPE (:= EXPR) ; |
 	PLUS_IDENT : TYPE ; |
-	procedure <ident> IS_DECL
-	BEGIN_INSTR ; |
-	procedure <ident> PARAMS IS_DECL
-	BEGIN_INSTR ; |
-	function <ident> return TYPE IS_DECL
-	BEGIN_INSTR ; |
-	function <ident> PARAMS return TYPE IS_DECL
-	BEGIN_INSTR ; |
+	procedure <ident> IS_DECL BEGIN_INSTR ; |
+	procedure <ident> PARAMS IS_DECL BEGIN_INSTR ; |
+	function <ident> return TYPE IS_DECL BEGIN_INSTR ; |
+	function <ident> PARAMS return TYPE IS_DECL BEGIN_INSTR ; |
 	
 PLUS_IDENT -> <ident> , PLUS_IDENT | <ident>
 
 IS_DECL -> is PLUS_DECL | is
 
-CHAMPS -> <ident> : TYPE ; | PLUS_IDENT : TYPE ;
+CHAMPS -> PLUS_IDENT : TYPE ;
 
 PLUS_CHAMPS -> CHAMPS PLUS_CHAMPS | CHAMPS	
 	
 TYPE -> <ident> | access <ident>
 
-PARAMS -> (PARAM 
+PARAMS -> ( PARAM 
 
 PARAM -> PLUS_IDENT : TYPE END_PARAM | PLUS_IDENT : MODE TYPE END_PARAM
 
@@ -49,12 +45,12 @@ EXPR -> // <entier> | <caractère> | true | false | null |
 	EXPR or EXPR1 | EXPR or else EXPR1 | EXPR1
 	// not EXPR | - EXPR |
 	new <ident> |
-	<ident> ( PLUS_EXPR |
-	character ' val ( EXPR )
+	// <ident> ( PLUS_EXPR |
+	character'val ( EXPR )
 
 EXPR1 -> EXPR1 and EXPR2 | EXPR1 and then EXPR2 | EXPR2
 
-EXPR2 -> not EXPR2 | not EXPR3 | EXPR3
+EXPR2 -> not EXPR2 | EXPR3
 
 EXPR3 -> EXPR3 = EXPR4 | EXPR3 /= EXPR4 | EXPR4
 
@@ -64,47 +60,41 @@ EXPR5 -> EXPR5 + EXPR6 | EXPR5 - EXPR6 | EXPR6
 
 EXPR6 -> EXPR6 * EXPR7 | EXPR6 / EXPR7 | EXPR6 rem EXPR7 | EXPR7
 
-EXPR7 -> - EXPR7 | - EXPR8 | EXPR8
+EXPR7 -> - EXPR7 | EXPR8
 
 EXPR8 -> EXPR8 . <ident> | EXPR9
 
-EXPR9 -> <entier> | <caractère> | <ident> | true | false | null | ( EXPR )
+EXPR9 -> <entier> | <caractère> | <ident> EXPR10 | true | false | null | ( EXPR )
 	
+EXPR10 -> ( PLUS_EXPR | ''
+
 PLUS_EXPR -> EXPR END_EXPR
 
-END_EXPR -> ) | , EXPR
+END_EXPR -> ) | , PLUS_EXPR
 
-INSTR -> ACCESS := EXPR ; |
-	 <ident> := EXPR ; |
-	 EXPR.<ident> := EXPR ; |
+INSTR -> <ident> := EXPR ; |
+	 EXPR . <ident> := EXPR ; |
 	 <ident> ;
 	 <ident> ( PLUS_EXPR ; |
 	 return ; |
 	 return EXPR ; |
 	 begin PLUS_INSTR end ; |
 	 if EXPR then PLUS_INSTR NEXT_IF |
-	 for <ident> in EXPR .. EXPR
-	 loop PLUS_INSR end loop ; |
-	 for <ident> in reverse EXPR .. EXPR
-	 loop PLUS_INSR end loop ; |
+	 for <ident> in EXPR .. EXPR loop PLUS_INSTR end loop ; |
+	 for <ident> in reverse EXPR .. EXPR loop PLUS_INSTR end loop ; |
 	 while EXPR loop PLUS_INSTR end loop ;	 
 
 
 NEXT_IF -> end if ; | else ELSE | elsif ELSIF
 
-ELSE -> PLUS_INSTR END_ELSE
-
-END_ELSE -> else ELSE | end if ;
+ELSE -> PLUS_INSTR end if ;
 
 ELSIF -> EXPR then PLUS_INSTR END_ELSIF 
 
 END_ELSIF -> end if ; | elsif ELSIF | else ELSE
 	 
 	 
-OPERATEUR -> = | /= | < | <= | > | >= 
-	     + | - | * | / | rem
-	     and | and then | or | or else
 
-ACCES -> <ident> | EXPR . <ident>
+
 	
 	
