@@ -8,6 +8,7 @@ import java.util.Hashtable;
 public class Lexer {
     private int line = 1;
     private char currentChar = ' ';
+    private boolean invalidToken = false;
     private final Hashtable<String, Word> words = new Hashtable<>();
     void reserve(Word t) {
         words.put(t.lexeme, t);
@@ -148,16 +149,22 @@ public class Lexer {
                     currentChar = (char) character;
                     if (currentChar != '\'') {
                         System.out.println("Invalid character: " + currentChar + " at line " + line);
+                        invalidToken = true;
                     }
                 }
                 else {
                     System.out.println("Invalid character: " + nextChar + " at line " + line);
+                    invalidToken = true;
                 }
             }
         }
         if (isCharacter) {
             if (!moinsUnaireCase) {
                 currentChar = ' ';
+            }
+            if (invalidToken) {
+                invalidToken = false;
+                return new Invalid();
             }
             return t;
         }
@@ -254,8 +261,13 @@ public class Lexer {
         // handle invalid characters
         if (words.get(Character.toString(currentChar)) == null) {
             System.out.println("Invalid character: " + currentChar + " at line " + line);
+            invalidToken = true;
         }
         currentChar = ' ';
+        if (invalidToken) {
+            invalidToken = false;
+            return new Invalid();
+        }
         return new Token(currentChar);
     }
 }
