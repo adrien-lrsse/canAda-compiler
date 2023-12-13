@@ -47,8 +47,10 @@ public class Tag {
         // character'val
         PUT = 293,
         // put
-        EOF = 294,
+        DOUBLEPOINT = 294,
+        // ..
+        EOF = 295,
         // temp
-        INVALID = 295;
+        INVALID = 296;
 
 }

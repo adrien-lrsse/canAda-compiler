@@ -45,6 +45,7 @@ public class Lexer {
         reserve(new Word(Tag.NOT, "not"));
         reserve(new Word(Tag.CHARACTERVAL, "character'val"));
         reserve(new Word(Tag.PUT, "put"));
+        reserve(new Word(Tag.DOUBLEPOINT, ".."));
         // operators
         reserve(new Word(Tag.GEQ, ">="));
         reserve(new Word(Tag.LEQ, "<="));
@@ -141,6 +142,17 @@ public class Lexer {
                 }
                 break;
             }
+            case '.' : {
+                isCharacter = true;
+                char nextChar = (char) fileReader.read();
+                if (nextChar == '.') { t = words.get(".."); }
+                else {
+                    t = new Char(currentChar);
+                    moinsUnaireCase = true;
+                    currentChar = nextChar;
+                }
+                break;
+            }
             case '\'' : {
                 isCharacter = true;
                 char nextChar = (char) fileReader.read();
@@ -169,6 +181,7 @@ public class Lexer {
             }
             return t;
         }
+
 
         // handle numbers
         if( AsciiPrintableCharacters.isDigit(currentChar)) {
@@ -203,6 +216,7 @@ public class Lexer {
 
             String s = reading_word.toString().toLowerCase();  // case-insensitive language
 
+            // handle character'val
             if (s.equals("character")) {
                 if (currentChar == '\'') {
                     reading_word.append(currentChar);
