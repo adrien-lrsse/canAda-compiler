@@ -35,3 +35,4 @@ identificateur
 .
 1
 character'val
+put

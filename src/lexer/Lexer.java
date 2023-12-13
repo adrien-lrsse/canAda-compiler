@@ -44,6 +44,7 @@ public class Lexer {
         reserve(new Word(Tag.WITH, "with"));
         reserve(new Word(Tag.NOT, "not"));
         reserve(new Word(Tag.CHARACTERVAL, "character'val"));
+        reserve(new Word(Tag.PUT, "put"));
         // operators
         reserve(new Word(Tag.GEQ, ">="));
         reserve(new Word(Tag.LEQ, "<="));

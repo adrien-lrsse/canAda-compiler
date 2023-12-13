@@ -45,8 +45,10 @@ public class Tag {
         // End of file
         CHARACTERVAL = 292,
         // character'val
-        EOF = 293,
+        PUT = 293,
+        // put
+        EOF = 294,
         // temp
-        INVALID = 294;
+        INVALID = 295;
 
 }
