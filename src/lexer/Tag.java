@@ -58,7 +58,7 @@ public class Tag {
 
         FICHIER = 1000,
         NT_PROCEDURE = 1001,
-        END_PRECEDURE = 1002,
+        END_PROCEDURE = 1002,
         BEGIN_INSTRUCTION = 1003,
         END_BEGIN_INSTRUCTION = 1004,
         GENERATE_DECLARATIONS = 1005,
