@@ -1,6 +1,5 @@
 package parser;
 
-import lexer.Lexer;
 import lexer.Tag;
 import lexer.Token;
 
@@ -11,7 +10,7 @@ public class AnalyzeTable {
     public Parser parser;
     public Token current;
     
-    public AnalyzeTable(Parser parser) throws IOException {
+    public AnalyzeTable(Parser parser) {
         this.parser = parser;
     }
 
