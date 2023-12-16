@@ -868,7 +868,7 @@ public class AnalyzeTable {
                 throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
-        if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals("(")){
+        else if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals("(")){
             this.params();
             this.is_declaration();
             this.begin_instruction();
@@ -970,7 +970,7 @@ public class AnalyzeTable {
                 }
             }
         }
-        if (current.getTag() == Tag.RETURN) {
+        else if (current.getTag() == Tag.RETURN) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.type();
