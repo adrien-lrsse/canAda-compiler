@@ -2818,6 +2818,7 @@ public class AnalyzeTable {
             this.instruction_ident_expression();
             int temp = parser.stack.pop();
             if (temp == Tag.INSTRUCTION_IDENT_EXPRESSION){
+                System.out.println(parser.stack);
                 temp = parser.stack.pop();
                 if (temp == Tag.ID){
                     parser.stack.push(Tag.INSTRUCTION);
@@ -3023,22 +3024,32 @@ public class AnalyzeTable {
             current = parser.lexer.scan();
             this.unary();
             this.generate_expression();
-            int temp = parser.stack.pop();
-            if (current.getTag() == Tag.GENERATE_EXPRESSION) {
-                temp = parser.stack.pop();
-                if (temp == Tag.UNARY) {
+            if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), ";")) {
+                parser.stack.push(current.getTag());
+                current = parser.lexer.scan();
+                int temp = parser.stack.pop();
+                if (temp == Tag.SYMBOL) {
                     temp = parser.stack.pop();
-                    if (temp == Tag.SYMBOL) {
-                        parser.stack.push(Tag.INSTRUCTION_IDENT_EXPRESSION);
-                        return;
+                    if (temp == Tag.GENERATE_EXPRESSION) {
+                        temp = parser.stack.pop();
+                        if (temp == Tag.UNARY) {
+                            temp = parser.stack.pop();
+                            if (temp == Tag.SYMBOL) {
+                                parser.stack.push(Tag.INSTRUCTION_IDENT_EXPRESSION);
+                            } else {
+                                throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
+                            }
+                        } else {
+                            throw new Error("Reduction/Stack error : expected <" + Tag.UNARY + "> but found <" + temp + ">");
+                        }
                     } else {
-                        throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
+                        throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_EXPRESSION + "> but found <" + temp + ">");
                     }
                 } else {
-                    throw new Error("Reduction/Stack error : expected <" + Tag.UNARY + "> but found <" + temp + ">");
+                    throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                 }
             } else {
-                throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_EXPRESSION + "> but found <" + temp + ">");
+                throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.ASSIGNMENT) {
             parser.stack.push(current.getTag());
@@ -3050,8 +3061,22 @@ public class AnalyzeTable {
                 current = parser.lexer.scan();
                 int temp = parser.stack.pop();
                 if (temp == Tag.SYMBOL) {
-                    parser.stack.push(Tag.INSTRUCTION_IDENT_EXPRESSION);
-                    return;
+                    temp = parser.stack.pop();
+                    if (temp == Tag.EXPRESSION) {
+                        temp = parser.stack.pop();
+                        if (temp == Tag.UNARY) {
+                            temp = parser.stack.pop();
+                            if (temp == Tag.ASSIGNMENT) {
+                                parser.stack.push(Tag.INSTRUCTION_IDENT_EXPRESSION);
+                            } else {
+                                throw new Error("Reduction/Stack error : expected <" + Tag.ASSIGNMENT + "> but found <" + temp + ">");
+                            }
+                        } else {
+                            throw new Error("Reduction/Stack error : expected <" + Tag.UNARY + "> but found <" + temp + ">");
+                        }
+                    } else {
+                        throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION + "> but found <" + temp + ">");
+                    }
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                 }
