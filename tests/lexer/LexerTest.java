@@ -100,6 +100,7 @@ class LexerTest {
                 "Symbol{290, ;}",
                 "Word{277, return}",
                 "Word{289, aire}",
+                "Symbol{290, ;}",
                 "Word{261, end}",
                 "Word{289, airerectangle}",
                 "Symbol{290, ;}",
@@ -120,6 +121,7 @@ class LexerTest {
                 "Word{289, p}",
                 "Symbol{290, :}",
                 "Word{289, integer}",
+                "Symbol{290, ;}",
                 "Word{258, begin}",
                 "Word{289, p}",
                 "Word{287, :=}",
@@ -133,10 +135,15 @@ class LexerTest {
                 "Symbol{290, ;}",
                 "Word{277, return}",
                 "Word{289, p}",
+                "Symbol{290, ;}",
                 "Word{261, end}",
                 "Word{289, perimetrerectangle}",
                 "Symbol{290, ;}",
                 "Word{289, choix}",
+                "Symbol{290, :}",
+                "Word{289, integer}",
+                "Symbol{290, ;}",
+                "Word{289, valeur}",
                 "Symbol{290, :}",
                 "Word{289, integer}",
                 "Symbol{290, ;}",
@@ -167,7 +174,7 @@ class LexerTest {
                 "Word{259, else}",
                 "Word{289, valeur}",
                 "Word{287, :=}",
-                "Word{289, airerectangale}",
+                "Word{289, airerectangle}",
                 "Symbol{290, (}",
                 "Num{291, 2}",
                 "Symbol{290, ,}",
@@ -185,7 +192,7 @@ class LexerTest {
                 "Word{261, end}",
                 "Word{289, undebut}",
                 "Symbol{290, ;}",
-                "<295>"
+                "<295>"	
         };
 
         for (String expectedLexicalUnit : expectedLexicalUnits) {
