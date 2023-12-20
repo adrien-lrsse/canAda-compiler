@@ -1283,8 +1283,14 @@ public class AnalyzeTable {
             this.param();
             int temp = parser.stack.pop();
             if (temp == Tag.PARAM){
-                parser.stack.push(Tag.PARAMS);
-                return;
+                temp = parser.stack.pop();
+                if (temp == Tag.SYMBOL){
+                    parser.stack.push(Tag.PARAMS);
+                    return;
+                }
+                else {
+                    throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
+                }
             }
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.PARAM+"> but found <"+temp+">");
@@ -1306,8 +1312,20 @@ public class AnalyzeTable {
                 this.type_or_mode_type_param();
                 int temp = parser.stack.pop();
                 if (temp == Tag.TYPE_OR_MODE_TYPE_PARAM){
-                    parser.stack.push(Tag.PARAM);
-                    return;
+                    temp = parser.stack.pop();
+                    if (temp == Tag.SYMBOL){
+                        temp = parser.stack.pop();
+                        if (temp == Tag.GENERATE_IDENT){
+                            parser.stack.push(Tag.PARAM);
+                            return;
+                        }
+                        else {
+                            throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_IDENT+"> but found <"+temp+">");
+                        }
+                    }
+                    else {
+                        throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
+                    }
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.TYPE_OR_MODE_TYPE_PARAM+"> but found <"+temp+">");
@@ -1351,18 +1369,12 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if (temp == Tag.END_PARAM){
                 temp = parser.stack.pop();
-                if (temp == Tag.TYPE){
-                    temp = parser.stack.pop();
-                    if (temp == Tag.ACCESS){
-                        parser.stack.push(Tag.TYPE_OR_MODE_TYPE_PARAM);
-                        return;
-                    }
-                    else {
-                        throw new Error("Reduction/Stack error : expected <"+Tag.ACCESS+"> but found <"+temp+">");
-                    }
+                if (temp == Tag.NT_TYPE){
+                    parser.stack.push(Tag.TYPE_OR_MODE_TYPE_PARAM);
+                    return;
                 }
                 else {
-                    throw new Error("Reduction/Stack error : expected <"+Tag.TYPE+"> but found <"+temp+">");
+                    throw new Error("Reduction/Stack error : expected <"+Tag.NT_TYPE+"> but found <"+temp+">");
                 }
             }
             else {
@@ -1408,7 +1420,7 @@ public class AnalyzeTable {
     private void end_param() throws IOException{
         // END_PARAM ::= ; PARAM (lecture de ;)
         // END_PARAM ::= ) (lecture de ) )
-        if ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(";"))){
+        if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")){
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.param();
@@ -1427,7 +1439,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <"+Tag.PARAM+"> but found <"+temp+">");
             }
         }
-        else if ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(")"))){
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")){
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
