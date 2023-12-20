@@ -465,17 +465,10 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_INSTRUCTIONS+"> but found <"+temp+">");
             }
         }
-        else if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("else"))) {
+        else if ((current.getTag() == Tag.END) || (current.getTag() == Tag.ELSE) || (current.getTag() == Tag.ELSIF)) {
+            parser.stack.push(current.getTag());
+            current = parser.lexer.scan();
             parser.stack.push(Tag.GENERATE_INSTRUCTIONS_FACTORISATION);
-            return;
-        }
-        else if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("end"))) {
-            parser.stack.push(Tag.GENERATE_INSTRUCTIONS_FACTORISATION);
-            return;
-        }
-        else if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("elsif"))) {
-            parser.stack.push(Tag.GENERATE_INSTRUCTIONS_FACTORISATION);
-            return;
         }
         else {
             throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.SYMBOL + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> or <" + Tag.SYMBOL + " 'else'> or <" + Tag.SYMBOL + " 'end'> or <" + Tag.SYMBOL + " 'elsif'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
@@ -2818,7 +2811,6 @@ public class AnalyzeTable {
             this.instruction_ident_expression();
             int temp = parser.stack.pop();
             if (temp == Tag.INSTRUCTION_IDENT_EXPRESSION){
-                System.out.println(parser.stack);
                 temp = parser.stack.pop();
                 if (temp == Tag.ID){
                     parser.stack.push(Tag.INSTRUCTION);
