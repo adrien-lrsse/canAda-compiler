@@ -90,7 +90,6 @@ public class AnalyzeTable {
                                                                                                             temp = parser.stack.pop();
                                                                                                             if(temp == Tag.WITH) {
                                                                                                                 parser.stack.push(Tag.FICHIER);
-                                                                                                                return;
                                                                                                             }
                                                                                                             else {
                                                                                                                 throw new Error("Reduction/Stack error : expected <"+Tag.WITH+"> but found <"+temp+">");
@@ -219,7 +218,6 @@ public class AnalyzeTable {
                                 temp = parser.stack.pop();
                                 if(temp == Tag.PROCEDURE) {
                                     parser.stack.push(Tag.NT_PROCEDURE);
-                                    return;
                                 }
                                 else {
                                     throw new Error("Reduction/Stack error : expected <"+Tag.PROCEDURE+"> but found <"+temp+">");
@@ -261,7 +259,6 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if(temp == Tag.GENERATE_DECLARATIONS) {
                 parser.stack.push(Tag.END_PROCEDURE);
-                return;
             }
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_DECLARATIONS+"> but found <"+temp+">");
@@ -269,7 +266,6 @@ public class AnalyzeTable {
         }
         else if(current.getTag() == Tag.BEGIN) {
             parser.stack.push(Tag.END_PROCEDURE);
-            return;
         }
         else {
             throw new Error("Error : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> or <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
@@ -295,7 +291,6 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if(temp == Tag.BEGIN) {
                                 parser.stack.push(Tag.BEGIN_INSTRUCTION);
-                                return;
                             }
                             else {
                                 throw new Error("Reduction/Stack error : expected <"+Tag.BEGIN+"> but found <"+temp+">");
@@ -328,12 +323,10 @@ public class AnalyzeTable {
         //END_BEGIN_INSTRUCTION ::= ident (lecture de ident)
         if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(";"))) {
             parser.stack.push(Tag.END_BEGIN_INSTRUCTION);
-            return;
         }
         else if(current.getTag() == Tag.ID) {
             current = parser.lexer.scan();
             parser.stack.push(Tag.END_BEGIN_INSTRUCTION);
-            return;
         }
         else {
             throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
@@ -354,7 +347,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if(temp == Tag.DECLARATION) {
                     parser.stack.push(Tag.GENERATE_DECLARATIONS);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.DECLARATION+"> but found <"+temp+">");
@@ -381,7 +373,6 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if(temp == Tag.GENERATE_DECLARATIONS) {
                 parser.stack.push(Tag.GENERATE_DECLARATIONS_FACTORISATION);
-                return;
             }
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_DECLARATIONS+"> but found <"+temp+">");
@@ -389,7 +380,6 @@ public class AnalyzeTable {
         }
         else if(current.getTag() == Tag.BEGIN) {
             parser.stack.push(Tag.GENERATE_DECLARATIONS_FACTORISATION);
-            return;
         }
         else {
             throw new Error("Error : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> or <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
@@ -421,7 +411,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if(temp == Tag.INSTRUCTION) {
                     parser.stack.push(Tag.GENERATE_INSTRUCTIONS);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.INSTRUCTION+"> but found <"+temp+">");
@@ -459,7 +448,6 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if(temp == Tag.GENERATE_INSTRUCTIONS) {
                 parser.stack.push(Tag.GENERATE_INSTRUCTIONS_FACTORISATION);
-                return;
             }
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_INSTRUCTIONS+"> but found <"+temp+">");
@@ -494,7 +482,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if(temp == Tag.PROCEDURE) {
                             parser.stack.push(Tag.DECLARATION);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.PROCEDURE+"> but found <"+temp+">");
@@ -528,7 +515,6 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if (temp == Tag.GENERATE_IDENT) {
                                 parser.stack.push(Tag.DECLARATION);
-                                return;
                             } else {
                                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_IDENT + "> but found <" + temp + ">");
                             }
@@ -555,7 +541,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if(temp == Tag.TYPE) {
                             parser.stack.push(Tag.DECLARATION);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.TYPE+"> but found <"+temp+">");
@@ -587,7 +572,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if(temp == Tag.FUNCTION) {
                             parser.stack.push(Tag.DECLARATION);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.FUNCTION+"> but found <"+temp+">");
@@ -617,7 +601,6 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
             current = parser.lexer.scan();
             parser.stack.push(Tag.DECLARATION_TYPE);
-            return;
         }
         else if(current.getTag() == Tag.IS) {
             parser.stack.push(current.getTag());
@@ -628,7 +611,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if(temp == Tag.IS) {
                     parser.stack.push(Tag.DECLARATION_TYPE);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.IS+"> but found <"+temp+">");
@@ -663,7 +645,6 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if(temp == Tag.ACCESS) {
                                 parser.stack.push(Tag.ACCESS_RECORD);
-                                return;
                             }
                             else {
                                 throw new Error("Reduction/Stack error : expected <"+Tag.ACCESS+"> but found <"+temp+">");
@@ -709,7 +690,6 @@ public class AnalyzeTable {
                                         temp = parser.stack.pop();
                                         if(temp == Tag.RECORD) {
                                             parser.stack.push(Tag.ACCESS_RECORD);
-                                            return;
                                         }
                                         else {
                                             throw new Error("Reduction/Stack error : expected <"+Tag.RECORD+"> but found <"+temp+">");
@@ -755,7 +735,6 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
             parser.stack.push(Tag.DECLARATION_WITH_EXPRESSION);
             current = parser.lexer.scan();
-            return;
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
             parser.stack.push(current.getTag());
@@ -784,7 +763,6 @@ public class AnalyzeTable {
                                             temp = parser.stack.pop();
                                             if(temp == Tag.SYMBOL) {
                                                 parser.stack.push(Tag.DECLARATION_WITH_EXPRESSION);
-                                                return;
                                             }
                                             else {
                                                 throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
@@ -841,7 +819,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if(temp == Tag.IS_DECLARATION) {
                             parser.stack.push(Tag.DECLARATION_PROCEDURE);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.IS_DECLARATION+"> but found <"+temp+">");
@@ -875,7 +852,6 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if(temp == Tag.PARAMS) {
                                 parser.stack.push(Tag.DECLARATION_PROCEDURE);
-                                return;
                             }
                             else {
                                 throw new Error("Reduction/Stack error : expected <"+Tag.PARAMS+"> but found <"+temp+">");
@@ -930,7 +906,6 @@ public class AnalyzeTable {
                                         temp = parser.stack.pop();
                                         if(temp == Tag.PARAMS) {
                                             parser.stack.push(Tag.DECLARATION_FUNCTION);
-                                            return;
                                         }
                                         else {
                                             throw new Error("Reduction/Stack error : expected <"+Tag.PARAMS+"> but found <"+temp+">");
@@ -981,7 +956,6 @@ public class AnalyzeTable {
                                 temp = parser.stack.pop();
                                 if(temp == Tag.RETURN) {
                                     parser.stack.push(Tag.DECLARATION_FUNCTION);
-                                    return;
                                 }
                                 else {
                                     throw new Error("Reduction/Stack error : expected <"+Tag.RETURN+"> but found <"+temp+">");
@@ -1021,7 +995,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if(temp == Tag.ID) {
                     parser.stack.push(Tag.GENERATE_IDENT);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.ID+"> but found <"+temp+">");
@@ -1042,7 +1015,6 @@ public class AnalyzeTable {
         //END_GENERATE_IDENT ::= , GENERATE_IDENT (lecture de , )
         if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(":")) {
             parser.stack.push(Tag.END_GENERATE_IDENT);
-            return;
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) {
             parser.stack.push(current.getTag());
@@ -1053,7 +1025,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if(temp == Tag.SYMBOL) {
                     parser.stack.push(Tag.END_GENERATE_IDENT);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
@@ -1080,7 +1051,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if(temp == Tag.IS) {
                     parser.stack.push(Tag.IS_DECLARATION);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.IS+"> but found <"+temp+">");
@@ -1107,7 +1077,6 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if(temp == Tag.GENERATE_DECLARATIONS) {
                 parser.stack.push(Tag.IS_DECLARATION_FACTORISATION);
-                return;
             }
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_DECLARATIONS+"> but found <"+temp+">");
@@ -1115,7 +1084,6 @@ public class AnalyzeTable {
         }
         else if(current.getTag() == Tag.BEGIN) {
             parser.stack.push(Tag.IS_DECLARATION_FACTORISATION);
-            return;
         }
         else {
             throw new Error("Error : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> or <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
@@ -1143,7 +1111,6 @@ public class AnalyzeTable {
                                 temp = parser.stack.pop();
                                 if (temp == Tag.GENERATE_IDENT){
                                     parser.stack.push(Tag.CHAMPS);
-                                    return;
                                 }
                                 else {
                                     throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_IDENT+"> but found <"+temp+">");
@@ -1189,7 +1156,6 @@ public class AnalyzeTable {
                 throw new Error("Error : expected <"+Tag.END_GENERATE_CHAMPS+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
-        return;
     }
 
     //END_GENERATE_CHAMPS
@@ -1229,7 +1195,6 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if (temp == Tag.ID){
                 parser.stack.push(Tag.NT_TYPE);
-                return;
             }
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.ID+"> but found <"+temp+">");
@@ -1246,7 +1211,6 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.ACCESS){
                         parser.stack.push(Tag.NT_TYPE);
-                        return;
                     }
                     else {
                         throw new Error("Reduction/Stack error : expected <"+Tag.ACCESS+"> but found <"+temp+">");
@@ -1277,7 +1241,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.SYMBOL){
                     parser.stack.push(Tag.PARAMS);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -1308,7 +1271,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.GENERATE_IDENT){
                             parser.stack.push(Tag.PARAM);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_IDENT+"> but found <"+temp+">");
@@ -1344,7 +1306,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.NT_TYPE){
                     parser.stack.push(Tag.TYPE_OR_MODE_TYPE_PARAM);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.NT_TYPE+"> but found <"+temp+">");
@@ -1362,7 +1323,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.NT_TYPE){
                     parser.stack.push(Tag.TYPE_OR_MODE_TYPE_PARAM);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.NT_TYPE+"> but found <"+temp+">");
@@ -1386,7 +1346,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.IN){
                             parser.stack.push(Tag.TYPE_OR_MODE_TYPE_PARAM);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.IN+"> but found <"+temp+">");
@@ -1420,7 +1379,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.SYMBOL){
                     parser.stack.push(Tag.END_PARAM);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -1436,7 +1394,6 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if (temp == Tag.SYMBOL){
                 parser.stack.push(Tag.END_PARAM);
-                return;
             }
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -1459,7 +1416,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.IN){
                     parser.stack.push(Tag.MODE);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.IN+"> but found <"+temp+">");
@@ -1481,7 +1437,6 @@ public class AnalyzeTable {
         // OUT_OR_NOT ::= out (lecture de out)
         if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.ACCESS)){
             parser.stack.push(Tag.OUT_OR_NOT);
-            return;
         }
         else if (current.getTag() == Tag.OUT){
             parser.stack.push(current.getTag());
@@ -1489,7 +1444,7 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if (temp == Tag.OUT){
                 parser.stack.push(Tag.OUT_OR_NOT);
-                return;
+
             }
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.OUT+"> but found <"+temp+">");
@@ -1520,7 +1475,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_1){
                     parser.stack.push(Tag.EXPRESSION);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_1+"> but found <"+temp+">");
@@ -1544,7 +1498,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL){
                             parser.stack.push(Tag.EXPRESSION);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -1585,7 +1538,6 @@ public class AnalyzeTable {
                                     temp = parser.stack.pop();
                                     if (temp == Tag.SYMBOL) {
                                         parser.stack.push(Tag.EXPRESSION);
-                                        return;
                                     } else {
                                         throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                                     }
@@ -1623,7 +1575,6 @@ public class AnalyzeTable {
         // EXPRESSION_OR ::= or UNARY EXPRESSION_ELSE (lecture de or)
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_OR);
-            return;
         }
         else if (current.getTag() == Tag.OR){
             parser.stack.push(current.getTag());
@@ -1637,7 +1588,6 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.OR){
                         parser.stack.push(Tag.EXPRESSION_OR);
-                        return;
                     }
                     else {
                         throw new Error("Reduction/Stack error : expected <"+Tag.OR+"> but found <"+temp+">");
@@ -1675,7 +1625,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_1) {
                     parser.stack.push(Tag.EXPRESSION_ELSE);
-                    return;
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_1 + "> but found <" + temp + ">");
                 }
@@ -1697,7 +1646,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.ELSE) {
                             parser.stack.push(Tag.EXPRESSION_ELSE);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.ELSE + "> but found <" + temp + ">");
                         }
@@ -1733,7 +1681,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_NOT){
                     parser.stack.push(Tag.EXPRESSION_1);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_NOT+"> but found <"+temp+">");
@@ -1761,7 +1708,6 @@ public class AnalyzeTable {
         // EXPRESSION_AND ::= and UNARY EXPRESSION_THEN (lecture de and)
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_AND);
-            return;
         }
         else if (current.getTag() == Tag.AND){
             parser.stack.push(current.getTag());
@@ -1775,7 +1721,6 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.AND){
                         parser.stack.push(Tag.EXPRESSION_AND);
-                        return;
                     }
                     else {
                         throw new Error("Reduction/Stack error : expected <"+Tag.AND+"> but found <"+temp+">");
@@ -1813,7 +1758,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_NOT){
                     parser.stack.push(Tag.EXPRESSION_THEN);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_NOT+"> but found <"+temp+">");
@@ -1838,7 +1782,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.THEN){
                             parser.stack.push(Tag.EXPRESSION_THEN);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.THEN+"> but found <"+temp+">");
@@ -1879,7 +1822,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_3){
                     parser.stack.push(Tag.EXPRESSION_NOT);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_3+"> but found <"+temp+">");
@@ -1901,7 +1843,6 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.NOT){
                         parser.stack.push(Tag.EXPRESSION_NOT);
-                        return;
                     }
                     else {
                         throw new Error("Reduction/Stack error : expected <"+Tag.NOT+"> but found <"+temp+">");
@@ -1937,7 +1878,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_4){
                     parser.stack.push(Tag.EXPRESSION_3);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_4+"> but found <"+temp+">");
@@ -1966,7 +1906,6 @@ public class AnalyzeTable {
         // EXPRESSION_EQUALS ::= /= UNARY EXPRESSION_4 EXPRESSION_EQUALS (lecture de /=)
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_EQUALS);
-            return;
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("=")){
             parser.stack.push(current.getTag());
@@ -1983,7 +1922,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL){
                             parser.stack.push(Tag.EXPRESSION_EQUALS);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -2016,7 +1954,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.DIFFERENT) {
                             parser.stack.push(Tag.EXPRESSION_EQUALS);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.DIFFERENT + "> but found <" + temp + ">");
                         }
@@ -2052,7 +1989,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_5){
                     parser.stack.push(Tag.EXPRESSION_4);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_5+"> but found <"+temp+">");
@@ -2085,7 +2021,6 @@ public class AnalyzeTable {
         // EXPRESSION_COMPARAISON ::= <= UNARY EXPRESSION_5 EXPRESSION_COMPARAISON (lecture de <=)
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("=")) || (current.getTag() == Tag.DIFFERENT) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
-            return;
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(">")){
             parser.stack.push(current.getTag());
@@ -2102,7 +2037,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL){
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -2135,7 +2069,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2163,7 +2096,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL){
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
-                            return;
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -2195,7 +2127,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2230,7 +2161,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_6){
                     parser.stack.push(Tag.EXPRESSION_5);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_6+"> but found <"+temp+">");
@@ -2265,7 +2195,6 @@ public class AnalyzeTable {
         // EXPRESSION_PLUS_MOINS ::= - UNARY EXPRESSION_6 EXPRESSION_PLUS_MOINS (lecture de -)
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("=")) || (current.getTag() == Tag.DIFFERENT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(">")) || (current.getTag() == Tag.GEQ) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("<")) || (current.getTag() == Tag.LEQ) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_PLUS_MOINS);
-            return;
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("+")) {
             parser.stack.push(current.getTag());
@@ -2282,7 +2211,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.EXPRESSION_PLUS_MOINS);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2310,7 +2238,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.EXPRESSION_PLUS_MOINS);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2346,7 +2273,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_7){
                     parser.stack.push(Tag.EXPRESSION_6);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_7+"> but found <"+temp+">");
@@ -2384,7 +2310,6 @@ public class AnalyzeTable {
         // EXPRESSION_MULT_DIV ::= rem UNARY EXPRESSION_7 EXPRESSION_MULT_DIV (lecture de rem)
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("=")) || (current.getTag() == Tag.DIFFERENT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(">")) || (current.getTag() == Tag.GEQ) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("<")) || (current.getTag() == Tag.LEQ) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("+")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_MULT_DIV);
-            return;
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("*")) {
             parser.stack.push(current.getTag());
@@ -2401,7 +2326,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.EXPRESSION_MULT_DIV);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2429,7 +2353,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.EXPRESSION_MULT_DIV);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2457,7 +2380,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.REM) {
                             parser.stack.push(Tag.EXPRESSION_MULT_DIV);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.REM + "> but found <" + temp + ">");
                         }
@@ -2492,7 +2414,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_ATOMS){
                     parser.stack.push(Tag.EXPRESSION_7);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_ATOMS+"> but found <"+temp+">");
@@ -2532,7 +2453,6 @@ public class AnalyzeTable {
         // EXPRESSION_ACCESS_IDENT ::= . ident EXPRESSION_ACCESS_IDENT (lecture de .)
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.ASSIGNMENT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("=")) || (current.getTag() == Tag.DIFFERENT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(">")) || (current.getTag() == Tag.GEQ) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("<")) || (current.getTag() == Tag.LEQ) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("+")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("*")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("/")) || (current.getTag() == Tag.REM) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_ACCESS_IDENT);
-            return;
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(".")) {
             parser.stack.push(current.getTag());
@@ -2548,7 +2468,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.EXPRESSION_ACCESS_IDENT);
-                            return;
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2584,7 +2503,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.ID){
                     parser.stack.push(Tag.EXPRESSION_ATOMS);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.ID+"> but found <"+temp+">");
@@ -2602,7 +2520,6 @@ public class AnalyzeTable {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 parser.stack.push(Tag.EXPRESSION_ATOMS);
-                return;
             } else {
                 throw new Error("Error : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
@@ -2610,27 +2527,22 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             parser.stack.push(Tag.EXPRESSION_ATOMS);
-            return;
         } else if (current.getTag() == Tag.CHAR) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             parser.stack.push(Tag.EXPRESSION_ATOMS);
-            return;
         } else if (current.getTag() == Tag.TRUE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             parser.stack.push(Tag.EXPRESSION_ATOMS);
-            return;
         } else if (current.getTag() == Tag.FALSE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             parser.stack.push(Tag.EXPRESSION_ATOMS);
-            return;
         } else if (current.getTag() == Tag.NULL) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             parser.stack.push(Tag.EXPRESSION_ATOMS);
-            return;
         } else {
             throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
@@ -2653,7 +2565,6 @@ public class AnalyzeTable {
         // UNARY ::= - UNARY (lecture de -)
         if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.ELSE) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)){
             parser.stack.push(Tag.UNARY);
-            return;
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")) {
             parser.stack.push(current.getTag());
@@ -2664,7 +2575,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.SYMBOL) {
                     parser.stack.push(Tag.UNARY);
-                    return;
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                 }
@@ -2701,7 +2611,6 @@ public class AnalyzeTable {
         // START_NEW_EXPRESSION ::= ( UNARY GENERATE_EXPRESSION (lecture de ( )
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(".")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("=")) || (current.getTag() == Tag.DIFFERENT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(">")) || (current.getTag() == Tag.GEQ) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("<")) || (current.getTag() == Tag.LEQ) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("+")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("*")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("/")) || (current.getTag() == Tag.REM) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.START_NEW_EXPRESSION);
-            return;
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
             parser.stack.push(current.getTag());
@@ -2712,7 +2621,6 @@ public class AnalyzeTable {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 parser.stack.push(Tag.START_NEW_EXPRESSION);
-                return;
             } else {
                 throw new Error("Error : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
@@ -2741,7 +2649,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION){
                     parser.stack.push(Tag.GENERATE_EXPRESSION);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION+"> but found <"+temp+">");
@@ -2764,7 +2671,6 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             parser.stack.push(Tag.END_GENERATE_EXPRESSION);
-            return;
         } else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -2774,7 +2680,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.SYMBOL) {
                     parser.stack.push(Tag.END_GENERATE_EXPRESSION);
-                    return;
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                 }
@@ -2812,7 +2717,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.ID){
                     parser.stack.push(Tag.INSTRUCTION);
-                    return;
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.ID+"> but found <"+temp+">");
@@ -2833,7 +2737,6 @@ public class AnalyzeTable {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
                     parser.stack.push(Tag.INSTRUCTION);
-                    return;
                 } else {
                     throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
@@ -2849,7 +2752,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.RETURN) {
                     parser.stack.push(Tag.INSTRUCTION);
-                    return;
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.RETURN + "> but found <" + temp + ">");
                 }
@@ -2867,7 +2769,6 @@ public class AnalyzeTable {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
                     parser.stack.push(Tag.INSTRUCTION);
-                    return;
                 } else {
                     throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
@@ -2897,7 +2798,6 @@ public class AnalyzeTable {
                                     temp = parser.stack.pop();
                                     if (temp == Tag.IF) {
                                         parser.stack.push(Tag.INSTRUCTION);
-                                        return;
                                     } else {
                                         throw new Error("Reduction/Stack error : expected <" + Tag.IF + "> but found <" + temp + ">");
                                     }
@@ -2938,7 +2838,6 @@ public class AnalyzeTable {
                                 temp = parser.stack.pop();
                                 if (temp == Tag.FOR) {
                                     parser.stack.push(Tag.INSTRUCTION);
-                                    return;
                                 } else {
                                     throw new Error("Reduction/Stack error : expected <" + Tag.FOR + "> but found <" + temp + ">");
                                 }
@@ -2976,7 +2875,6 @@ public class AnalyzeTable {
                             parser.stack.push(current.getTag());
                             current = parser.lexer.scan();
                             parser.stack.push(Tag.INSTRUCTION);
-                            return;
                         } else {
                             throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                         }
@@ -3005,7 +2903,6 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if (temp == Tag.SYMBOL) {
                 parser.stack.push(Tag.INSTRUCTION_IDENT_EXPRESSION);
-                return;
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
             }
@@ -3098,7 +2995,6 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if (temp == Tag.SYMBOL) {
                 parser.stack.push(Tag.END_RETURN);
-                return;
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
             }
@@ -3115,7 +3011,6 @@ public class AnalyzeTable {
                           temp = parser.stack.pop();
                           if (temp == Tag.UNARY) {
                             parser.stack.push(Tag.END_RETURN);
-                            return;
                           } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.UNARY + "> but found <" + temp + ">");
                           }
@@ -3147,7 +3042,7 @@ public class AnalyzeTable {
         // FOR_INSTRUCTION ::= UNARY EXPRESSION .. UNARY EXPRESSION loop GENERATE_INSTRUCTIONS end loop ; (lecture de false)
         // FOR_INSTRUCTION ::= UNARY EXPRESSION .. UNARY EXPRESSION loop GENERATE_INSTRUCTIONS end loop ; (lecture de null)
         // FOR_INSTRUCTION ::= reverse UNARY EXPRESSION .. UNARY EXPRESSION loop GENERATE_INSTRUCTIONS end loop ; (lecture de reverse)
-        if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL) || (current.getTag() == Tag.REVERSE)) {
+        if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
             this.unary();
             this.expression();
             if (current.getTag() == Tag.DOUBLEPOINT) {
@@ -3354,7 +3249,6 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if (temp == Tag.END) {
                                 parser.stack.push(Tag.NEXT_IF);
-                                return;
                             } else {
                                 throw new Error("Reduction/Stack error : expected <" + Tag.END + "> but found <" + temp + ">");
                             }
@@ -3379,7 +3273,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.ELSE) {
                     parser.stack.push(Tag.NEXT_IF);
-                    return;
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.ELSE + "> but found <" + temp + ">");
                 }
@@ -3395,7 +3288,6 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.NT_ELSIF) {
                     parser.stack.push(Tag.NEXT_IF);
-                    return;
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.NT_ELSIF + "> but found <" + temp + ">");
                 }
@@ -3444,7 +3336,6 @@ public class AnalyzeTable {
                                     temp = parser.stack.pop();
                                     if (temp == Tag.GENERATE_INSTRUCTIONS) {
                                         parser.stack.push(Tag.NT_ELSE);
-                                        return;
                                     } else {
                                         throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_INSTRUCTIONS + "> but found <" + temp + ">");
                                     }
@@ -3553,7 +3444,6 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if(temp == Tag.END) {
                                 parser.stack.push(Tag.END_ELSIF);
-                                return;
                             }
                             else {
                                 throw new Error("Reduction/Stack error : expected <"+Tag.END+"> but found <"+temp+">");
@@ -3725,7 +3615,6 @@ public class AnalyzeTable {
         //WI_EXPRESSION_OR ::= or UNARY WI_EXPRESSION_ELSE (lecture de or)
         if (current.getTag() == Tag.ASSIGNMENT) {
             parser.stack.push(Tag.WI_EXPRESSION_OR);
-            return;
         }
         else if (current.getTag() == Tag.OR) {
             parser.stack.push(current.getTag());
