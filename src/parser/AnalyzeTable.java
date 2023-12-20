@@ -1335,6 +1335,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.IN){
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.mode();
             this.type();
             this.end_param();
             int temp = parser.stack.pop();
