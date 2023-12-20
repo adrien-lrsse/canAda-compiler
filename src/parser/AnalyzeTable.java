@@ -27,13 +27,13 @@ public class AnalyzeTable {
             if ((current.getTag() == Tag.ID) && (current.getStringValue().equals("ada"))) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
-                if ((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals("."))){
+                if ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("."))){
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
                     if ((current.getTag() == Tag.ID) && (current.getStringValue().equals("text_io"))) {
                         parser.stack.push(current.getTag());
                         current = parser.lexer.scan();
-                        if((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals(";"))) {
+                        if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(";"))) {
                             parser.stack.push(current.getTag());
                             current = parser.lexer.scan();
                             if(current.getTag() == Tag.USE) {
@@ -42,18 +42,18 @@ public class AnalyzeTable {
                                 if ((current.getTag() == Tag.ID) && (current.getStringValue().equals("ada"))) {
                                     parser.stack.push(current.getTag());
                                     current = parser.lexer.scan();
-                                    if ((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals("."))){
+                                    if ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("."))){
                                         parser.stack.push(current.getTag());
                                         current = parser.lexer.scan();
                                         if ((current.getTag() == Tag.ID) && (current.getStringValue().equals("text_io"))) {
                                             parser.stack.push(current.getTag());
                                             current = parser.lexer.scan();
-                                            if((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals(";"))) {
+                                            if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(";"))) {
                                                 parser.stack.push(current.getTag());
                                                 current = parser.lexer.scan();
                                                 this.procedure();
                                                 this.begin_instruction();
-                                                if((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals(";"))) {
+                                                if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(";"))) {
                                                     parser.stack.push(current.getTag());
                                                     current = parser.lexer.scan();
                                                     if(current.getTag() == Tag.EOF) {
@@ -63,27 +63,27 @@ public class AnalyzeTable {
                                                         int temp = parser.stack.pop();
                                                         if (temp == Tag.EOF) {
                                                             temp = parser.stack.pop();
-                                                            if(temp == Tag.CHARCONST){
+                                                            if(temp == Tag.SYMBOL){
                                                                 temp = parser.stack.pop();
                                                                 if(temp == Tag.BEGIN_INSTRUCTION) {
                                                                     temp = parser.stack.pop();
                                                                     if(temp == Tag.NT_PROCEDURE) {
                                                                         temp = parser.stack.pop();
-                                                                        if(temp == Tag.CHARCONST) {
+                                                                        if(temp == Tag.SYMBOL) {
                                                                             temp = parser.stack.pop();
                                                                             if(temp == Tag.ID) {
                                                                                 temp = parser.stack.pop();
-                                                                                if(temp == Tag.CHARCONST) {
+                                                                                if(temp == Tag.SYMBOL) {
                                                                                     temp = parser.stack.pop();
                                                                                     if(temp == Tag.ID) {
                                                                                         temp = parser.stack.pop();
                                                                                         if(temp == Tag.USE) {
                                                                                             temp = parser.stack.pop();
-                                                                                            if(temp == Tag.CHARCONST) {
+                                                                                            if(temp == Tag.SYMBOL) {
                                                                                                 temp = parser.stack.pop();
                                                                                                 if(temp == Tag.ID) {
                                                                                                     temp = parser.stack.pop();
-                                                                                                    if(temp == Tag.CHARCONST) {
+                                                                                                    if(temp == Tag.SYMBOL) {
                                                                                                         temp = parser.stack.pop();
                                                                                                         if(temp == Tag.ID) {
                                                                                                             temp = parser.stack.pop();
@@ -96,7 +96,7 @@ public class AnalyzeTable {
                                                                                                             }
                                                                                                         }
                                                                                                         else {
-                                                                                                            throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                                                                                                            throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                                                                                                         }
                                                                                                     }
                                                                                                     else {
@@ -108,7 +108,7 @@ public class AnalyzeTable {
                                                                                                 }
                                                                                             }
                                                                                             else {
-                                                                                                throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                                                                                                throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                                                                                             }
                                                                                         }
                                                                                         else {
@@ -120,7 +120,7 @@ public class AnalyzeTable {
                                                                                     }
                                                                                 }
                                                                                 else {
-                                                                                    throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                                                                                    throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                                                                                 }
                                                                             }
                                                                             else {
@@ -128,7 +128,7 @@ public class AnalyzeTable {
                                                                             }
                                                                         }
                                                                         else {
-                                                                            throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                                                                            throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                                                                         }
                                                                     }
                                                                     else {
@@ -140,7 +140,7 @@ public class AnalyzeTable {
                                                                 }
                                                             }
                                                             else {
-                                                                throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                                                                throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                                                             }
                                                         }
                                                         else {
@@ -152,12 +152,12 @@ public class AnalyzeTable {
                                                     }
                                                 }
                                                 else {
-                                                    throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                                    throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
 
                                                 }
                                             }
                                             else {
-                                                throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                                throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                                             }
                                         }
                                         else {
@@ -165,7 +165,7 @@ public class AnalyzeTable {
                                         }
                                     }
                                     else {
-                                        throw new Error("Error : expected <"+Tag.CHARCONST+" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                        throw new Error("Error : expected <"+Tag.SYMBOL +" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                                     }
                                 }
                                 else {
@@ -177,7 +177,7 @@ public class AnalyzeTable {
                             }
                         }
                         else {
-                            throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                            throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                         }
                     }
                     else {
@@ -185,7 +185,7 @@ public class AnalyzeTable {
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.CHARCONST+" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error : expected <"+Tag.SYMBOL +" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
             }
             else {
@@ -325,7 +325,7 @@ public class AnalyzeTable {
     private void end_begin_instruction() throws IOException{
         //END_BEGIN_INSTRUCTION ::= ε (lecture de ;)
         //END_BEGIN_INSTRUCTION ::= ident (lecture de ident)
-        if((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals(";"))) {
+        if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(";"))) {
             parser.stack.push(Tag.END_BEGIN_INSTRUCTION);
             return;
         }
@@ -335,7 +335,7 @@ public class AnalyzeTable {
             return;
         }
         else {
-            throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> or <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -412,7 +412,7 @@ public class AnalyzeTable {
         //GENERATE_INSTRUCTIONS ::= INSTRUCTION GENERATE_INSTRUCTIONS_FACTORISATION (lecture de if)
         //GENERATE_INSTRUCTIONS ::= INSTRUCTION GENERATE_INSTRUCTIONS_FACTORISATION (lecture de for)
         //GENERATE_INSTRUCTIONS ::= INSTRUCTION GENERATE_INSTRUCTIONS_FACTORISATION (lecture de while)
-        if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.BEGIN) || ((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals("("))) || (current.getTag() == Tag.RETURN) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHARCONST) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL) || (current.getTag() == Tag.IF) || (current.getTag() == Tag.FOR) || (current.getTag() == Tag.WHILE)) {
+        if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.BEGIN) || ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("("))) || (current.getTag() == Tag.RETURN) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.SYMBOL) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL) || (current.getTag() == Tag.IF) || (current.getTag() == Tag.FOR) || (current.getTag() == Tag.WHILE)) {
             this.instruction();
             this.generate_instructions_factorisation();
             int temp = parser.stack.pop();
@@ -431,7 +431,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.BEGIN+" 'begin'> or <"+Tag.CHARCONST+" '('> or <"+Tag.RETURN+" 'return'> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHARCONST+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.IF+" 'if'> or <"+Tag.FOR+" 'for'> or <"+Tag.WHILE+" 'while'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.BEGIN+" 'begin'> or <"+Tag.SYMBOL +" '('> or <"+Tag.RETURN+" 'return'> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.SYMBOL +" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.IF+" 'if'> or <"+Tag.FOR+" 'for'> or <"+Tag.WHILE+" 'while'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -453,7 +453,7 @@ public class AnalyzeTable {
         //GENERATE_INSTRUCTIONS_FACTORISATION ::= GENERATE_INSTRUCTIONS (lecture de for)
         //GENERATE_INSTRUCTIONS_FACTORISATION ::= GENERATE_INSTRUCTIONS (lecture de while)
         //GENERATE_INSTRUCTIONS_FACTORISATION ::= ε (lecture de elsif)
-        if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.BEGIN) || ((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals("("))) || (current.getTag() == Tag.RETURN) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL) || (current.getTag() == Tag.IF) || (current.getTag() == Tag.FOR) || (current.getTag() == Tag.WHILE)) {
+        if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.BEGIN) || ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("("))) || (current.getTag() == Tag.RETURN) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL) || (current.getTag() == Tag.IF) || (current.getTag() == Tag.FOR) || (current.getTag() == Tag.WHILE)) {
             this.generate_instructions();
             int temp = parser.stack.pop();
             if(temp == Tag.GENERATE_INSTRUCTIONS) {
@@ -464,20 +464,20 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_INSTRUCTIONS+"> but found <"+temp+">");
             }
         }
-        else if((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals("else"))) {
+        else if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("else"))) {
             parser.stack.push(Tag.GENERATE_INSTRUCTIONS_FACTORISATION);
             return;
         }
-        else if((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals("end"))) {
+        else if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("end"))) {
             parser.stack.push(Tag.GENERATE_INSTRUCTIONS_FACTORISATION);
             return;
         }
-        else if((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals("elsif"))) {
+        else if((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals("elsif"))) {
             parser.stack.push(Tag.GENERATE_INSTRUCTIONS_FACTORISATION);
             return;
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.CHARCONST + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> or <" + Tag.CHARCONST + " 'else'> or <" + Tag.CHARCONST + " 'end'> or <" + Tag.CHARCONST + " 'elsif'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.SYMBOL + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> or <" + Tag.SYMBOL + " 'else'> or <" + Tag.SYMBOL + " 'end'> or <" + Tag.SYMBOL + " 'elsif'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -522,7 +522,7 @@ public class AnalyzeTable {
         }
         else if(current.getTag() == Tag.ID) {
             this.generate_ident();
-            if ((current.getTag() == Tag.CHARCONST) && (current.getStringValue().equals(":"))) {
+            if ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(":"))) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 this.type();
@@ -532,7 +532,7 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.TYPE) {
                         temp = parser.stack.pop();
-                        if (temp == Tag.CHARCONST) {
+                        if (temp == Tag.SYMBOL) {
                             temp = parser.stack.pop();
                             if (temp == Tag.ID) {
                                 parser.stack.push(Tag.DECLARATION);
@@ -541,7 +541,7 @@ public class AnalyzeTable {
                                 throw new Error("Reduction/Stack error : expected <" + Tag.ID + "> but found <" + temp + ">");
                             }
                         } else {
-                            throw new Error("Reduction/Stack error : expected <" + Tag.CHARCONST + "> but found <" + temp + ">");
+                            throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
                     } else {
                         throw new Error("Reduction/Stack error : expected <" + Tag.TYPE + "> but found <" + temp + ">");
@@ -622,7 +622,7 @@ public class AnalyzeTable {
     private void declaration_type() throws IOException{
         //DECLARATION_TYPE ::= ; (lecture de ;)
         //DECLARATION_TYPE ::= is ACCESS_RECORD (lecture de is)
-        if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(";")) {
+        if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
             current = parser.lexer.scan();
             parser.stack.push(Tag.DECLARATION_TYPE);
             return;
@@ -647,7 +647,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> or <"+Tag.IS+" 'is'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.IS+" 'is'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -661,11 +661,11 @@ public class AnalyzeTable {
             if (current.getTag() == Tag.ID) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
-                if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(";")) {
+                if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
                     int temp = parser.stack.pop();
-                    if(temp == Tag.CHARCONST) {
+                    if(temp == Tag.SYMBOL) {
                         temp = parser.stack.pop();
                         if(temp == Tag.ID) {
                             temp = parser.stack.pop();
@@ -682,11 +682,11 @@ public class AnalyzeTable {
                         }
                     }
                     else {
-                        throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                        throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
             }
             else {
@@ -703,11 +703,11 @@ public class AnalyzeTable {
                 if (current.getTag() == Tag.RECORD) {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
-                    if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(";")) {
+                    if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
                         parser.stack.push(current.getTag());
                         current = parser.lexer.scan();
                         int temp = parser.stack.pop();
-                        if(temp == Tag.CHARCONST) {
+                        if(temp == Tag.SYMBOL) {
                             temp = parser.stack.pop();
                             if(temp == Tag.RECORD) {
                                 temp = parser.stack.pop();
@@ -736,11 +736,11 @@ public class AnalyzeTable {
                             }
                         }
                         else {
-                            throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                            throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                         }
                     }
                     else {
-                        throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                        throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                     }
                 }
                 else {
@@ -760,12 +760,12 @@ public class AnalyzeTable {
     private void declaration_with_expression() throws IOException{
         //DECLARATION_WITH_EXPRESSION ::= ; (lecture de ;)
         //DECLARATION_WITH_EXPRESSION ::= ( := UNARY EXPRESSION ) ; (lecture de ( )
-        if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(";")) {
+        if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
             current = parser.lexer.scan();
             parser.stack.push(Tag.DECLARATION_WITH_EXPRESSION);
             return;
         }
-        else if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals("(")) {
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ASSIGNMENT && current.getStringValue().equals(":=")) {
@@ -773,16 +773,16 @@ public class AnalyzeTable {
                 current = parser.lexer.scan();
                 this.unary();
                 this.expression();
-                if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(")")) {
+                if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
-                    if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(";")) {
+                    if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
                         parser.stack.push(current.getTag());
                         current = parser.lexer.scan();
                         int temp = parser.stack.pop();
-                        if(temp == Tag.CHARCONST) {
+                        if(temp == Tag.SYMBOL) {
                             temp = parser.stack.pop();
-                            if(temp == Tag.CHARCONST) {
+                            if(temp == Tag.SYMBOL) {
                                 temp = parser.stack.pop();
                                 if(temp == Tag.EXPRESSION) {
                                     temp = parser.stack.pop();
@@ -790,16 +790,16 @@ public class AnalyzeTable {
                                         temp = parser.stack.pop();
                                         if(temp == Tag.ASSIGNMENT) {
                                             temp = parser.stack.pop();
-                                            if(temp == Tag.CHARCONST) {
+                                            if(temp == Tag.SYMBOL) {
                                                 parser.stack.push(Tag.DECLARATION_WITH_EXPRESSION);
                                                 return;
                                             }
                                             else {
-                                                throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                                                throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                                             }
                                         }
                                         else {
-                                            throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                                            throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                                         }
                                     }
                                     else {
@@ -811,24 +811,24 @@ public class AnalyzeTable {
                                 }
                             }
                             else {
-                                throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                                throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                             }
                         }
                         else {
-                            throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                            throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                         }
                     }
                     else {
-                        throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                        throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                     }
                 }
                 else {
-                    throw new Error("Error : expected <" + Tag.CHARCONST + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> or <"+Tag.CHARCONST+" ':='> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.SYMBOL +" ':='> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -839,11 +839,11 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.IS) {
             this.is_declaration();
             this.begin_instruction();
-            if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(";")) {
+            if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 int temp = parser.stack.pop();
-                if(temp == Tag.CHARCONST) {
+                if(temp == Tag.SYMBOL) {
                     temp = parser.stack.pop();
                     if(temp == Tag.BEGIN_INSTRUCTION) {
                         temp = parser.stack.pop();
@@ -860,22 +860,22 @@ public class AnalyzeTable {
                     }
                 }
                 else {
-                    throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                    throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
-        else if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals("(")){
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")){
             this.params();
             this.is_declaration();
             this.begin_instruction();
-            if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(";")) {
+            if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 int temp = parser.stack.pop();
-                if(temp == Tag.CHARCONST) {
+                if(temp == Tag.SYMBOL) {
                     temp = parser.stack.pop();
                     if(temp == Tag.BEGIN_INSTRUCTION) {
                         temp = parser.stack.pop();
@@ -898,15 +898,15 @@ public class AnalyzeTable {
                     }
                 }
                 else {
-                    throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                    throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.IS+" 'is'> or <"+Tag.CHARCONST+" '('> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error : expected <"+Tag.IS+" 'is'> or <"+Tag.SYMBOL +" '('> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -914,7 +914,7 @@ public class AnalyzeTable {
     private void declaration_function() throws IOException{
         //DECLARATION_FUNCTION ::= PARAMS return TYPE IS_DECLARATION BEGIN_INSTRUCTION ; (lecture de ( )
         //DECLARATION_FUNCTION ::= return TYPE IS_DECLARATION BEGIN_INSTRUCTION ; (lecture de return)
-        if(current.getTag() == Tag.CHARCONST && current.getStringValue().equals("(")){
+        if(current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")){
             this.params();
             if(current.getTag() == Tag.RETURN){
                 parser.stack.push(current.getTag());
@@ -922,11 +922,11 @@ public class AnalyzeTable {
                 this.type();
                 this.is_declaration();
                 this.begin_instruction();
-                if(current.getTag() == Tag.CHARCONST && current.getStringValue().equals(";")) {
+                if(current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
                     int temp = parser.stack.pop();
-                    if(temp == Tag.CHARCONST) {
+                    if(temp == Tag.SYMBOL) {
                         temp = parser.stack.pop();
                         if(temp == Tag.BEGIN_INSTRUCTION) {
                             temp = parser.stack.pop();
@@ -961,11 +961,11 @@ public class AnalyzeTable {
                         }
                     }
                     else {
-                        throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                        throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.CHARCONST+" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
             }
         }
@@ -975,11 +975,11 @@ public class AnalyzeTable {
             this.type();
             this.is_declaration();
             this.begin_instruction();
-            if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(";")) {
+            if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 int temp = parser.stack.pop();
-                if(temp == Tag.CHARCONST) {
+                if(temp == Tag.SYMBOL) {
                     temp = parser.stack.pop();
                     if(temp == Tag.BEGIN_INSTRUCTION) {
                         temp = parser.stack.pop();
@@ -1008,12 +1008,12 @@ public class AnalyzeTable {
                     }
                 }
                 else {
-                    throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                    throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                 }
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.CHARCONST+" '('> or <"+Tag.RETURN+" 'return'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error : expected <"+Tag.SYMBOL +" '('> or <"+Tag.RETURN+" 'return'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1048,23 +1048,23 @@ public class AnalyzeTable {
     private void end_generate_ident() throws IOException{
         //END_GENERATE_IDENT ::= ε (lecture de : )
         //END_GENERATE_IDENT ::= , GENERATE_IDENT (lecture de , )
-        if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(":")) {
+        if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(":")) {
             parser.stack.push(Tag.END_GENERATE_IDENT);
             return;
         }
-        else if (current.getTag() == Tag.CHARCONST && current.getStringValue().equals(",")) {
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.generate_ident();
             int temp = parser.stack.pop();
             if(temp == Tag.GENERATE_IDENT) {
                 temp = parser.stack.pop();
-                if(temp == Tag.CHARCONST) {
+                if(temp == Tag.SYMBOL) {
                     parser.stack.push(Tag.END_GENERATE_IDENT);
                     return;
                 }
                 else {
-                    throw new Error("Reduction/Stack error : expected <"+Tag.CHARCONST+"> but found <"+temp+">");
+                    throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
                 }
             }
             else {
@@ -1072,7 +1072,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.CHARCONST+" ':'> or <"+Tag.CHARCONST+" ','> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error : expected <"+Tag.SYMBOL +" ':'> or <"+Tag.SYMBOL +" ','> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1132,17 +1132,98 @@ public class AnalyzeTable {
 
     //CHAMPS
     private void champs() throws IOException{
-        return;
+        // CHAMPS ::= GENERATE_IDENT : TYPE ; (lecture de ident)
+        if (current.getTag() == Tag.ID){
+            this.generate_ident();
+            if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(":")){
+                parser.stack.push(current.getTag());
+                current = parser.lexer.scan();
+                this.type();
+                if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")){
+                    parser.stack.push(current.getTag());
+                    current = parser.lexer.scan();
+                    int temp = parser.stack.pop();
+                    if (temp == Tag.SYMBOL){
+                        temp = parser.stack.pop();
+                        if (temp == Tag.NT_TYPE){
+                            temp = parser.stack.pop();
+                            if (temp == Tag.SYMBOL){
+                                temp = parser.stack.pop();
+                                if (temp == Tag.GENERATE_IDENT){
+                                    parser.stack.push(Tag.CHAMPS);
+                                    return;
+                                }
+                                else {
+                                    throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_IDENT+"> but found <"+temp+">");
+                                }
+                            }
+                            else {
+                                throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
+                            }
+
+                        }
+                        else {
+                            throw new Error("Reduction/Stack error : expected <"+Tag.NT_TYPE+"> but found <"+temp+">");
+                        }
+                    }
+                    else {
+                        throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL +"> but found <"+temp+">");
+                    }
+                }
+                else {
+                    throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                }
+
+            }
+        }
     }
 
     //GENERATE_CHAMPS
     private void generate_champs() throws IOException{
+        // GENERATE_CHAMPS GENERATE_CHAMPS ::= CHAMPS END_GENERATE_CHAMPS (lecture de ident)
+        if (current.getTag() == Tag.ID){
+            this.champs();
+            if (current.getTag() == Tag.END_GENERATE_CHAMPS) {
+                int temp = parser.stack.pop();
+                if (temp == Tag.END_GENERATE_CHAMPS) {
+                    parser.stack.push(Tag.GENERATE_CHAMPS);
+                }
+                else {
+                    throw new Error("Reduction/Stack error : expected <"+Tag.END_GENERATE_CHAMPS+"> but found <"+temp+">");
+                }
+            }
+            else {
+                throw new Error("Error : expected <"+Tag.END_GENERATE_CHAMPS+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            }
+        }
         return;
     }
 
     //END_GENERATE_CHAMPS
     private void end_generate_champs() throws IOException{
-        return;
+        // END_GENERATE_CHAMPS ::= GENERATE_CHAMPS (lecture de ident)
+        // END_GENERATE_CHAMPS ::= ε (lecture de end)
+        if (current.getTag() == Tag.ID){
+            this.generate_champs();
+            if (current.getTag() == Tag.GENERATE_CHAMPS) {
+                int temp = parser.stack.pop();
+                if (temp == Tag.GENERATE_CHAMPS) {
+                    parser.stack.push(Tag.END_GENERATE_CHAMPS);
+                }
+                else {
+                    throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_CHAMPS+"> but found <"+temp+">");
+                }
+            }
+            else {
+                throw new Error("Error : expected <"+Tag.GENERATE_CHAMPS+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            }
+        }
+        else if (current.getTag() == Tag.END){
+            parser.stack.push(Tag.END_GENERATE_CHAMPS);
+        }
+        else {
+            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.END+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+        }
     }
 
     //TYPE

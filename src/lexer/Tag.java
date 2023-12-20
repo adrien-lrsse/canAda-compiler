@@ -40,7 +40,7 @@ public class Tag {
         // identifiers
         ID = 289,
         // constants
-        CHARCONST = 290,
+        SYMBOL = 290,
         NUMCONST = 291,
         // End of file
         CHARACTERVAL = 292,
@@ -53,7 +53,7 @@ public class Tag {
         // temp
         INVALID = 296,
 
-
+        CHAR = 297,
         // Non terminals start at 1000;
 
         FICHIER = 1000,

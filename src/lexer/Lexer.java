@@ -84,7 +84,7 @@ public class Lexer {
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '=') t = words.get("/=");
                 else {
-                    t = new Char(currentChar);
+                    t = new Symbol(currentChar);
                     moinsUnaireCase = true;
                     currentChar = nextChar;
                 }
@@ -95,7 +95,7 @@ public class Lexer {
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '=') t = words.get("<=");
                 else {
-                    t = new Char(currentChar);
+                    t = new Symbol(currentChar);
                     moinsUnaireCase = true;
                     currentChar = nextChar;
                 }
@@ -106,7 +106,7 @@ public class Lexer {
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '=') t = words.get(">=");
                 else {
-                    t = new Char(currentChar);
+                    t = new Symbol(currentChar);
                     moinsUnaireCase = true;
                     currentChar = nextChar;
                 }
@@ -117,7 +117,7 @@ public class Lexer {
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '=') t = words.get(":=");
                 else {
-                    t = new Char(currentChar);
+                    t = new Symbol(currentChar);
                     moinsUnaireCase = true;
                     currentChar = nextChar;
                 }
@@ -127,7 +127,7 @@ public class Lexer {
                 isCharacter = true;
                 char nextChar = (char) fileReader.read();
                 if (nextChar != '-') {
-                    t = new Char(currentChar);
+                    t = new Symbol(currentChar);
                     moinsUnaireCase = true;
                     currentChar = nextChar;
                 }
@@ -147,7 +147,7 @@ public class Lexer {
                 char nextChar = (char) fileReader.read();
                 if (nextChar == '.') { t = words.get(".."); }
                 else {
-                    t = new Char(currentChar);
+                    t = new Symbol(currentChar);
                     moinsUnaireCase = true;
                     currentChar = nextChar;
                 }
@@ -269,7 +269,7 @@ public class Lexer {
             }
         // handle characters
         if (AsciiPrintableCharacters.isAsciiPrintable(currentChar)) {
-            Token tmp = new Char(currentChar);
+            Token tmp = new Symbol(currentChar);
             currentChar = ' ';
             return tmp;
         }

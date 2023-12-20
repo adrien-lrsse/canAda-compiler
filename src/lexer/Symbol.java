@@ -1,10 +1,10 @@
 package lexer;
 
-public class Char extends Token {
+public class Symbol extends Token {
     public final char value;
 
-    public Char(char value) {
-        super(Tag.CHAR);
+    public Symbol(char value) {
+        super(Tag.SYMBOL);
         this.value = value;
     }
 
@@ -16,7 +16,6 @@ public class Char extends Token {
     @Override
     public String toString() {
 
-        return "Char{" + tag + ", " + value + "}";
+        return "Symbol{" + tag + ", " + value + "}";
     }
 }
-

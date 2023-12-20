@@ -1,33 +1,34 @@
-with Ada.Text_IO ; use Ada.Text_IO ;
+with Ada.Text_IO; use Ada.Text_IO;
 
-procedure unDebut is
+procedure UnDebut is
 
-    function aireRectangle(larg : integer; long : integer) return integer is
-    aire: integer;
+    function AireRectangle(Larg : Integer; Long : Integer) return Integer is
+        Aire : Integer;
     begin
-        aire := larg * long ;
-    return aire
-    end aireRectangle ;
+        Aire := Larg * Long;
+        return Aire;
+    end AireRectangle;
 
-    function perimetreRectangle(larg : integer; long : integer) return integer is
-    p : integer
+    function PerimetreRectangle(Larg : Integer; Long : Integer) return Integer is
+        P : Integer;
     begin
-        p := larg*2 + long*2 ;
-    return p
-    end perimetreRectangle;
+        P := Larg * 2 + Long * 2;
+        return P;
+    end PerimetreRectangle;
 
-        -- VARIABLES
-choix : integer ;
+    -- VARIABLES
+    Choix : Integer;
+    Valeur : Integer;
 
-        -- PROCEDURE PRINCIPALE
-
+    -- PROCEDURE PRINCIPALE
 begin
-    choix := 2;
+    Choix := 2;
 
-    if choix = 1
-        then valeur := perimetreRectangle(2, 3) ;
-            put(valeur) ;
-        else valeur := aireRectangale(2, 3) ;
-            put(valeur) ;
+    if Choix = 1 then
+        Valeur := PerimetreRectangle(2, 3);
+        Put(Valeur);
+    else
+        Valeur := AireRectangle(2, 3);
+        Put(Valeur);
     end if;
-end unDebut ;
+end UnDebut;
