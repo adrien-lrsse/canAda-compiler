@@ -2527,23 +2527,48 @@ public class AnalyzeTable {
         } else if (current.getTag() == Tag.NUMCONST) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
-            parser.stack.push(Tag.EXPRESSION_ATOMS);
+            int temp = parser.stack.pop();
+            if (temp == Tag.NUMCONST) {
+                parser.stack.push(Tag.EXPRESSION_ATOMS);
+            } else {
+                throw new Error("Reduction/Stack error : expected <" + Tag.NUMCONST + "> but found <" + temp + ">");
+            }
         } else if (current.getTag() == Tag.CHAR) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
-            parser.stack.push(Tag.EXPRESSION_ATOMS);
+            int temp = parser.stack.pop();
+            if (temp == Tag.CHAR) {
+                parser.stack.push(Tag.EXPRESSION_ATOMS);
+            } else {
+                throw new Error("Reduction/Stack error : expected <" + Tag.CHAR + "> but found <" + temp + ">");
+            }
         } else if (current.getTag() == Tag.TRUE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
-            parser.stack.push(Tag.EXPRESSION_ATOMS);
+            int temp = parser.stack.pop();
+            if (temp == Tag.TRUE) {
+                parser.stack.push(Tag.EXPRESSION_ATOMS);
+            } else {
+                throw new Error("Reduction/Stack error : expected <" + Tag.TRUE + "> but found <" + temp + ">");
+            }
         } else if (current.getTag() == Tag.FALSE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
-            parser.stack.push(Tag.EXPRESSION_ATOMS);
+            int temp = parser.stack.pop();
+            if (temp == Tag.FALSE) {
+                parser.stack.push(Tag.EXPRESSION_ATOMS);
+            } else {
+                throw new Error("Reduction/Stack error : expected <" + Tag.FALSE + "> but found <" + temp + ">");
+            }
         } else if (current.getTag() == Tag.NULL) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
-            parser.stack.push(Tag.EXPRESSION_ATOMS);
+            int temp = parser.stack.pop();
+            if (temp == Tag.NULL) {
+                parser.stack.push(Tag.EXPRESSION_ATOMS);
+            } else {
+                throw new Error("Reduction/Stack error : expected <" + Tag.NULL + "> but found <" + temp + ">");
+            }
         } else {
             throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
