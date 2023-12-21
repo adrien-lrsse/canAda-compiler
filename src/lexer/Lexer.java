@@ -285,4 +285,8 @@ public class Lexer {
         }
         return new Token(currentChar);
     }
+
+    public int getLine() {
+        return line;
+    }
 }

@@ -148,52 +148,52 @@ public class AnalyzeTable {
                                                         }
                                                     }
                                                     else {
-                                                        throw new Error("Error : expected <"+Tag.EOF+" 'EOF'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                                        throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.EOF+" 'EOF'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                                                     }
                                                 }
                                                 else {
-                                                    throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
 
                                                 }
                                             }
                                             else {
-                                                throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                                             }
                                         }
                                         else {
-                                            throw new Error("Error : expected <"+Tag.ID+" 'text_io'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'text_io'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                                         }
                                     }
                                     else {
-                                        throw new Error("Error : expected <"+Tag.SYMBOL +" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                        throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                                     }
                                 }
                                 else {
-                                    throw new Error("Error : expected <"+Tag.ID+" 'ada'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ada'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                                 }
                             }
                             else {
-                                throw new Error("Error : expected <"+Tag.USE+" 'USE'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.USE+" 'USE'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                             }
                         }
                         else {
-                            throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                         }
                     }
                     else {
-                        throw new Error("Error : expected <"+Tag.ID+" 'text_io'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                        throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'text_io'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.SYMBOL +" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.ID+" 'ada'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ada'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.WITH+" 'WITH'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.WITH+" 'WITH'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -236,15 +236,15 @@ public class AnalyzeTable {
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.IS+" 'IS'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.IS+" 'IS'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.PROCEDURE+" 'procedure'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.PROCEDURE+" 'procedure'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -268,7 +268,7 @@ public class AnalyzeTable {
             parser.stack.push(Tag.END_PROCEDURE);
         }
         else {
-            throw new Error("Error : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> or <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> or <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -309,11 +309,11 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.END+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.END+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -329,7 +329,7 @@ public class AnalyzeTable {
             parser.stack.push(Tag.END_BEGIN_INSTRUCTION);
         }
         else {
-            throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -357,7 +357,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -382,7 +382,7 @@ public class AnalyzeTable {
             parser.stack.push(Tag.GENERATE_DECLARATIONS_FACTORISATION);
         }
         else {
-            throw new Error("Error : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> or <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> or <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -421,7 +421,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.BEGIN+" 'begin'> or <"+Tag.SYMBOL +" '('> or <"+Tag.RETURN+" 'return'> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.SYMBOL +" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.IF+" 'if'> or <"+Tag.FOR+" 'for'> or <"+Tag.WHILE+" 'while'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.BEGIN+" 'begin'> or <"+Tag.SYMBOL +" '('> or <"+Tag.RETURN+" 'return'> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.SYMBOL +" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.IF+" 'if'> or <"+Tag.FOR+" 'for'> or <"+Tag.WHILE+" 'while'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -457,7 +457,7 @@ public class AnalyzeTable {
             parser.stack.push(Tag.GENERATE_INSTRUCTIONS_FACTORISATION);
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.SYMBOL + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> or <" + Tag.SYMBOL + " 'else'> or <" + Tag.SYMBOL + " 'end'> or <" + Tag.SYMBOL + " 'elsif'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.SYMBOL + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> or <" + Tag.SYMBOL + " 'else'> or <" + Tag.SYMBOL + " 'end'> or <" + Tag.SYMBOL + " 'elsif'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -496,7 +496,7 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else if(current.getTag() == Tag.ID) {
@@ -555,7 +555,7 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else if(current.getTag() == Tag.FUNCTION) {
@@ -586,11 +586,11 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -621,7 +621,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.IS+" 'is'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.IS+" 'is'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -659,11 +659,11 @@ public class AnalyzeTable {
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else if(current.getTag() == Tag.RECORD) {
@@ -712,19 +712,19 @@ public class AnalyzeTable {
                         }
                     }
                     else {
-                        throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                        throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.RECORD+" 'record'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.RECORD+" 'record'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.END+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.END+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ACCESS+" 'access'> or <"+Tag.RECORD+" 'record'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ACCESS+" 'access'> or <"+Tag.RECORD+" 'record'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -789,16 +789,16 @@ public class AnalyzeTable {
                         }
                     }
                     else {
-                        throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                        throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                     }
                 }
                 else {
-                    throw new Error("Error : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.SYMBOL +" ':='> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> or <"+Tag.SYMBOL +" ':='> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -833,7 +833,7 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")){
@@ -870,11 +870,11 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.IS+" 'is'> or <"+Tag.SYMBOL +" '('> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.IS+" 'is'> or <"+Tag.SYMBOL +" '('> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -932,7 +932,7 @@ public class AnalyzeTable {
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
             }
         }
@@ -979,7 +979,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.SYMBOL +" '('> or <"+Tag.RETURN+" 'return'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" '('> or <"+Tag.RETURN+" 'return'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1005,7 +1005,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1035,7 +1035,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.SYMBOL +" ':'> or <"+Tag.SYMBOL +" ','> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ':'> or <"+Tag.SYMBOL +" ','> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1061,7 +1061,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.IS+" 'is'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.IS+" 'is'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1086,7 +1086,7 @@ public class AnalyzeTable {
             parser.stack.push(Tag.IS_DECLARATION_FACTORISATION);
         }
         else {
-            throw new Error("Error : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> or <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.PROCEDURE+" 'procedure'> or <"+Tag.ID+" 'ident'> or <"+Tag.TYPE+" 'type'> or <"+Tag.FUNCTION+" 'function'> or <"+Tag.BEGIN+" 'begin'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1130,7 +1130,7 @@ public class AnalyzeTable {
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
 
             }
@@ -1153,7 +1153,7 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.END_GENERATE_CHAMPS+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.END_GENERATE_CHAMPS+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
     }
@@ -1174,14 +1174,14 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.GENERATE_CHAMPS+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.GENERATE_CHAMPS+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else if (current.getTag() == Tag.END){
             parser.stack.push(Tag.END_GENERATE_CHAMPS);
         }
         else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.END+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.END+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1221,11 +1221,11 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.ACCESS+" 'access'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.ACCESS+" 'access'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1251,7 +1251,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.SYMBOL+" '('> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" '('> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1285,11 +1285,11 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.SYMBOL+" ':'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ':'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1401,7 +1401,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1427,7 +1427,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.IN+" 'in'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.IN+" 'in'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1452,7 +1452,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.ACCESS+" 'access'> or <"+Tag.OUT+" 'out'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.ACCESS+" 'access'> or <"+Tag.OUT+" 'out'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1513,7 +1513,7 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else if (current.getTag() == Tag.CHARACTERVAL){
@@ -1555,13 +1555,13 @@ public class AnalyzeTable {
                             throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_OR + "> but found <" + temp + ">");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.SYMBOL + " '('> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " '('> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL+" '('> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character_val'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL+" '('> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character_val'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1603,7 +1603,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.THEN+" 'then'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.OR+" 'or'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.THEN+" 'then'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.OR+" 'or'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1660,7 +1660,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_OR + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.ELSE + " 'else'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.ELSE + " 'else'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -1692,7 +1692,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL+" '('> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL+" '('> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
 
     }
@@ -1736,7 +1736,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.THEN+" 'then'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.AND+" 'and'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.THEN+" 'then'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.AND+" 'and'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1801,7 +1801,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.THEN + " 'then'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.THEN + " 'then'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -1858,7 +1858,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.NOT + " 'not'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.NOT + " 'not'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -1889,7 +1889,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -1968,7 +1968,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_EQUALS + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
 
     }
@@ -2000,7 +2000,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -2141,7 +2141,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_COMPARAISON + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.SYMBOL+" '>'> or <"+Tag.GEQ+" '>='> or <"+Tag.SYMBOL+" '<'> or <"+Tag.LEQ+" '<='> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.SYMBOL+" '>'> or <"+Tag.GEQ+" '>='> or <"+Tag.SYMBOL+" '<'> or <"+Tag.LEQ+" '<='> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -2172,7 +2172,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -2252,7 +2252,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_PLUS_MOINS + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> or <"+Tag.SYMBOL+" '>'> or <"+Tag.GEQ+" '>='> or <"+Tag.SYMBOL+" '<'> or <"+Tag.LEQ+" '<='> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.SYMBOL+" '+'> or <"+Tag.SYMBOL+" '-'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> or <"+Tag.SYMBOL+" '>'> or <"+Tag.GEQ+" '>='> or <"+Tag.SYMBOL+" '<'> or <"+Tag.LEQ+" '<='> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.SYMBOL+" '+'> or <"+Tag.SYMBOL+" '-'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
 
     }
@@ -2284,7 +2284,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -2394,7 +2394,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_MULT_DIV + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> or <"+Tag.SYMBOL+" '>'> or <"+Tag.GEQ+" '>='> or <"+Tag.SYMBOL+" '<'> or <"+Tag.LEQ+" '<='> or <"+Tag.SYMBOL+" '+'> or <"+Tag.SYMBOL+" '-'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.REM+" 'rem'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> or <"+Tag.SYMBOL+" '>'> or <"+Tag.GEQ+" '>='> or <"+Tag.SYMBOL+" '<'> or <"+Tag.LEQ+" '<='> or <"+Tag.SYMBOL+" '+'> or <"+Tag.SYMBOL+" '-'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.REM+" 'rem'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -2425,7 +2425,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -2479,10 +2479,10 @@ public class AnalyzeTable {
                     throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_ACCESS_IDENT + "> but found <" + temp + ">");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else {
-            throw new Error("Error : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.ASSIGNMENT+" ':='> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> or <"+Tag.SYMBOL+" '>'> or <"+Tag.GEQ+" '>='> or <"+Tag.SYMBOL+" '<'> or <"+Tag.LEQ+" '<='> or <"+Tag.SYMBOL+" '+'> or <"+Tag.SYMBOL+" '-'> or <"+Tag.SYMBOL+" '*'> or <"+Tag.SYMBOL+" '/'> or <"+Tag.REM+" 'rem'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.SYMBOL+" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.ASSIGNMENT+" ':='> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> or <"+Tag.SYMBOL+" '>'> or <"+Tag.GEQ+" '>='> or <"+Tag.SYMBOL+" '<'> or <"+Tag.LEQ+" '<='> or <"+Tag.SYMBOL+" '+'> or <"+Tag.SYMBOL+" '-'> or <"+Tag.SYMBOL+" '*'> or <"+Tag.SYMBOL+" '/'> or <"+Tag.REM+" 'rem'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.SYMBOL+" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -2522,7 +2522,7 @@ public class AnalyzeTable {
                 current = parser.lexer.scan();
                 parser.stack.push(Tag.EXPRESSION_ATOMS);
             } else {
-                throw new Error("Error : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.NUMCONST) {
             parser.stack.push(current.getTag());
@@ -2570,7 +2570,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.NULL + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -2608,7 +2608,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.UNARY + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL+" '('> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.ELSE+" 'else'> or <"+Tag.THEN+" 'then'> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.SYMBOL+" '-'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL+" '('> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.ELSE+" 'else'> or <"+Tag.THEN+" 'then'> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.SYMBOL+" '-'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -2660,7 +2660,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_EXPRESSION + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.SYMBOL + " '.'> or <" + Tag.SYMBOL + " ';'> or <" + Tag.SYMBOL + " ')'> or <" + Tag.SYMBOL + " ','> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.THEN + " 'then'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> or <" + Tag.SYMBOL + " '>'> or <" + Tag.GEQ + " '>='> or <" + Tag.SYMBOL + " '<'> or <" + Tag.LEQ + " '<='> or <" + Tag.SYMBOL + " '+'> or <" + Tag.SYMBOL + " '-'> or <" + Tag.SYMBOL + " '*'> or <" + Tag.SYMBOL + " '/'> or <" + Tag.REM + " 'rem'> or <" + Tag.LOOP + " 'loop'> or <" + Tag.DOUBLEPOINT + " '..'> or <" + Tag.SYMBOL + " '('> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " '.'> or <" + Tag.SYMBOL + " ';'> or <" + Tag.SYMBOL + " ')'> or <" + Tag.SYMBOL + " ','> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.THEN + " 'then'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> or <" + Tag.SYMBOL + " '>'> or <" + Tag.GEQ + " '>='> or <" + Tag.SYMBOL + " '<'> or <" + Tag.LEQ + " '<='> or <" + Tag.SYMBOL + " '+'> or <" + Tag.SYMBOL + " '-'> or <" + Tag.SYMBOL + " '*'> or <" + Tag.SYMBOL + " '/'> or <" + Tag.REM + " 'rem'> or <" + Tag.LOOP + " 'loop'> or <" + Tag.DOUBLEPOINT + " '..'> or <" + Tag.SYMBOL + " '('> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -2694,7 +2694,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -2727,7 +2727,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_EXPRESSION + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.SYMBOL + " ')'> or <" + Tag.SYMBOL + " ','> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ')'> or <" + Tag.SYMBOL + " ','> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -2798,10 +2798,10 @@ public class AnalyzeTable {
                         throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.RETURN) {
             parser.stack.push(current.getTag());
@@ -2855,10 +2855,10 @@ public class AnalyzeTable {
                         throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + tmp + ">");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.ASSIGNMENT + " ':='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ASSIGNMENT + " ':='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.IF) {
             parser.stack.push(current.getTag());
@@ -2902,7 +2902,7 @@ public class AnalyzeTable {
                     throw new Error("Reduction/Stack error : expected <" + Tag.NEXT_IF + "> but found <" + temp + ">");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.THEN + " 'then'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.THEN + " 'then'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.FOR) {
             parser.stack.push(current.getTag());
@@ -2936,10 +2936,10 @@ public class AnalyzeTable {
                         throw new Error("Reduction/Stack error : expected <" + Tag.FOR_INSTRUCTION + "> but found <" + temp + ">");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.IN + " 'in'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.IN + " 'in'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.WHILE) {
             parser.stack.push(current.getTag());
@@ -2961,19 +2961,19 @@ public class AnalyzeTable {
                             current = parser.lexer.scan();
                             parser.stack.push(Tag.INSTRUCTION);
                         } else {
-                            throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                         }
                     } else {
-                        throw new Error("Error : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                        throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.RETURN + " 'return'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.RETURN + " 'return'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3021,7 +3021,7 @@ public class AnalyzeTable {
                     throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.ASSIGNMENT) {
             parser.stack.push(current.getTag());
@@ -3053,10 +3053,10 @@ public class AnalyzeTable {
                     throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> or <" + Tag.SYMBOL + " '('> or <" + Tag.ASSIGNMENT + " ':='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> or <" + Tag.SYMBOL + " '('> or <" + Tag.ASSIGNMENT + " ':='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3106,10 +3106,10 @@ public class AnalyzeTable {
                     throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> or <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.SYMBOL + " '-'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> or <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.SYMBOL + " '-'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3200,19 +3200,19 @@ public class AnalyzeTable {
                                     throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                                 }
                             } else {
-                                throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                             }
                         } else {
-                            throw new Error("Error : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                         }
                     } else {
-                        throw new Error("Error : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                        throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.DOUBLEPOINT + " '..'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.DOUBLEPOINT + " '..'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.REVERSE) {
             parser.stack.push(current.getTag());
@@ -3294,22 +3294,22 @@ public class AnalyzeTable {
                                     throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                                 }
                             } else {
-                                throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                             }
                         } else {
-                            throw new Error("Error : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                         }
                     } else {
-                        throw new Error("Error : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                        throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.LOOP + " 'loop'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.DOUBLEPOINT + " '..'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.DOUBLEPOINT + " '..'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.SYMBOL + " '-'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.REVERSE + " 'reverse'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.SYMBOL + " '-'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.REVERSE + " 'reverse'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3344,10 +3344,10 @@ public class AnalyzeTable {
                         throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.IF + " 'if'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.IF + " 'if'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.ELSE) {
             parser.stack.push(current.getTag());
@@ -3380,7 +3380,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.ELSIF + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.END + " 'end'> or <" + Tag.ELSE + " 'else'> or <" + Tag.ELSIF + " 'elsif'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.END + " 'end'> or <" + Tag.ELSE + " 'else'> or <" + Tag.ELSIF + " 'elsif'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3434,16 +3434,16 @@ public class AnalyzeTable {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
                     } else {
-                        throw new Error("Error : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                        throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.IF + " 'if'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.IF + " 'if'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.SYMBOL + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.SYMBOL + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3501,10 +3501,10 @@ public class AnalyzeTable {
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.THEN+" 'then'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.THEN+" 'then'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         } else{
-            throw new Error("Error : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL +" '('> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.NOT+" 'not'> or <"+Tag.SYMBOL +" '-'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL +" '('> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.NOT+" 'not'> or <"+Tag.SYMBOL +" '-'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -3543,11 +3543,11 @@ public class AnalyzeTable {
                     }
                 }
                 else {
-                    throw new Error("Error : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL +" ';'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
                 }
             }
             else {
-                throw new Error("Error : expected <"+Tag.IF+" 'if'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.IF+" 'if'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
         }
         else if (current.getTag() == Tag.ELSE) {
@@ -3587,7 +3587,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.END+" 'end'> or <"+Tag.ELSE+" 'else'> or <"+Tag.ELSIF+" 'elsif'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.END+" 'end'> or <"+Tag.ELSE+" 'else'> or <"+Tag.ELSIF+" 'elsif'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -3640,7 +3640,7 @@ public class AnalyzeTable {
                     throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_OR + "> but found <" + temp + ">");
                 }
             } else {
-                throw new Error("Error : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
         } else if (current.getTag() == Tag.CHARACTERVAL) {
             parser.stack.push(current.getTag());
@@ -3686,11 +3686,11 @@ public class AnalyzeTable {
                         throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_OR + "> but found <" + temp + ">");
                     }
                 } else {
-                    throw new Error("Error : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+                    throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             }
         } else {
-            throw new Error("Error : expected <" + Tag.OR + " 'or'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.OR + " 'or'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3727,7 +3727,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ASSIGNMENT+" ':='> or <"+Tag.OR+" 'or'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ASSIGNMENT+" ':='> or <"+Tag.OR+" 'or'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -3783,7 +3783,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_OR + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.OR + " 'or'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.ELSE + " 'else'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.OR + " 'or'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.ELSE + " 'else'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3811,7 +3811,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_AND + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3852,7 +3852,7 @@ public class AnalyzeTable {
             }
         }
         else {
-            throw new Error("Error : expected <"+Tag.ASSIGNMENT+" ':='> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ASSIGNMENT+" ':='> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -3908,7 +3908,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_AND + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.THEN + " 'then'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.THEN + " 'then'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3951,7 +3951,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_NOT + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -3978,7 +3978,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_EQUALS + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -4046,7 +4046,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_EQUALS + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.ASSIGNMENT + " ':='> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ASSIGNMENT + " ':='> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -4073,7 +4073,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_COMPARAISON + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -4199,7 +4199,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_COMPARAISON + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.ASSIGNMENT + " ':='> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> or <" + Tag.SYMBOL + " '>'> or <" + Tag.GEQ + " '>='> or <" + Tag.SYMBOL + " '<'> or <" + Tag.LEQ + " '<='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ASSIGNMENT + " ':='> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> or <" + Tag.SYMBOL + " '>'> or <" + Tag.GEQ + " '>='> or <" + Tag.SYMBOL + " '<'> or <" + Tag.LEQ + " '<='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -4226,7 +4226,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_PLUS_MOINS + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -4300,7 +4300,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_PLUS_MOINS + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.ASSIGNMENT + " ':='> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> or <" + Tag.SYMBOL + " '>'> or <" + Tag.GEQ + " '>='> or <" + Tag.SYMBOL + " '<'> or <" + Tag.LEQ + " '<='> or <" + Tag.SYMBOL + " '+'> or <" + Tag.SYMBOL + " '-'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ASSIGNMENT + " ':='> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> or <" + Tag.SYMBOL + " '>'> or <" + Tag.GEQ + " '>='> or <" + Tag.SYMBOL + " '<'> or <" + Tag.LEQ + " '<='> or <" + Tag.SYMBOL + " '+'> or <" + Tag.SYMBOL + " '-'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -4327,7 +4327,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_MUL_DIV + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -4456,7 +4456,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_ACCESS_IDENT + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
@@ -4565,7 +4565,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_ATOMS + "> but found <" + temp + ">");
             }
         } else {
-            throw new Error("Error : expected <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 }
