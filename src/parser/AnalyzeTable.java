@@ -1143,18 +1143,19 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.ID){
             this.champs();
             this.end_generate_champs();
-            if (current.getTag() == Tag.END_GENERATE_CHAMPS) {
-                int temp = parser.stack.pop();
-                if (temp == Tag.END_GENERATE_CHAMPS) {
+            int temp = parser.stack.pop();
+            if (temp == Tag.END_GENERATE_CHAMPS) {
+                temp = parser.stack.pop();
+                if (temp == Tag.CHAMPS) {
                     parser.stack.push(Tag.GENERATE_CHAMPS);
+                } else {
+                    throw new Error("Reduction/Stack error : expected <" + Tag.CHAMPS + "> but found <" + temp + ">");
                 }
-                else {
-                    throw new Error("Reduction/Stack error : expected <"+Tag.END_GENERATE_CHAMPS+"> but found <"+temp+">");
-                }
+            } else {
+                throw new Error("Reduction/Stack error : expected <" + Tag.END_GENERATE_CHAMPS + "> but found <" + temp + ">");
             }
-            else {
-                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.END_GENERATE_CHAMPS+" 'end'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
-            }
+        } else {
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
@@ -1164,17 +1165,12 @@ public class AnalyzeTable {
         // END_GENERATE_CHAMPS ::= ε (lecture de end)
         if (current.getTag() == Tag.ID){
             this.generate_champs();
-            if (current.getTag() == Tag.GENERATE_CHAMPS) {
-                int temp = parser.stack.pop();
-                if (temp == Tag.GENERATE_CHAMPS) {
-                    parser.stack.push(Tag.END_GENERATE_CHAMPS);
-                }
-                else {
-                    throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_CHAMPS+"> but found <"+temp+">");
-                }
+            int temp = parser.stack.pop();
+            if (temp == Tag.GENERATE_CHAMPS){
+                parser.stack.push(Tag.END_GENERATE_CHAMPS);
             }
             else {
-                throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.GENERATE_CHAMPS+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+                throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_CHAMPS+"> but found <"+temp+">");
             }
         }
         else if (current.getTag() == Tag.END){
