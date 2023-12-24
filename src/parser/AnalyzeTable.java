@@ -1329,8 +1329,6 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.IN){
-            parser.stack.push(current.getTag());
-            current = parser.lexer.scan();
             this.mode();
             this.type();
             this.end_param();
@@ -1340,13 +1338,7 @@ public class AnalyzeTable {
                 if (temp == Tag.NT_TYPE){
                     temp = parser.stack.pop();
                     if (temp == Tag.MODE){
-                        temp = parser.stack.pop();
-                        if (temp == Tag.IN){
-                            parser.stack.push(Tag.TYPE_OR_MODE_TYPE_PARAM);
-                        }
-                        else {
-                            throw new Error("Reduction/Stack error : expected <"+Tag.IN+"> but found <"+temp+">");
-                        }
+                        parser.stack.push(Tag.TYPE_OR_MODE_TYPE_PARAM);
                     }
                     else {
                         throw new Error("Reduction/Stack error : expected <"+Tag.MODE+"> but found <"+temp+">");
@@ -1441,7 +1433,6 @@ public class AnalyzeTable {
             int temp = parser.stack.pop();
             if (temp == Tag.OUT){
                 parser.stack.push(Tag.OUT_OR_NOT);
-
             }
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.OUT+"> but found <"+temp+">");
