@@ -2,8 +2,8 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 procedure IDENT0 is
 
-    type IDENT1;
+    IDENT1 : IDENT2;
 
     begin
-        IDENT2 := 1;
+        IDENT3 := 1;
     end;

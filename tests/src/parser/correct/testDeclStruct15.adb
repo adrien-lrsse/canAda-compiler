@@ -2,10 +2,10 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 procedure IDENT0 is
 
-    type IDENT1 is
-        record
-            IDENT2 : IDENT3;
-        end record;
+    function IDENT1 return IDENT2 is
+        begin
+            IDENT3 := 1;
+        end;
 
     begin
         IDENT4 := 1;
