@@ -3,8 +3,10 @@ with Ada.Text_IO; use Ada.Text_IO;
 procedure IDENT0 is
 
     type IDENT1 is
-        access IDENT2;
+        record
+            IDENT2, IDENT3 : IDENT4;
+        end record;
 
     begin
-        IDENT3 := 1;
+        IDENT5 := 1;
     end;
