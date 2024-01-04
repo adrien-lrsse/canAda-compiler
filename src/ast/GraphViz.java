@@ -3,10 +3,12 @@ package ast;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Stack;
 
 public class GraphViz {
     private FileWriter file;
-    public int nodeCount = 0;
+    public int lastNode = -1;
+    public Stack<Integer> buffer;
 
     public GraphViz(String filename) {
         try {
@@ -19,6 +21,7 @@ public class GraphViz {
                     "\t\tsubgraph cluster01\n" +
                     "\t\t\t{\n" +
                     "\t\t\t\tlabel=\"AST\"\n");
+            buffer = new Stack<>();
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
@@ -26,9 +29,10 @@ public class GraphViz {
 
     public int addNode(String node) {
         try {
-            file.write("\t\t\t\tnode" + nodeCount + ";\n");
-            file.write("\t\t\t\tnode" + nodeCount + " [label=\"" + node + "\"];\n");
-            return nodeCount++;
+            lastNode++;
+            file.write("\t\t\t\tnode" + lastNode + ";\n");
+            file.write("\t\t\t\tnode" + lastNode + " [label=\"" + node + "\"];\n");
+            return lastNode;
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
