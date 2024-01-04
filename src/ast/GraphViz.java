@@ -11,16 +11,14 @@ public class GraphViz {
     public GraphViz(String filename) {
         try {
             file = new FileWriter(filename + ".dot");
-            file.write("""
-graph ""
-\t{
-\t\tfontname="Helvetica,Arial,sans-serif"
-\t\tnode [fontname="Helvetica,Arial,sans-serif"]
-\t\tedge [fontname="Helvetica,Arial,sans-serif"]
-\t\tsubgraph cluster01
-\t\t\t{
-\t\t\t\tlabel="AST"
-                    """);
+            file.write("graph \"\"\n" +
+                    "\t{\n" +
+                    "\t\tfontname=\"Helvetica,Arial,sans-serif\"\n" +
+                    "\t\tnode [fontname=\"Helvetica,Arial,sans-serif\"]\n" +
+                    "\t\tedge [fontname=\"Helvetica,Arial,sans-serif\"]\n" +
+                    "\t\tsubgraph cluster01\n" +
+                    "\t\t\t{\n" +
+                    "\t\t\t\tlabel=\"AST\"\n");
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
@@ -47,10 +45,8 @@ graph ""
 
     public void close() {
         try {
-            file.write("""
-\t\t\t}
-\t}
-                    """);
+            file.write("\t\t\t}\n" +
+                    "\t}\n");
             file.flush();
             file.close();
         } catch (IOException e) {

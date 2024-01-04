@@ -1,4 +1,3 @@
-
 image: amazoncorretto:latest
 
 stages:
@@ -9,7 +8,7 @@ build:
   stage: build
   script:
     - chmod +x ./gradlew
-    - /bin/bash -c "./gradlew assemble"  # Specify the shell interpreter
+    - ./gradlew assemble
   artifacts:
     paths:
       - build/libs/*.jar
@@ -18,5 +17,4 @@ test:
   stage: test
   script:
     - chmod +x ./gradlew
-    - /bin/bash -c "./gradlew check clean"  # Specify the shell interpreter
-
+    - ./gradlew check clean
