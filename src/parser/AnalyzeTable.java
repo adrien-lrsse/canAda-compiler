@@ -18,6 +18,10 @@ public class AnalyzeTable {
     public void analyze() throws IOException {
         current = parser.lexer.scan();
         this.ficher();
+        int temp = parser.stack.pop();
+        if (temp != Tag.FICHIER) {
+            throw new Error("Reduction/Stack error : expected <" + Tag.FICHIER + "> but found <" + current.getTag() + ">");
+        }
     }
 
     private void ficher() throws IOException {

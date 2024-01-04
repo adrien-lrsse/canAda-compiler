@@ -15,7 +15,6 @@ public class Parser {
     }
     public void parse() throws IOException {
         analyzeTable.analyze();
-        stack.pop();
         assert stack.empty();
     }
 }
