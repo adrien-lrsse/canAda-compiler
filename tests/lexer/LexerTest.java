@@ -44,7 +44,11 @@ class LexerTest {
 
         List<Integer> expectedTags = new ArrayList<>();
         for (int i = 256; i <= 295; i++) {
-            expectedTags.add(i);
+            if (i == 293){
+                expectedTags.add(289); // gestion of put as an identifier
+            } else {
+                expectedTags.add(i);
+            }
         }
 
         for (int expectedTag : expectedTags) {
@@ -166,7 +170,7 @@ class LexerTest {
                 "Num{291, 3}",
                 "Symbol{290, )}",
                 "Symbol{290, ;}",
-                "Word{293, put}",
+                "Word{289, put}",
                 "Symbol{290, (}",
                 "Word{289, valeur}",
                 "Symbol{290, )}",
@@ -181,7 +185,7 @@ class LexerTest {
                 "Num{291, 3}",
                 "Symbol{290, )}",
                 "Symbol{290, ;}",
-                "Word{293, put}",
+                "Word{289, put}",
                 "Symbol{290, (}",
                 "Word{289, valeur}",
                 "Symbol{290, )}",
