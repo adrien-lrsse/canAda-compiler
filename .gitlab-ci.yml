@@ -1,4 +1,4 @@
-image: openjdk:11
+image: amazoncorretto:20.0.2-al2023-generic
 
 stages:
   - build
