@@ -15,6 +15,8 @@ public class Parser {
     }
     public void parse() throws IOException {
         analyzeTable.analyze();
-        assert stack.empty();
+        if (!stack.isEmpty()) {
+            throw new RuntimeException("Stack is not empty");
+        }
     }
 }
