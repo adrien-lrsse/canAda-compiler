@@ -227,9 +227,9 @@ public class ParserTest {
             Parser parser5 = new Parser(lexer5);
             parser5.parse();
 
-            //Lexer lexer6 = new Lexer("tests/src/parser/correct/testExprStruct6.adb");
-            //Parser parser6 = new Parser(lexer6);
-            //parser6.parse();
+            Lexer lexer6 = new Lexer("tests/src/parser/correct/testExprStruct6.adb");
+            Parser parser6 = new Parser(lexer6);
+            parser6.parse();
 
             Lexer lexer7 = new Lexer("tests/src/parser/correct/testExprStruct7.adb");
             Parser parser7 = new Parser(lexer7);

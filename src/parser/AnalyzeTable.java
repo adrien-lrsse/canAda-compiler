@@ -20,7 +20,7 @@ public class AnalyzeTable {
         current = parser.lexer.scan();
         try {
             this.ficher();
-        } catch (Error e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             parser.ast.close();
         }
@@ -2466,7 +2466,22 @@ public class AnalyzeTable {
             if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
-                parser.stack.push(Tag.EXPRESSION_ATOMS);
+                int temp = parser.stack.pop();
+                if (temp == Tag.SYMBOL) {
+                    temp = parser.stack.pop();
+                    if (temp == Tag.EXPRESSION) {
+                        temp = parser.stack.pop();
+                        if (temp == Tag.SYMBOL) {
+                            parser.stack.push(Tag.EXPRESSION_ATOMS);
+                        } else {
+                            throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
+                        }
+                    } else {
+                        throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION + "> but found <" + temp + ">");
+                    }
+                } else {
+                    throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
+                }
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
