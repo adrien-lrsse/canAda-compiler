@@ -2044,7 +2044,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_COMPARAISON + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("<")){
+        }
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("<")){
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("<"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -2078,7 +2079,8 @@ public class AnalyzeTable {
             else {
                 throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_COMPARAISON+"> but found <"+temp+">");
             }
-        } else if (current.getTag() == Tag.LEQ) {
+        }
+        else if (current.getTag() == Tag.LEQ) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("<="));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -2196,7 +2198,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_PLUS_MOINS + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")){
+        }
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")){
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("-"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -2317,7 +2320,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_MULT_DIV + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("/")){
+        }
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("/")){
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("/"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -2347,7 +2351,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_MULT_DIV + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.REM) {
+        }
+        else if (current.getTag() == Tag.REM) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("rem"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -2424,7 +2429,7 @@ public class AnalyzeTable {
         // EXPRESSION_ACCESS_IDENT ::= ε (lecture de then)
         // EXPRESSION_ACCESS_IDENT ::= ε (lecture de = )
         // EXPRESSION_ACCESS_IDENT ::= ε (lecture de /= )
-        //  EXPRESSION_ACCESS_IDENT ::= ε (lecture de > )
+        // EXPRESSION_ACCESS_IDENT ::= ε (lecture de > )
         // EXPRESSION_ACCESS_IDENT ::= ε (lecture de >= )
         // EXPRESSION_ACCESS_IDENT ::= ε (lecture de < )
         // EXPRESSION_ACCESS_IDENT ::= ε (lecture de <= )
@@ -2531,7 +2536,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.NUMCONST) {
+        }
+        else if (current.getTag() == Tag.NUMCONST) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Num)current).getStringValue()));
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -2541,8 +2547,9 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.NUMCONST + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.CHAR) {
-parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)current).getStringValue()));
+        }
+        else if (current.getTag() == Tag.CHAR) {
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)current).getStringValue()));
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
@@ -2551,7 +2558,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.CHAR + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.TRUE) {
+        }
+        else if (current.getTag() == Tag.TRUE) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue()));
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -2561,7 +2569,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.TRUE + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.FALSE) {
+        }
+        else if (current.getTag() == Tag.FALSE) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue()));
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -2571,7 +2580,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.FALSE + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.NULL) {
+        }
+        else if (current.getTag() == Tag.NULL) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue()));
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -2581,7 +2591,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.NULL + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -2677,7 +2688,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_EXPRESSION + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " '.'> or <" + Tag.SYMBOL + " ';'> or <" + Tag.SYMBOL + " ')'> or <" + Tag.SYMBOL + " ','> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.THEN + " 'then'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> or <" + Tag.SYMBOL + " '>'> or <" + Tag.GEQ + " '>='> or <" + Tag.SYMBOL + " '<'> or <" + Tag.LEQ + " '<='> or <" + Tag.SYMBOL + " '+'> or <" + Tag.SYMBOL + " '-'> or <" + Tag.SYMBOL + " '*'> or <" + Tag.SYMBOL + " '/'> or <" + Tag.REM + " 'rem'> or <" + Tag.LOOP + " 'loop'> or <" + Tag.DOUBLEPOINT + " '..'> or <" + Tag.SYMBOL + " '('> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -2729,7 +2741,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) {
+        }
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.generate_expression();
@@ -2744,7 +2757,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_EXPRESSION + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ')'> or <" + Tag.SYMBOL + " ','> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -2821,7 +2835,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.RETURN) {
+        }
+        else if (current.getTag() == Tag.RETURN) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.end_return();
@@ -2836,7 +2851,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.END_RETURN + "> but found <" + temp + ">");
             }
-        } else if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
+        }
+        else if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
             this.wi_expression();
             if (current.getTag() == Tag.ASSIGNMENT) {
                 parser.stack.push(current.getTag());
@@ -2878,7 +2894,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ASSIGNMENT + " ':='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.IF) {
+        }
+        else if (current.getTag() == Tag.IF) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -2922,7 +2939,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.THEN + " 'then'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.FOR) {
+        }
+        else if (current.getTag() == Tag.FOR) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
@@ -2959,7 +2977,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.WHILE) {
+        }
+        else if (current.getTag() == Tag.WHILE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -3067,7 +3086,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals((";"))) {
+        }
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals((";"))) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
@@ -3076,7 +3096,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
+        }
+        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -3108,7 +3129,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.ASSIGNMENT) {
+        }
+        else if (current.getTag() == Tag.ASSIGNMENT) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -3140,7 +3162,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ';'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " '.'> or <" + Tag.SYMBOL + " ';'> or <" + Tag.SYMBOL + " '('> or <" + Tag.ASSIGNMENT + " ':='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -3168,7 +3191,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
             }
-        } else if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
+        }
+        else if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
             this.unary();
             this.expression();
             if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
@@ -3299,7 +3323,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.DOUBLEPOINT + " '..'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.REVERSE) {
+        }
+        else if (current.getTag() == Tag.REVERSE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -3393,7 +3418,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.DOUBLEPOINT + " '..'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.SYMBOL + " '-'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.REVERSE + " 'reverse'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -3434,7 +3460,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.IF + " 'if'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.ELSE) {
+        }
+        else if (current.getTag() == Tag.ELSE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.nt_else();
@@ -3449,7 +3476,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.NT_ELSE + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.ELSIF) {
+        }
+        else if (current.getTag() == Tag.ELSIF) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.elsif();
@@ -3464,7 +3492,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.ELSIF + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.END + " 'end'> or <" + Tag.ELSE + " 'else'> or <" + Tag.ELSIF + " 'elsif'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -3527,7 +3556,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.SYMBOL + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -3588,7 +3618,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.THEN+" 'then'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
             }
-        } else{
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL +" '('> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.NOT+" 'not'> or <"+Tag.SYMBOL +" '-'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
@@ -3701,7 +3732,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_OR + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.NEW) {
+        }
+        else if (current.getTag() == Tag.NEW) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
@@ -3727,7 +3759,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.CHARACTERVAL) {
+        }
+        else if (current.getTag() == Tag.CHARACTERVAL) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
@@ -3774,7 +3807,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
                     throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " ')'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
                 }
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.OR + " 'or'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -3840,7 +3874,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_OR + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.ELSE) {
+        }
+        else if (current.getTag() == Tag.ELSE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -3867,7 +3902,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_OR + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.OR + " 'or'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.ELSE + " 'else'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -3895,7 +3931,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_AND + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -3965,7 +4002,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_AND + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.THEN) {
+        }
+        else if (current.getTag() == Tag.THEN) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -3992,7 +4030,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_AND + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.THEN + " 'then'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -4014,7 +4053,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_3 + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.NOT) {
+        }
+        else if (current.getTag() == Tag.NOT) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4035,7 +4075,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_NOT + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -4076,7 +4117,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
         //WI_EXPRESSION_EQUALS ::= /= UNARY WI_EXPRESSION_4 WI_EXPRESSION_EQUALS (lecture de /=)
         if ((current.getTag() == Tag.ASSIGNMENT) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND)) {
             parser.stack.push(Tag.WI_EXPRESSION_EQUALS);
-        } else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "=")) {
+        }
+        else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "=")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4089,7 +4131,7 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
                     temp = parser.stack.pop();
                     if (temp == Tag.UNARY) {
                         temp = parser.stack.pop();
-                        if (temp == Tag.SYMBOL && Objects.equals(current.getStringValue(), "=")) {
+                        if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.WI_EXPRESSION_EQUALS);
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
@@ -4103,7 +4145,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_EQUALS + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.DIFFERENT) {
+        }
+        else if (current.getTag() == Tag.DIFFERENT) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4130,7 +4173,8 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_EQUALS + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ASSIGNMENT + " ':='> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
