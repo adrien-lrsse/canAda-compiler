@@ -1524,7 +1524,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.SYMBOL + " '('> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL+" '('> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character_val'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
@@ -1599,7 +1600,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_OR + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.ELSE) {
+        }
+        else if (current.getTag() == Tag.ELSE) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("OR_ELSE"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -1629,7 +1631,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.EXPRESSION_OR + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> or <" + Tag.SYMBOL + " '('> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.ELSE + " 'else'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -2503,7 +2506,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.SYMBOL+" ';'> or <"+Tag.ASSIGNMENT+" ':='> or <"+Tag.SYMBOL+" ')'> or <"+Tag.SYMBOL+" ','> or <"+Tag.OR+" 'or'> or <"+Tag.AND+" 'and'> or <"+Tag.THEN+" 'then'> or <"+Tag.SYMBOL+" '='> or <"+Tag.DIFFERENT+" '/='> or <"+Tag.SYMBOL+" '>'> or <"+Tag.GEQ+" '>='> or <"+Tag.SYMBOL+" '<'> or <"+Tag.LEQ+" '<='> or <"+Tag.SYMBOL+" '+'> or <"+Tag.SYMBOL+" '-'> or <"+Tag.SYMBOL+" '*'> or <"+Tag.SYMBOL+" '/'> or <"+Tag.REM+" 'rem'> or <"+Tag.LOOP+" 'loop'> or <"+Tag.DOUBLEPOINT+" '..'> or <"+Tag.SYMBOL+" '.'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
@@ -2662,7 +2666,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.UNARY + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.SYMBOL+" '('> or <"+Tag.NEW+" 'new'> or <"+Tag.CHARACTERVAL+" 'character'val'> or <"+Tag.ELSE+" 'else'> or <"+Tag.THEN+" 'then'> or <"+Tag.NOT+" 'not'> or <"+Tag.NUMCONST+" 'entier'> or <"+Tag.CHAR+" 'caractere'> or <"+Tag.TRUE+" 'true'> or <"+Tag.FALSE+" 'false'> or <"+Tag.NULL+" 'null'> or <"+Tag.SYMBOL+" '-'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
@@ -4132,7 +4137,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_EQUALS + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
