@@ -1897,12 +1897,18 @@ public class AnalyzeTable {
             parser.stack.push(Tag.EXPRESSION_EQUALS);
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("=")){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("="));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_4();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("=");
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_equals();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_EQUALS){
@@ -1913,7 +1919,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL){
                             parser.stack.push(Tag.EXPRESSION_EQUALS);
-                            parser.ast.buffer.pop();
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -1932,12 +1937,18 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.DIFFERENT) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("/="));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_4();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("/=");
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_equals();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_EQUALS) {
@@ -1948,7 +1959,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.DIFFERENT) {
                             parser.stack.push(Tag.EXPRESSION_EQUALS);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.DIFFERENT + "> but found <" + temp + ">");
                         }
@@ -2435,12 +2445,18 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.REM) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("rem"));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_7();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("rem");
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_mult_div();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_MULT_DIV) {
@@ -2451,7 +2467,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.REM) {
                             parser.stack.push(Tag.EXPRESSION_MULT_DIV);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.REM + "> but found <" + temp + ">");
                         }
