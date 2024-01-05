@@ -4201,7 +4201,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_COMPARAISON + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -4219,7 +4220,8 @@ public class AnalyzeTable {
         //WI_EXPRESSION_COMPARAISON ::= <= UNARY WI_EXPRESSION_5 WI_EXPRESSION_COMPARAISON (lecture de <=)
         if ((current.getTag() == Tag.ASSIGNMENT) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND) || (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "=")) || (current.getTag() == Tag.DIFFERENT)) {
             parser.stack.push(Tag.WI_EXPRESSION_COMPARAISON);
-        } else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), ">")) {
+        }
+        else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), ">")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4232,7 +4234,7 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.UNARY) {
                         temp = parser.stack.pop();
-                        if (temp == Tag.SYMBOL && Objects.equals(current.getStringValue(), ">")) {
+                        if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.WI_EXPRESSION_COMPARAISON);
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
@@ -4246,7 +4248,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_COMPARAISON + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.GEQ) {
+        }
+        else if (current.getTag() == Tag.GEQ) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4273,7 +4276,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_COMPARAISON + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "<")) {
+        }
+        else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "<")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4286,7 +4290,7 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.UNARY) {
                         temp = parser.stack.pop();
-                        if (temp == Tag.SYMBOL && Objects.equals(current.getStringValue(), "<")) {
+                        if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.WI_EXPRESSION_COMPARAISON);
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
@@ -4300,7 +4304,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_COMPARAISON + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.LEQ) {
+        }
+        else if (current.getTag() == Tag.LEQ) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4327,7 +4332,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_COMPARAISON + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ASSIGNMENT + " ':='> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> or <" + Tag.SYMBOL + " '>'> or <" + Tag.GEQ + " '>='> or <" + Tag.SYMBOL + " '<'> or <" + Tag.LEQ + " '<='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -4354,7 +4360,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_PLUS_MOINS + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
