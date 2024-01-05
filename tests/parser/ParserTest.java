@@ -3,8 +3,10 @@ package parser;
 import lexer.Lexer;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ParserTest {
 
@@ -314,17 +316,17 @@ public class ParserTest {
             Parser parser10 = new Parser(lexer10);
             parser10.parse();
 
-            //Lexer lexer11 = new Lexer("tests/src/parser/correct/testInstrStruct11.adb");
-            //Parser parser11 = new Parser(lexer11);
-            //parser11.parse();
+            Lexer lexer11 = new Lexer("tests/src/parser/correct/testInstrStruct11.adb");
+            Parser parser11 = new Parser(lexer11);
+            parser11.parse();
 
-            //Lexer lexer12 = new Lexer("tests/src/parser/correct/testInstrStruct12.adb");
-            //Parser parser12 = new Parser(lexer12);
-            //parser12.parse();
+            Lexer lexer12 = new Lexer("tests/src/parser/correct/testInstrStruct12.adb");
+            Parser parser12 = new Parser(lexer12);
+            parser12.parse();
 
-            //Lexer lexer13 = new Lexer("tests/src/parser/correct/testInstrStruct13.adb");
-            //Parser parser13 = new Parser(lexer13);
-            //parser13.parse();
+            Lexer lexer13 = new Lexer("tests/src/parser/correct/testInstrStruct13.adb");
+            Parser parser13 = new Parser(lexer13);
+            parser13.parse();
 
             Lexer lexer14 = new Lexer("tests/src/parser/correct/testInstrStruct14.adb");
             Parser parser14 = new Parser(lexer14);
@@ -439,4 +441,75 @@ public class ParserTest {
             fail("Le parsing a généré une exception : " + e.getMessage());
         }
     }
+
+    @Test
+    public void testMissingEnd() {
+        try {
+            Lexer lexer1 = new Lexer("tests/src/parser/incorrect/testMissingEnd.adb");
+            Parser parser1 = new Parser(lexer1);
+            parser1.parse();
+        }
+        catch (Error e) {
+            assertEquals("Error line 11 : expected <265 'if'> but found <290 ';'>", e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testMissingSemicolon() {
+        try {
+            Lexer lexer1 = new Lexer("tests/src/parser/incorrect/testMissingSemicolon.adb");
+            Parser parser1 = new Parser(lexer1);
+            parser1.parse();
+        }
+        catch (Error e) {
+            assertEquals("Error line 7 : expected <290 ';'> or <287 ':='> or <290 ')'> or <290 ','> or <272 'or'> or <257 'and'> or <279 'then'> or <290 '='> or <288 '/='> or <290 '>'> or <285 '>='> or <290 '<'> or <286 '<='> or <290 '+'> or <290 '-'> or <290 '*'> or <290 '/'> or <276 'rem'> or <268 'loop'> or <294 '..'> or <290 '.'> but found <261 'end'>", e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testMissingParenthesis() {
+        try {
+            Lexer lexer1 = new Lexer("tests/src/parser/incorrect/testMissingParenthesis.adb");
+            Parser parser1 = new Parser(lexer1);
+            parser1.parse();
+        }
+        catch (Error e) {
+            assertEquals("Error line 6 : expected <290 ')'> but found <290 ';'>", e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testUnknowKeyWord() {
+        try {
+            Lexer lexer1 = new Lexer("tests/src/parser/incorrect/testUnknowKeyWord.adb");
+            Parser parser1 = new Parser(lexer1);
+            parser1.parse();
+        }
+        catch (Error e) {
+            assertEquals("Error line 6 : expected <290 '.'> or <290 ';'> or <290 ')'> or <290 ','> or <272 'or'> or <257 'and'> or <279 'then'> or <290 '='> or <288 '/='> or <290 '>'> or <285 '>='> or <290 '<'> or <286 '<='> or <290 '+'> or <290 '-'> or <290 '*'> or <290 '/'> or <276 'rem'> or <268 'loop'> or <294 '..'> or <290 '('> but found <291 '1'>", e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testWrongEnding() {
+        try {
+            Lexer lexer1 = new Lexer("tests/src/parser/incorrect/testWrongEnding.adb");
+            Parser parser1 = new Parser(lexer1);
+            parser1.parse();
+        }
+        catch (Error e) {
+            assertEquals("Error line 11 : expected <265 'if'> but found <268 'loop'>", e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
+
