@@ -373,17 +373,17 @@ public class ParserTest {
             Parser parser3 = new Parser(lexer3);
             parser3.parse();
 
-            //Lexer lexer4 = new Lexer("tests/src/parser/correct/testOperateurStruct4.adb");
-            //Parser parser4 = new Parser(lexer4);
-            //parser4.parse();
+            Lexer lexer4 = new Lexer("tests/src/parser/correct/testOperateurStruct4.adb");
+            Parser parser4 = new Parser(lexer4);
+            parser4.parse();
 
             Lexer lexer5 = new Lexer("tests/src/parser/correct/testOperateurStruct5.adb");
             Parser parser5 = new Parser(lexer5);
             parser5.parse();
 
-            //Lexer lexer6 = new Lexer("tests/src/parser/correct/testOperateurStruct6.adb");
-            //Parser parser6 = new Parser(lexer6);
-            //parser6.parse();
+            Lexer lexer6 = new Lexer("tests/src/parser/correct/testOperateurStruct6.adb");
+            Parser parser6 = new Parser(lexer6);
+            parser6.parse();
 
             Lexer lexer7 = new Lexer("tests/src/parser/correct/testOperateurStruct7.adb");
             Parser parser7 = new Parser(lexer7);
@@ -428,13 +428,13 @@ public class ParserTest {
             Parser parser1 = new Parser(lexer1);
             parser1.parse();
 
-            //Lexer lexer2 = new Lexer("tests/src/parser/correct/testAccesStruct2.adb");
-            //Parser parser2 = new Parser(lexer2);
-            //parser2.parse();
+            Lexer lexer2 = new Lexer("tests/src/parser/correct/testAccesStruct2.adb");
+            Parser parser2 = new Parser(lexer2);
+            parser2.parse();
 
-            //Lexer lexer3 = new Lexer("tests/src/parser/correct/testAccesStruct3.adb");
-            //Parser parser3 = new Parser(lexer3);
-            //parser3.parse();
+            Lexer lexer3 = new Lexer("tests/src/parser/correct/testAccesStruct3.adb");
+            Parser parser3 = new Parser(lexer3);
+            parser3.parse();
         } catch (Exception e) {
             fail("Le parsing a généré une exception : " + e.getMessage());
         }

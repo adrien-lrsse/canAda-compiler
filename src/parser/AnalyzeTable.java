@@ -2029,7 +2029,7 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.UNARY) {
                         temp = parser.stack.pop();
-                        if (temp == Tag.SYMBOL) {
+                        if (temp == Tag.GEQ) {
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
                             parser.ast.buffer.pop();
                         } else {
@@ -2093,7 +2093,7 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.UNARY) {
                         temp = parser.stack.pop();
-                        if (temp == Tag.SYMBOL) {
+                        if (temp == Tag.LEQ) {
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
                             parser.ast.buffer.pop();
                         } else {
