@@ -3,7 +3,6 @@ package parser;
 import lexer.Lexer;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -268,6 +267,7 @@ public class ParserTest {
             Lexer lexer15 = new Lexer("tests/src/parser/correct/testExprStruct15.adb");
             Parser parser15 = new Parser(lexer15);
             parser15.parse();
+
         } catch (Exception e) {
             fail("Le parsing a généré une exception : " + e.getMessage());
         }
@@ -509,6 +509,30 @@ public class ParserTest {
             assertEquals("Error line 11 : expected <265 'if'> but found <268 'loop'>", e.getMessage());
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testAccesInstrStruct() {
+        try {
+
+            Lexer lexer2 = new Lexer("tests/src/parser/correct/testAccesInstrStruct2.adb");
+            Parser parser2 = new Parser(lexer2);
+            parser2.parse();
+
+            Lexer lexer3 = new Lexer("tests/src/parser/correct/testAccesInstrStruct3.adb");
+            Parser parser3 = new Parser(lexer3);
+            parser3.parse();
+
+            Lexer lexer4 = new Lexer("tests/src/parser/correct/testAccesInstrStruct4.adb");
+            Parser parser4 = new Parser(lexer4);
+            parser4.parse();
+
+            Lexer lexer5 = new Lexer("tests/src/parser/correct/testAccesInstrStruct5.adb");
+            Parser parser5 = new Parser(lexer5);
+            parser5.parse();
+        } catch (Exception e) {
+            fail("Le parsing a généré une exception : " + e.getMessage());
         }
     }
 }
