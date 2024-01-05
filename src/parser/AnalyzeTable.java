@@ -9,6 +9,7 @@ public class AnalyzeTable {
 
     public Parser parser;
     public Token current;
+    private boolean checkIdent = false;
 
     public AnalyzeTable(Parser parser) {
         this.parser = parser;
@@ -2888,6 +2889,9 @@ public class AnalyzeTable {
         }
         else if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
             this.wi_expression();
+            if (!this.checkIdent) {
+                throw new Error("Error line "+parser.lexer.getLine()+" : expected '. ident' got ':='");
+            }
             if (current.getTag() == Tag.ASSIGNMENT) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
@@ -3770,9 +3774,11 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.NEW) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             if (current.getTag() == Tag.ID) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
+                this.checkIdent = false;
                 this.wi_expression_or();
                 int temp = parser.stack.pop();
                 if (temp == Tag.WI_EXPRESSION_OR) {
@@ -3797,14 +3803,17 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.CHARACTERVAL) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
+                this.checkIdent = false;
                 this.unary();
                 this.expression();
                 if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
+                    this.checkIdent = false;
                     this.wi_expression_or();
                     int temp = parser.stack.pop();
                     if (temp == Tag.WI_EXPRESSION_OR) {
@@ -3857,6 +3866,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.OR) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_else();
             int temp = parser.stack.pop();
@@ -3912,6 +3922,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.ELSE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_1();
             this.wi_expression_or();
@@ -3985,6 +3996,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.AND) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_then();
             int temp = parser.stack.pop();
@@ -4040,6 +4052,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.THEN) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_not();
             this.wi_expression_and();
@@ -4091,6 +4104,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.NOT) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_not();
             int temp = parser.stack.pop();
@@ -4156,6 +4170,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "=")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_4();
             this.wi_expression_equals();
@@ -4184,6 +4199,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.DIFFERENT) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_4();
             this.wi_expression_equals();
@@ -4259,6 +4275,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), ">")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_5();
             this.wi_expression_comparaison();
@@ -4287,6 +4304,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.GEQ) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_5();
             this.wi_expression_comparaison();
@@ -4315,6 +4333,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "<")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_5();
             this.wi_expression_comparaison();
@@ -4343,6 +4362,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.LEQ) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_5();
             this.wi_expression_comparaison();
@@ -4420,6 +4440,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "+")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_6();
             this.wi_expression_plus_moins();
@@ -4448,6 +4469,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "-")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_6();
             this.wi_expression_plus_moins();
@@ -4528,6 +4550,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "*")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_acces_ident();
             this.wi_expression_mul_div();
@@ -4556,6 +4579,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "/")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_acces_ident();
             this.wi_expression_mul_div();
@@ -4584,6 +4608,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.REM) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.wi_expression_acces_ident();
             this.wi_expression_mul_div();
@@ -4624,6 +4649,9 @@ public class AnalyzeTable {
         //WI_EXPRESSION_ACCES_IDENT ::= WI_EXPRESSION_ATOMS EXPRESSION_ACCESS_IDENT (lecture de null)
         if ((current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "(")) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
             this.wi_expression_atoms();
+            if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(".")) {
+                this.checkIdent = true;
+            }
             this.expression_access_ident();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_ACCESS_IDENT) {
@@ -4653,6 +4681,7 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "(")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             this.unary();
             this.generate_expression();
             int temp = parser.stack.pop();
@@ -4675,6 +4704,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.NUMCONST) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             int temp = parser.stack.pop();
             if (temp == Tag.NUMCONST) {
                 parser.stack.push(Tag.WI_EXPRESSION_ATOMS);
@@ -4685,6 +4715,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.CHAR) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             int temp = parser.stack.pop();
             if (temp == Tag.CHAR) {
                 parser.stack.push(Tag.WI_EXPRESSION_ATOMS);
@@ -4695,6 +4726,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.TRUE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             int temp = parser.stack.pop();
             if (temp == Tag.TRUE) {
                 parser.stack.push(Tag.WI_EXPRESSION_ATOMS);
@@ -4705,6 +4737,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.FALSE) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             int temp = parser.stack.pop();
             if (temp == Tag.FALSE) {
                 parser.stack.push(Tag.WI_EXPRESSION_ATOMS);
@@ -4715,6 +4748,7 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.NULL) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            this.checkIdent = false;
             int temp = parser.stack.pop();
             if (temp == Tag.NULL) {
                 parser.stack.push(Tag.WI_EXPRESSION_ATOMS);
