@@ -4465,7 +4465,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_MUL_DIV + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.NUMCONST + " 'entier'> or <" + Tag.CHAR + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -4488,7 +4489,8 @@ public class AnalyzeTable {
         //WI_EXPRESSION_MUL_DIV ::= rem UNARY WI_EXPRESSION_ACCES_IDENT WI_EXPRESSION_MUL_DIV (lecture de rem)
         if ((current.getTag() == Tag.ASSIGNMENT) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND) || (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "=")) || (current.getTag() == Tag.DIFFERENT) || (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), ">")) || (current.getTag() == Tag.GEQ) || (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "<")) || (current.getTag() == Tag.LEQ) || (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "+")) || (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "-"))) {
             parser.stack.push(Tag.WI_EXPRESSION_MUL_DIV);
-        } else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "*")) {
+        }
+        else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "*")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4501,7 +4503,7 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.UNARY) {
                         temp = parser.stack.pop();
-                        if (temp == Tag.SYMBOL && Objects.equals(current.getStringValue(), "*")) {
+                        if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.WI_EXPRESSION_MUL_DIV);
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
@@ -4515,7 +4517,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_MUL_DIV + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "/")) {
+        }
+        else if (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "/")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4528,7 +4531,7 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.UNARY) {
                         temp = parser.stack.pop();
-                        if (temp == Tag.SYMBOL && Objects.equals(current.getStringValue(), "/")) {
+                        if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.WI_EXPRESSION_MUL_DIV);
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
@@ -4542,7 +4545,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_MUL_DIV + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.REM) {
+        }
+        else if (current.getTag() == Tag.REM) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4569,6 +4573,9 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.WI_EXPRESSION_MUL_DIV + "> but found <" + temp + ">");
             }
+        }
+        else {
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <" + Tag.ASSIGNMENT + " ':='> or <" + Tag.OR + " 'or'> or <" + Tag.AND + " 'and'> or <" + Tag.SYMBOL + " '='> or <" + Tag.DIFFERENT + " '/='> or <" + Tag.SYMBOL + " '>'> or <" + Tag.GEQ + " '>='> or <" + Tag.SYMBOL + " '<'> or <" + Tag.LEQ + " '<='> or <" + Tag.SYMBOL + " '+'> or <" + Tag.SYMBOL + " '-'> or <" + Tag.SYMBOL + " '*'> or <" + Tag.SYMBOL + " '/'> or <" + Tag.REM + " 'rem'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
 
