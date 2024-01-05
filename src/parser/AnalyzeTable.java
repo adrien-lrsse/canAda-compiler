@@ -2018,12 +2018,18 @@ public class AnalyzeTable {
             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(">")){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(">"));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_5();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode(">");
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_comparaison();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_COMPARAISON){
@@ -2034,7 +2040,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL){
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
-                            parser.ast.buffer.pop();
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -2053,12 +2058,18 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.GEQ) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(">="));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_5();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode(">=");
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_comparaison();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_COMPARAISON) {
@@ -2069,7 +2080,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.GEQ) {
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2084,12 +2094,18 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("<")){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("<"));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_5();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("<");
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_comparaison();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_COMPARAISON){
@@ -2100,7 +2116,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL){
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
-                            parser.ast.buffer.pop();
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.SYMBOL+"> but found <"+temp+">");
@@ -2119,12 +2134,18 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.LEQ) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("<="));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_5();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("<=");
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_comparaison();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_COMPARAISON) {
@@ -2135,7 +2156,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.LEQ) {
                             parser.stack.push(Tag.EXPRESSION_COMPARAISON);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
