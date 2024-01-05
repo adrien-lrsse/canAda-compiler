@@ -2614,8 +2614,9 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.CHAR) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)current).getStringValue()));
-            parser.stack.push(current.getTag());
+            // semantic function
+            parser.ast.buffer.push(parser.ast.addNode(((Char)current).getStringValue()));
+            // end semantic function
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
             if (temp == Tag.CHAR) {
@@ -2625,8 +2626,9 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.TRUE) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue()));
-            parser.stack.push(current.getTag());
+            // semantic function
+            parser.ast.buffer.push(parser.ast.addNode(((Word)current).getStringValue()));
+            // end semantic function
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
             if (temp == Tag.TRUE) {
@@ -2636,8 +2638,9 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.FALSE) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue()));
-            parser.stack.push(current.getTag());
+            // semantic function
+            parser.ast.buffer.push(parser.ast.addNode(((Word)current).getStringValue()));
+            // end semantic function
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
             if (temp == Tag.FALSE) {
@@ -2647,8 +2650,9 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.NULL) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue()));
-            parser.stack.push(current.getTag());
+            // semantic function
+            parser.ast.buffer.push(parser.ast.addNode(((Word)current).getStringValue()));
+            // end semantic function
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
             if (temp == Tag.NULL) {
