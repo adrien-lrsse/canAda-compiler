@@ -179,7 +179,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.ID + " 'ada'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.WITH + " 'WITH'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -227,7 +228,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.PROCEDURE + " 'procedure'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -246,9 +248,11 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_DECLARATIONS + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.BEGIN) {
+        }
+        else if (current.getTag() == Tag.BEGIN) {
             parser.stack.push(Tag.END_PROCEDURE);
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.PROCEDURE + " 'procedure'> or <" + Tag.ID + " 'ident'> or <" + Tag.TYPE + " 'type'> or <" + Tag.FUNCTION + " 'function'> or <" + Tag.BEGIN + " 'begin'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -287,7 +291,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.BEGIN + " 'begin'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -298,10 +303,12 @@ public class AnalyzeTable {
         //END_BEGIN_INSTRUCTION ::= ident (lecture de ident)
         if ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(";"))) {
             parser.stack.push(Tag.END_BEGIN_INSTRUCTION);
-        } else if (current.getTag() == Tag.ID) {
+        }
+        else if (current.getTag() == Tag.ID) {
             current = parser.lexer.scan();
             parser.stack.push(Tag.END_BEGIN_INSTRUCTION);
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.SYMBOL + " ';'> or <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -326,7 +333,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_DECLARATIONS_FACTORISATION + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.PROCEDURE + " 'procedure'> or <" + Tag.ID + " 'ident'> or <" + Tag.TYPE + " 'type'> or <" + Tag.FUNCTION + " 'function'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -346,9 +354,11 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_DECLARATIONS + "> but found <" + temp + ">");
             }
-        } else if (current.getTag() == Tag.BEGIN) {
+        }
+        else if (current.getTag() == Tag.BEGIN) {
             parser.stack.push(Tag.GENERATE_DECLARATIONS_FACTORISATION);
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.PROCEDURE + " 'procedure'> or <" + Tag.ID + " 'ident'> or <" + Tag.TYPE + " 'type'> or <" + Tag.FUNCTION + " 'function'> or <" + Tag.BEGIN + " 'begin'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -384,7 +394,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_INSTRUCTIONS_FACTORISATION + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.SYMBOL + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.NUMCONST + " 'entier'> or <" + Tag.SYMBOL + " 'caractere'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -415,9 +426,11 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.GENERATE_INSTRUCTIONS + "> but found <" + temp + ">");
             }
-        } else if ((current.getTag() == Tag.END) || (current.getTag() == Tag.ELSE) || (current.getTag() == Tag.ELSIF)) {
+        }
+        else if ((current.getTag() == Tag.END) || (current.getTag() == Tag.ELSE) || (current.getTag() == Tag.ELSIF)) {
             parser.stack.push(Tag.GENERATE_INSTRUCTIONS_FACTORISATION);
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.ID + " 'ident'> or <" + Tag.BEGIN + " 'begin'> or <" + Tag.SYMBOL + " '('> or <" + Tag.RETURN + " 'return'> or <" + Tag.NEW + " 'new'> or <" + Tag.CHARACTERVAL + " 'character'val'> or <" + Tag.NOT + " 'not'> or <" + Tag.TRUE + " 'true'> or <" + Tag.FALSE + " 'false'> or <" + Tag.NULL + " 'null'> or <" + Tag.IF + " 'if'> or <" + Tag.FOR + " 'for'> or <" + Tag.WHILE + " 'while'> or <" + Tag.SYMBOL + " 'else'> or <" + Tag.SYMBOL + " 'end'> or <" + Tag.SYMBOL + " 'elsif'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -459,7 +472,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.ID) {
+        }
+        else if (current.getTag() == Tag.ID) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("VARIABLE"));
             parser.ast.buffer.push(parser.ast.lastNode);
             this.generate_ident();
@@ -489,7 +503,8 @@ public class AnalyzeTable {
                     }
                 }
             }
-        } else if (current.getTag() == Tag.TYPE) {
+        }
+        else if (current.getTag() == Tag.TYPE) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("STRUCTURE"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -519,7 +534,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.FUNCTION) {
+        }
+        else if (current.getTag() == Tag.FUNCTION) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("FUNCTION"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -549,7 +565,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.PROCEDURE + " 'procedure'> or <" + Tag.ID + " 'ident'> or <" + Tag.TYPE + " 'type'> or <" + Tag.FUNCTION + " 'function'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -561,7 +578,8 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
             current = parser.lexer.scan();
             parser.stack.push(Tag.DECLARATION_TYPE);
-        } else if (current.getTag() == Tag.IS) {
+        }
+        else if (current.getTag() == Tag.IS) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.access_record();
@@ -576,7 +594,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.ACCESS_RECORD + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.SYMBOL + " ';'> or <" + Tag.IS + " 'is'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -620,7 +639,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else if (current.getTag() == Tag.RECORD) {
+        }
+        else if (current.getTag() == Tag.RECORD) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("RECORD"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -671,7 +691,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.END + " 'end'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.ACCESS + " 'access'> or <" + Tag.RECORD + " 'record'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -683,7 +704,8 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
             parser.stack.push(Tag.DECLARATION_WITH_EXPRESSION);
             current = parser.lexer.scan();
-        } else if (current.getTag() == Tag.ASSIGNMENT) {
+        }
+        else if (current.getTag() == Tag.ASSIGNMENT) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -715,7 +737,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.SYMBOL + " ';'> or <" + Tag.ASSIGNMENT + " ':='> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.EXPRESSION + "> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
         }
     }
@@ -904,7 +927,7 @@ public class AnalyzeTable {
     //GENERATE_IDENT
     private void generate_ident() throws IOException{
         //GENERATE_IDENT ::= ident END_GENERATE_IDENT (lecture de ident)
-        if(current.getTag() == Tag.ID) {
+        if (current.getTag() == Tag.ID) {
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -1059,6 +1082,9 @@ public class AnalyzeTable {
                 }
 
             }
+        }
+        else {
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
 
