@@ -3,13 +3,13 @@ package ast;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.Stack;
 
 public class GraphViz {
     private FileWriter file;
     public int lastNode = -1;
     public Stack<Integer> buffer;
-
     public GraphViz(String filename) {
         try {
             file = new FileWriter(filename + ".dot");
@@ -39,25 +39,6 @@ public class GraphViz {
         return -1;
     }
 
-    public int reserveNode() {
-        try {
-            lastNode++;
-            file.write("\t\t\t\tnode" + lastNode + ";\n");
-            return lastNode;
-        } catch (IOException e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        }
-        return -1;
-    }
-
-    public void addNodeLabel(String label, int node){
-        try {
-            file.write("\t\t\t\tnode" + node + " [label=\"" + label + "\"];\n");
-        } catch (IOException e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        }
-    }
-
     public void addEdge(int node1, int node2) {
         try {
             file.write("\t\t\t\tnode" + node1 + " -- node" + node2 + ";\n");
@@ -65,6 +46,9 @@ public class GraphViz {
             System.out.println("An error occurred: " + e.getMessage());
         }
     }
+
+
+
 
     public void close() {
         try {

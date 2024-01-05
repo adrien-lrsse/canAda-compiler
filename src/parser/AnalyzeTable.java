@@ -16,12 +16,12 @@ public class AnalyzeTable {
 
     public void analyze() throws IOException {
         current = parser.lexer.scan();
-        try {
+         try {
             this.ficher();
-        } catch (Exception e) {
+         } catch (Exception e) {
             System.out.println(e.getMessage());
             parser.ast.close();
-        }
+         }
         int temp = parser.stack.pop();
         if (temp != Tag.FICHIER) {
             throw new Error("Reduction/Stack error : expected <" + Tag.FICHIER + "> but found <" + current.getTag() + ">");
@@ -1428,6 +1428,11 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.EXPRESSION_1){
                     parser.stack.push(Tag.EXPRESSION);
+                    // semantic function
+                    int newNode = parser.ast.buffer.pop();
+                    parser.ast.addEdge(parser.ast.buffer.lastElement(),newNode);
+                    parser.ast.buffer.pop();
+                    // end semantic function
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_1+"> but found <"+temp+">");
@@ -2196,18 +2201,26 @@ public class AnalyzeTable {
         // EXPRESSION_PLUS_MOINS ::= ε (lecture de .. )
         // EXPRESSION_PLUS_MOINS ::= + UNARY EXPRESSION_6 EXPRESSION_PLUS_MOINS (lecture de +)
         // EXPRESSION_PLUS_MOINS ::= - UNARY EXPRESSION_6 EXPRESSION_PLUS_MOINS (lecture de -)
+
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.AND) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("=")) || (current.getTag() == Tag.DIFFERENT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(">")) || (current.getTag() == Tag.GEQ) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("<")) || (current.getTag() == Tag.LEQ) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_PLUS_MOINS);
+
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("+")) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("+"));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_6();
+            // semantic function
+            System.out.println(parser.ast.buffer);
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("+");
+            parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_plus_moins();
-
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_PLUS_MOINS) {
                 temp = parser.stack.pop();
@@ -2216,8 +2229,8 @@ public class AnalyzeTable {
                     if (temp == Tag.UNARY) {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
+
                             parser.stack.push(Tag.EXPRESSION_PLUS_MOINS);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2232,12 +2245,18 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("-"));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_6();
+            // semantic function
+            int left = parser.ast.buffer.pop();
+            int right = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("-");
+            parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_plus_moins();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_PLUS_MOINS) {
@@ -2247,8 +2266,8 @@ public class AnalyzeTable {
                     if (temp == Tag.UNARY) {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
+
                             parser.stack.push(Tag.EXPRESSION_PLUS_MOINS);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2323,12 +2342,18 @@ public class AnalyzeTable {
             parser.stack.push(Tag.EXPRESSION_MULT_DIV);
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("*")){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("*"));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_7();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("*");
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_mult_div();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_MULT_DIV) {
@@ -2339,7 +2364,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.EXPRESSION_MULT_DIV);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2354,8 +2378,6 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("/")){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("/"));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -2370,7 +2392,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.SYMBOL) {
                             parser.stack.push(Tag.EXPRESSION_MULT_DIV);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                         }
@@ -2571,7 +2592,9 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.NUMCONST) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Num)current).getStringValue()));
+            // semantic function
+            parser.ast.buffer.push(parser.ast.addNode(((Num)current).getStringValue()));
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
