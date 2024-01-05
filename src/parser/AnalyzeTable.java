@@ -1105,7 +1105,8 @@ public class AnalyzeTable {
             } else {
                 throw new Error("Reduction/Stack error : expected <" + Tag.END_GENERATE_CHAMPS + "> but found <" + temp + ">");
             }
-        } else {
+        }
+        else {
             throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
         }
     }
@@ -1314,7 +1315,9 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <"+Tag.END_PARAM+"> but found <"+temp+">");
             }
         }
-
+        else {
+            throw new Error("Error line "+parser.lexer.getLine()+" : expected <"+Tag.ID+" 'ident'> or <"+Tag.ACCESS+" 'access'> or <"+Tag.IN+" 'in'> but found <"+current.getTag()+" '"+current.getStringValue()+"'>");
+        }
     }
 
     //END_PARAM
