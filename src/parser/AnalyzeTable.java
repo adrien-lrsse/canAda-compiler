@@ -3454,9 +3454,9 @@ parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Char)cu
             current = parser.lexer.scan();
             this.elsif();
             int temp = parser.stack.pop();
-            if (temp == Tag.ELSIF) {
+            if (temp == Tag.NT_ELSIF) {
                 temp = parser.stack.pop();
-                if (temp == Tag.NT_ELSIF) {
+                if (temp == Tag.ELSIF) {
                     parser.stack.push(Tag.NEXT_IF);
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.NT_ELSIF + "> but found <" + temp + ">");
