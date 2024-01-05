@@ -1408,7 +1408,7 @@ public class AnalyzeTable {
                 throw new Error("Reduction/Stack error : expected <"+Tag.EXPRESSION_OR+"> but found <"+temp+">");
             }
         }
-        else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("new")){
+        else if (current.getTag() == Tag.NEW){
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("EXPRESSION_NEW"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
@@ -1423,7 +1423,7 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.ID){
                         temp = parser.stack.pop();
-                        if (temp == Tag.SYMBOL){
+                        if (temp == Tag.NEW){
                             parser.stack.push(Tag.EXPRESSION);
                             parser.ast.buffer.pop();
                         }
