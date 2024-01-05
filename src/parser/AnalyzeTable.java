@@ -2383,6 +2383,14 @@ public class AnalyzeTable {
             current = parser.lexer.scan();
             this.unary();
             this.expression_7();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("/");
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.expression_mult_div();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_MULT_DIV) {
