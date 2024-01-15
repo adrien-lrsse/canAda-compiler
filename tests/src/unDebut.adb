@@ -5,7 +5,7 @@ procedure UnDebut is
     function AireRectangle(Larg : Integer; Long : Integer) return Integer is
         Aire, Kiwi : Integer;
     begin
-        Aire := Larg * Long;
+        Aire := - Larg * Long;
         return Aire;
     end AireRectangle;
 
@@ -25,7 +25,7 @@ begin
     Choix := 2;
 
     if Choix = 1 then
-        Valeur := PerimetreRectangle(2, 3);
+        Valeur := PerimetreRectangle(2, -3);
         Put(Valeur);
     else
         Valeur := AireRectangle(2, 3);
