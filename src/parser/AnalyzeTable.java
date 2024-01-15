@@ -2796,8 +2796,6 @@ public class AnalyzeTable {
             parser.stack.push(Tag.START_NEW_EXPRESSION);
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("GENERATE_EXPRESSION"));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -2809,7 +2807,6 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.SYMBOL) {
                         parser.stack.push(Tag.START_NEW_EXPRESSION);
-                        parser.ast.buffer.pop();
                     } else {
                         throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
                     }
@@ -3048,14 +3045,30 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.IF) {
+            // semantic functions
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("IF"));
+            parser.ast.buffer.push(parser.ast.lastNode);
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("CONDITION"));
+            parser.ast.buffer.push(parser.ast.lastNode);
+            // end functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression();
+            // semantic functions
+            parser.ast.buffer.pop();
+            // end functions
             if (current.getTag() == Tag.THEN) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
+                // semantic functions
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("INSTRUCTIONS"));
+                parser.ast.buffer.push(parser.ast.lastNode);
+                // end functions
                 this.generate_instructions();
+                // semantic functions
+                parser.ast.buffer.pop();
+                // end functions
                 this.next_if();
                 int temp = parser.stack.pop();
                 if (temp == Tag.NEXT_IF) {
@@ -3070,6 +3083,9 @@ public class AnalyzeTable {
                                     temp = parser.stack.pop();
                                     if (temp == Tag.IF) {
                                         parser.stack.push(Tag.INSTRUCTION);
+                                        // semantic functions
+                                        parser.ast.buffer.pop();
+                                        // end functions
                                     } else {
                                         throw new Error("Reduction/Stack error : expected <" + Tag.IF + "> but found <" + temp + ">");
                                     }
@@ -3646,6 +3662,10 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.ELSE) {
+            // semantic functions
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("ELSE"));
+            parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.nt_else();
@@ -3654,6 +3674,9 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.ELSE) {
                     parser.stack.push(Tag.NEXT_IF);
+                    // semantic functions
+                    parser.ast.buffer.pop();
+                    // end semantic functions
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.ELSE + "> but found <" + temp + ">");
                 }
