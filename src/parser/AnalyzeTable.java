@@ -2,6 +2,7 @@ package parser;
 
 import lexer.*;
 
+import java.awt.desktop.ScreenSleepEvent;
 import java.io.IOException;
 import java.util.EmptyStackException;
 import java.util.Objects;
@@ -193,9 +194,11 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
+                // semantic functions
                 parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
                 parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("DECLARATIONS"));
                 parser.ast.buffer.push(parser.ast.lastNode);
+                // end semantic functions
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 if (current.getTag() == Tag.IS) {
@@ -211,7 +214,9 @@ public class AnalyzeTable {
                                 temp = parser.stack.pop();
                                 if (temp == Tag.PROCEDURE) {
                                     parser.stack.push(Tag.NT_PROCEDURE);
+                                    // semantic functions
                                     parser.ast.buffer.pop();
+                                    // end semantic functions
                                 } else {
                                     throw new Error("Reduction/Stack error : expected <" + Tag.PROCEDURE + "> but found <" + temp + ">");
                                 }
@@ -282,9 +287,6 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if (temp == Tag.BEGIN) {
                                 parser.stack.push(Tag.BEGIN_INSTRUCTION);
-                                // semantic functions
-                                parser.ast.buffer.pop();
-                                // end semantic functions
                             } else {
                                 throw new Error("Reduction/Stack error : expected <" + Tag.BEGIN + "> but found <" + temp + ">");
                             }
@@ -312,10 +314,20 @@ public class AnalyzeTable {
         //END_BEGIN_INSTRUCTION ::= ident (lecture de ident)
         if ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(";"))) {
             parser.stack.push(Tag.END_BEGIN_INSTRUCTION);
+            // semantic functions
+            parser.ast.buffer.pop();
+            // end semantic functions
         }
         else if (current.getTag() == Tag.ID) {
+            // semantic function
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue()));
+            // end semantic function
             current = parser.lexer.scan();
             parser.stack.push(Tag.END_BEGIN_INSTRUCTION);
+            // semantic functions
+            parser.ast.buffer.pop();
+            // end semantic functions
+
         }
         else {
             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.SYMBOL + " ';'> or <" + Tag.ID + " 'ident'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
@@ -452,8 +464,10 @@ public class AnalyzeTable {
         //DECLARATION ::= type ident DECLARATION_TYPE (lecture de type)
         //DECLARATION ::= function ident DECLARATION_FUNCTION (lecture de function)
         if (current.getTag() == Tag.PROCEDURE) {
+            // semantic functions
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("PROCEDURE"));
             parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
@@ -464,11 +478,12 @@ public class AnalyzeTable {
                 if (temp == Tag.DECLARATION_PROCEDURE) {
                     temp = parser.stack.pop();
                     if (temp == Tag.ID) {
+                        // semantic function
                         parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
+                        // end semantic function
                         temp = parser.stack.pop();
                         if (temp == Tag.PROCEDURE) {
                             parser.stack.push(Tag.DECLARATION);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.PROCEDURE + "> but found <" + temp + ">");
                         }
@@ -483,18 +498,23 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.ID) {
+            // semantic functions
+            System.out.println(parser.ast.buffer);
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("VARIABLE"));
+            parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic functions
             this.generate_ident();
             if ((current.getTag() == Tag.SYMBOL) && (current.getStringValue().equals(":"))) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 this.type();
                 // semantic functions
-                int ident = parser.ast.buffer.pop();
-                int type = parser.ast.buffer.pop();
-                int newNode = parser.ast.addNode("VARIABLE");
-                parser.ast.addEdge(newNode, ident);
-                parser.ast.addEdge(newNode, type);
-                parser.ast.addEdge(parser.ast.buffer.lastElement(), newNode);
+                // int ident = parser.ast.buffer.pop();
+                // int type = parser.ast.buffer.pop();
+                // int newNode = parser.ast.addNode("VARIABLE");
+                // parser.ast.addEdge(newNode, ident);
+                // parser.ast.addEdge(newNode, type);
+                // parser.ast.addEdge(parser.ast.buffer.lastElement(), newNode);
                 // end semantic functions
                 this.declaration_with_expression();
                 int temp = parser.stack.pop();
@@ -519,9 +539,11 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.TYPE) {
+            // semantic functions
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("STRUCTURE"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
+            // end semantic functions
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
                 parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
@@ -535,7 +557,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.TYPE) {
                             parser.stack.push(Tag.DECLARATION);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.TYPE + "> but found <" + temp + ">");
                         }
@@ -550,8 +571,10 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.FUNCTION) {
+            // semantic functions
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("FUNCTION"));
             parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
@@ -566,7 +589,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.FUNCTION) {
                             parser.stack.push(Tag.DECLARATION);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.FUNCTION + "> but found <" + temp + ">");
                         }
@@ -602,6 +624,9 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if (temp == Tag.IS) {
                     parser.stack.push(Tag.DECLARATION_TYPE);
+                    // semantic functions
+                    parser.ast.buffer.pop();
+                    // end semantic functions
                 } else {
                     throw new Error("Reduction/Stack error : expected <" + Tag.IS + "> but found <" + temp + ">");
                 }
@@ -619,12 +644,16 @@ public class AnalyzeTable {
         //ACCESS_RECORD ::= access ident ; (lecture de access)
         //ACCESS_RECORD ::= record GENERATE_CHAMPS end record ; (lecture de record)
         if (current.getTag() == Tag.ACCESS) {
+            // semantic function
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("ACCESS"));
             parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
+                // semantic function
                 parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
+                // end semantic function
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
@@ -637,7 +666,9 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if (temp == Tag.ACCESS) {
                                 parser.stack.push(Tag.ACCESS_RECORD);
+                                // semantic function
                                 parser.ast.buffer.pop();
+                                // end semantic function
                             } else {
                                 throw new Error("Reduction/Stack error : expected <" + Tag.ACCESS + "> but found <" + temp + ">");
                             }
@@ -655,8 +686,10 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.RECORD) {
+            // semantic function
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("RECORD"));
             parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.generate_champs();
@@ -680,7 +713,9 @@ public class AnalyzeTable {
                                         temp = parser.stack.pop();
                                         if (temp == Tag.RECORD) {
                                             parser.stack.push(Tag.ACCESS_RECORD);
+                                            // semantic function
                                             parser.ast.buffer.pop();
+                                            // end semantic function
                                         } else {
                                             throw new Error("Reduction/Stack error : expected <" + Tag.RECORD + "> but found <" + temp + ">");
                                         }
@@ -718,12 +753,18 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
             parser.stack.push(Tag.DECLARATION_WITH_EXPRESSION);
             current = parser.lexer.scan();
+            // semantic functions
+            parser.ast.buffer.pop();
+            // end semantic functions
         }
         else if (current.getTag() == Tag.ASSIGNMENT) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression();
+            // semantic functions
+            parser.ast.buffer.pop();
+            // end semantic functions
             if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
@@ -736,6 +777,8 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if (temp == Tag.ASSIGNMENT) {
                                 parser.stack.push(Tag.DECLARATION_WITH_EXPRESSION);
+
+
                             } else {
                                 throw new Error("Reduction/Stack error : expected <" + Tag.ASSIGNMENT + "> but found <" + temp + ">");
                             }
@@ -774,6 +817,9 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if(temp == Tag.IS_DECLARATION) {
                             parser.stack.push(Tag.DECLARATION_PROCEDURE);
+                            // semantic functions
+                            parser.ast.buffer.pop();
+                            // end semantic functions
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.IS_DECLARATION+"> but found <"+temp+">");
@@ -842,7 +888,14 @@ public class AnalyzeTable {
             if(current.getTag() == Tag.RETURN){
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
+                // semantic functions
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("RETURN_TYPE"));
+                parser.ast.buffer.push(parser.ast.lastNode);
+                // end semantic functions
                 this.type();
+                // semantic functions
+                parser.ast.buffer.pop();
+                // end semantic functions
                 this.is_declaration();
                 this.begin_instruction();
                 if(current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
@@ -861,6 +914,9 @@ public class AnalyzeTable {
                                         temp = parser.stack.pop();
                                         if(temp == Tag.PARAMS) {
                                             parser.stack.push(Tag.DECLARATION_FUNCTION);
+                                            // semantic functions
+                                            parser.ast.buffer.pop();
+                                            // end semantic functions
                                         }
                                         else {
                                             throw new Error("Reduction/Stack error : expected <"+Tag.PARAMS+"> but found <"+temp+">");
@@ -911,6 +967,9 @@ public class AnalyzeTable {
                                 temp = parser.stack.pop();
                                 if(temp == Tag.RETURN) {
                                     parser.stack.push(Tag.DECLARATION_FUNCTION);
+                                    // semantic functions
+                                    parser.ast.buffer.pop();
+                                    // end semantic functions
                                 }
                                 else {
                                     throw new Error("Reduction/Stack error : expected <"+Tag.RETURN+"> but found <"+temp+">");
@@ -943,7 +1002,7 @@ public class AnalyzeTable {
         //GENERATE_IDENT ::= ident END_GENERATE_IDENT (lecture de ident)
         if (current.getTag() == Tag.ID) {
             // semantic functions
-            parser.ast.buffer.push(parser.ast.addNode(((Word)current).lexeme));
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
             // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -1002,9 +1061,8 @@ public class AnalyzeTable {
         //IS_DECLARATION ::= is IS_DECLARATION_FACTORISATION (lecture de is)
         if (current.getTag() == Tag.IS) {
             // semantic functions
-            int return_type = parser.ast.buffer.pop();
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("RETURN_TYPE"));
-            parser.ast.addEdge(parser.ast.lastNode, return_type);
+            // int return_type = parser.ast.buffer.pop();
+            // parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("RETURN_TYPE"));
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("DECLARATIONS"));
             parser.ast.buffer.push(parser.ast.lastNode);
             // end semantic functions
@@ -1059,8 +1117,10 @@ public class AnalyzeTable {
     //CHAMPS
     private void champs() throws IOException{
         // CHAMPS ::= GENERATE_IDENT : TYPE ; (lecture de ident)
+        // semantic function
         parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("CHAMP"));
         parser.ast.buffer.push(parser.ast.lastNode);
+        // end semantic function
         if (current.getTag() == Tag.ID){
             this.generate_ident();
             if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(":")){
@@ -1079,7 +1139,9 @@ public class AnalyzeTable {
                                 temp = parser.stack.pop();
                                 if (temp == Tag.GENERATE_IDENT){
                                     parser.stack.push(Tag.CHAMPS);
+                                    // semantic function
                                     parser.ast.buffer.pop();
+                                    // end semantic function
                                 }
                                 else {
                                     throw new Error("Reduction/Stack error : expected <"+Tag.GENERATE_IDENT+"> but found <"+temp+">");
@@ -1160,7 +1222,7 @@ public class AnalyzeTable {
         // TYPE ::= access ident (lecture de access)
         if (current.getTag() == Tag.ID){
             // semantic functions
-            parser.ast.buffer.push(parser.ast.addNode(((Word)current).lexeme));
+            parser.ast.addEdge(parser.ast.buffer.lastElement(),parser.ast.addNode(((Word)current).lexeme));
             // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -1173,12 +1235,16 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.ACCESS){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("TYPE_ACCESS"));
-            parser.ast.buffer.push(parser.ast.lastNode);
+            // semantic function
+            // parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("TYPE_ACCESS"));
+            // parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID){
+                // semantic function
                 parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
+                // end semantic function
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 int temp = parser.stack.pop();
@@ -1186,7 +1252,6 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.ACCESS){
                         parser.stack.push(Tag.NT_TYPE);
-                        parser.ast.buffer.pop();
                     }
                     else {
                         throw new Error("Reduction/Stack error : expected <"+Tag.ACCESS+"> but found <"+temp+">");
@@ -1235,6 +1300,10 @@ public class AnalyzeTable {
     private void param() throws IOException{
         // PARAM ::= GENERATE_IDENT : TYPE_OR_MODE_TYPE_PARAM (lecture de ident)
         if (current.getTag() == Tag.ID){
+            // semantic function
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("PARAM"));
+            parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic function
             this.generate_ident();
             if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(":")){
                 parser.stack.push(current.getTag());
@@ -1277,12 +1346,12 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.ID){
             this.type();
             // semantic functions
-            int ident = parser.ast.buffer.pop();
-            int type = parser.ast.buffer.pop();
-            int newNode = parser.ast.addNode("PARAM");
-            parser.ast.addEdge(newNode, ident);
-            parser.ast.addEdge(newNode, type);
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), newNode);
+            // int ident = parser.ast.buffer.pop();
+            // int type = parser.ast.buffer.pop();
+            // int newNode = parser.ast.addNode("PARAM");
+            // parser.ast.addEdge(newNode, ident);
+            // parser.ast.addEdge(newNode, type);
+            // parser.ast.addEdge(parser.ast.buffer.lastElement(), newNode);
             // end semantic functions
             this.end_param();
             int temp = parser.stack.pop();
@@ -1349,6 +1418,9 @@ public class AnalyzeTable {
     private void end_param() throws IOException{
         // END_PARAM ::= ; PARAM (lecture de ;)
         // END_PARAM ::= ) (lecture de ) )
+        // semantic function
+        parser.ast.buffer.pop();
+        // end semantic function
         if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")){
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -1468,9 +1540,11 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.NEW){
+            // semantic function
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("EXPRESSION_NEW"));
             parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
+            // end semantic function
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID){
                 parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
@@ -1503,8 +1577,10 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.CHARACTERVAL){
+            // semantic function
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("EXPRESSION_CHAR_VAL"));
             parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")){
@@ -1529,7 +1605,9 @@ public class AnalyzeTable {
                                         temp = parser.stack.pop();
                                         if (temp == Tag.CHARACTERVAL) {
                                             parser.stack.push(Tag.EXPRESSION);
+                                            // semantic function
                                             parser.ast.buffer.pop();
+                                            // end semantic function
                                         } else {
                                             throw new Error("Reduction/Stack error : expected <" + Tag.CHARACTERVAL + "> but found <" + temp + ">");
                                         }
@@ -2937,7 +3015,7 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             // semantic function
-            parser.ast.buffer.push(parser.ast.addNode("GENERATE_INSTRUCTIONS"));
+            parser.ast.buffer.push(parser.ast.addNode("BLOCK_INSTRCUTIONS"));
             // end semantic function
             this.generate_instructions();
             if (current.getTag() == Tag.END) {
@@ -2955,7 +3033,9 @@ public class AnalyzeTable {
                                 temp = parser.stack.pop();
                                 if (temp == Tag.BEGIN) {
                                     parser.stack.push(Tag.INSTRUCTION);
+                                    // semantic function
                                     parser.ast.buffer.pop();
+                                    // end semantic function
                                 } else {
                                     throw new Error("Reduction/Stack error : expected <" + Tag.BEGIN + "> but found <" + temp + ">");
                                 }
@@ -3109,10 +3189,17 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.FOR) {
+            // semantic functions
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("FOR"));
+            parser.ast.buffer.push(parser.ast.lastNode);
+            // end functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
                 parser.stack.push(current.getTag());
+                // semantic functions
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue()));
+                // end semantic functions
                 current = parser.lexer.scan();
                 if (current.getTag() == Tag.IN) {
                     parser.stack.push(current.getTag());
@@ -3147,6 +3234,10 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.WHILE) {
+            // semantic functions
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("WHILE"));
+            parser.ast.buffer.push(parser.ast.lastNode);
+            // end functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -3181,6 +3272,9 @@ public class AnalyzeTable {
                                                         temp = parser.stack.pop();
                                                         if (temp == Tag.WHILE) {
                                                             parser.stack.push(Tag.INSTRUCTION);
+                                                            // semantic functions
+                                                            parser.ast.buffer.pop();
+                                                            // end functions
                                                         } else {
                                                             throw new Error("Reduction/Stack error : expected <" + Tag.WHILE + "> but found <" + temp + ">");
                                                         }
@@ -3478,6 +3572,9 @@ public class AnalyzeTable {
                                                                     temp = parser.stack.pop();
                                                                     if (temp == Tag.UNARY) {
                                                                         parser.stack.push(Tag.FOR_INSTRUCTION);
+                                                                        // semantic functions
+                                                                        parser.ast.buffer.pop();
+                                                                        // end semantic functions
                                                                     } else {
                                                                         throw new Error("Reduction/Stack error : expected <" + Tag.UNARY + "> but found <" + temp + ">");
                                                                     }
@@ -3525,6 +3622,9 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.REVERSE) {
+            // semantic functions
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("reverse"));
+            // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -3570,6 +3670,9 @@ public class AnalyzeTable {
                                                                         temp = parser.stack.pop();
                                                                         if (temp == Tag.REVERSE) {
                                                                             parser.stack.push(Tag.FOR_INSTRUCTION);
+                                                                            // semantic functions
+                                                                            parser.ast.buffer.pop();
+                                                                            // end semantic functions
                                                                         } else {
                                                                             throw new Error("Reduction/Stack error : expected <" + Tag.REVERSE + "> but found <" + temp + ">");
                                                                         }
@@ -3783,6 +3886,10 @@ public class AnalyzeTable {
         //ELSIF ::= UNARY EXPRESSION then GENERATE_INSTRUCTIONS END_ELSIF (lecture de false)
         //ELSIF ::= UNARY EXPRESSION then GENERATE_INSTRUCTIONS END_ELSIF (lecture de null)
         if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "-")) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
+            // semantic functions
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("ELSIF"));
+            parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic functions
             this.unary();
             this.expression();
             if (current.getTag() == Tag.THEN) {
@@ -3836,6 +3943,9 @@ public class AnalyzeTable {
         //END_ELSIF ::= end if ; (lecture de end)
         //END_ELSIF ::= else ELSE (lecture de else)
         //END_ELSIF ::= elsif ELSIF (lecture de elsif)
+        // semantic functions
+        parser.ast.buffer.pop();
+        // end semantic functions
         if (current.getTag() == Tag.END) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();

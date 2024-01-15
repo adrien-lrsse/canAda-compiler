@@ -3,7 +3,7 @@ with Ada.Text_IO; use Ada.Text_IO;
 procedure UnDebut is
 
     function AireRectangle(Larg : Integer; Long : Integer) return Integer is
-        Aire : Integer;
+        Aire, Kiwi : Integer;
     begin
         Aire := Larg * Long;
         return Aire;
