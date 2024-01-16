@@ -9,11 +9,10 @@ procedure UnDebut is
         return Aire;
     end AireRectangle;
 
-    function PerimetreRectangle(Larg : Integer; Long : Integer) return Integer is
+    procedure PerimetreRectangle is
         P : Integer;
     begin
         P := Larg * 2 + Long * 2;
-        return P;
     end PerimetreRectangle;
 
     -- VARIABLES
