@@ -36,9 +36,9 @@ procedure Gestion_Produit is
     procedure Ajuster_Prix(P : in out Produit) is
     begin
         if P.Quantite < 10 then
-            P.Prix := P.Prix * 1.1; -- Augmenter le prix de 10% si la quantité est faible
+            P.Prix := P.Prix * 1; -- Augmenter le prix de 10% si la quantité est faible
         else
-            P.Prix := P.Prix * 0.9; -- Réduire le prix de 10% si la quantité est suffisante
+            P.Prix := P.Prix * 0; -- Réduire le prix de 10% si la quantité est suffisante
         end if;
     end Ajuster_Prix;
 
@@ -58,7 +58,7 @@ procedure Gestion_Produit is
 
     -- Programme principal
     procedure Programme_Principal is
-        // Déclaration d'un produit
+        -- Déclaration d'un produit
     begin
         -- Affichage du produit initial
         -- Put("Produit initial : ");
@@ -77,7 +77,7 @@ procedure Gestion_Produit is
             Ajuster_Prix(Mon_Produit);
             Put(Mon_Produit.Prix);
         else
-            -- Put("Le produit est en rupture de stock.");
+            Put(3);
         end if;
 
         -- Simulation de la vente de 4 unités du produit
