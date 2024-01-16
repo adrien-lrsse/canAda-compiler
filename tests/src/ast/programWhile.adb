@@ -19,8 +19,8 @@ begin
     end loop;
 
     -- Affichage de la somme
-    Put("La somme des entiers de 1 à ");
+    -- Put("La somme des entiers de 1 à ");
     Put(N);
-    Put(" est ");
+    -- Put(" est ");
     Put(Somme);
 end Programme_Boucle_While;
