@@ -58,7 +58,7 @@ procedure Gestion_Produit is
 
     -- Programme principal
     procedure Programme_Principal is
-        // Déclaration d'un produit
+        Mon_Produit := new Produit;
     begin
         -- Affichage du produit initial
         -- Put("Produit initial : ");
