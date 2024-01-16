@@ -5,7 +5,7 @@ procedure Gestion_Produit is
     -- Déclaration de la structure représentant un produit
     type Produit is record
         Nom : String;
-        Prix : Float;
+        Prix : Integer;
         Quantite : Integer;
     end record;
 
