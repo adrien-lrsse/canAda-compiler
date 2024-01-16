@@ -463,6 +463,9 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
+                // semantic functions
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
+                // end semantic functions
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 this.declaration_procedure();
@@ -470,12 +473,12 @@ public class AnalyzeTable {
                 if (temp == Tag.DECLARATION_PROCEDURE) {
                     temp = parser.stack.pop();
                     if (temp == Tag.ID) {
-                        // semantic function
-                        parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
-                        // end semantic function
                         temp = parser.stack.pop();
                         if (temp == Tag.PROCEDURE) {
                             parser.stack.push(Tag.DECLARATION);
+                            // semantic functions
+                            parser.ast.buffer.pop();
+                            // end semantic functions
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.PROCEDURE + "> but found <" + temp + ">");
                         }
@@ -569,7 +572,9 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
+                // semantic functions
                 parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme));
+                // end semantic functions
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 this.declaration_function();
@@ -580,6 +585,9 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.FUNCTION) {
                             parser.stack.push(Tag.DECLARATION);
+                            // semantic functions
+                            parser.ast.buffer.pop();
+                            // end semantic functions
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.FUNCTION + "> but found <" + temp + ">");
                         }
@@ -846,6 +854,9 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if(temp == Tag.PARAMS) {
                                 parser.stack.push(Tag.DECLARATION_PROCEDURE);
+                                // semantic functions
+                                parser.ast.buffer.pop();
+                                // end semantic functions
                             }
                             else {
                                 throw new Error("Reduction/Stack error : expected <"+Tag.PARAMS+"> but found <"+temp+">");
@@ -3088,7 +3099,6 @@ public class AnalyzeTable {
             // semantic functions
             int expr = parser.ast.buffer.pop();
             parser.ast.addEdge(parser.ast.buffer.lastElement(), expr);
-            parser.ast.buffer.pop();
             // end semantic functions
             int temp = parser.stack.pop();
             if (temp == Tag.END_RETURN) {
