@@ -22,8 +22,8 @@ begin
     Resultat := Somme_Entiers(N);
 
     -- Affichage de la somme
-    Put("La somme des entiers de 1 à ");
+   -- Put("La somme des entiers de 1 à ");
     Put(N);
-    Put(" est ");
+   -- Put(" est ");
     Put(Resultat);
 end Programme_Avec_Fonction;
