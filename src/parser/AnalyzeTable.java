@@ -854,6 +854,9 @@ public class AnalyzeTable {
                             temp = parser.stack.pop();
                             if(temp == Tag.PARAMS) {
                                 parser.stack.push(Tag.DECLARATION_PROCEDURE);
+                                // semantic functions
+                                parser.ast.buffer.pop();
+                                // end semantic functions
                             }
                             else {
                                 throw new Error("Reduction/Stack error : expected <"+Tag.PARAMS+"> but found <"+temp+">");
