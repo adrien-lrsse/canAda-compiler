@@ -2,9 +2,7 @@ package parser;
 
 import lexer.*;
 
-import java.awt.desktop.ScreenSleepEvent;
 import java.io.IOException;
-import java.util.EmptyStackException;
 import java.util.Objects;
 
 public class AnalyzeTable {
