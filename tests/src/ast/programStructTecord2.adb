@@ -11,7 +11,7 @@ procedure Gestion_Produit is
 
     -- Programme principal
     procedure Programme_Principal is
-        Mon_Produit := new Produit;
+        Mon_Produit : Produit := new Produit;
     begin
         Put(Mon_Produit.Nom);
     end Programme_Principal;
