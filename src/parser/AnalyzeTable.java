@@ -3579,15 +3579,30 @@ public class AnalyzeTable {
         if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NEW) || (current.getTag() == Tag.CHARACTERVAL) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("-")) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
             this.unary();
             this.expression();
+            // semantic functions
+            int expr = parser.ast.buffer.pop();
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), expr);
+            // end semantic functions
             if (current.getTag() == Tag.DOUBLEPOINT) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 this.unary();
                 this.expression();
+                // semantic functions
+                expr = parser.ast.buffer.pop();
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), expr);
+                // end semantic functions
                 if (current.getTag() == Tag.LOOP) {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
+                    // semantic functions
+                    parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("INSTRUCTIONS"));
+                    parser.ast.buffer.push(parser.ast.lastNode);
+                    // end semantic functions
                     this.generate_instructions();
+                    // semantic functions
+                    parser.ast.buffer.pop();
+                    // end semantic functions
                     if (current.getTag() == Tag.END) {
                         parser.stack.push(current.getTag());
                         current = parser.lexer.scan();
