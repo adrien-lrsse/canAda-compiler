@@ -20,8 +20,8 @@ public class GraphViz {
             file = new FileWriter(filename + ".dot");
             file.write("graph" +
                     "{" +
-                    "fontname=\"Arial bold\"" +
-                    "node [fontname=\"sans-serif bold\"]" +
+                    "fontname=\"bold\"" +
+                    "node [fontname=\"bold\"]" +
                     "edge [fontname=\"Helvetica,Arial,sans-serif\"]" +
                     "{" +
                     "label=\"AST\"");
