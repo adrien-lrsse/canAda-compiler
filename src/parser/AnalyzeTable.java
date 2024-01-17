@@ -28,6 +28,7 @@ public class AnalyzeTable {
             throw new Error("Reduction/Stack error : expected <" + Tag.FICHIER + "> but found <" + current.getTag() + "> at line " + parser.lexer.getLine() + " '" + current.getStringValue() + "'");
         }
         parser.ast.close();
+        parser.ast.export();
     }
 
     private void ficher() throws IOException {
@@ -1510,7 +1511,7 @@ public class AnalyzeTable {
         }
         else if (current.getTag() == Tag.OUT){
             // semantic functions
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("IN OUT"));
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("IN_OUT"));
             // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
