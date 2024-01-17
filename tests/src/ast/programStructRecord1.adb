@@ -2,6 +2,8 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Gestion_Produit is
 
+    Coix : Interger;
+
     -- Déclaration de la structure représentant un produit
     type Produit is record
         Nom : String;
@@ -15,6 +17,6 @@ procedure Gestion_Produit is
     end Programme_Principal;
 
 begin
-    -- Appel du programme principal
+    -- Appel du programme princiProgramme_Principalpal
     Programme_Principal;
 end Gestion_Produit;
