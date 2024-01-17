@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class ParserDemo {
     public static void main(String[] args) throws IOException {
-        Lexer lexer = new Lexer("tests/src/ast/programStructRecord1.adb");
+        Lexer lexer = new Lexer("tests/src/ast/programStructRecord2.adb");
         Parser parser = new Parser(lexer);
         parser.parse();
     }
