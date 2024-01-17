@@ -10,10 +10,10 @@ begin
 
     -- Utilisation de la condition if pour afficher un message en fonction du nombre
     if Nombre > 0 then
-        Put("Le nombre est positif.");
+        Put(aa);
     elsif Nombre = 0 then
-        Put("Le nombre est nul.");
+        Put(a);
     else
-        Put("Le nombre est négatif.");
+        Put(a);
     end if;
 end Programme_If;

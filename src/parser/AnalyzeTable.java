@@ -3996,9 +3996,16 @@ public class AnalyzeTable {
             // semantic functions
             parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("ELSIF"));
             parser.ast.buffer.push(parser.ast.lastNode);
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("CONDITION"));
+            parser.ast.buffer.push(parser.ast.lastNode);
             // end semantic functions
             this.unary();
             this.expression();
+            // semantic functions
+            int expr = parser.ast.buffer.pop();
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), expr);
+            parser.ast.buffer.pop();
+            // end semantic functions
             if (current.getTag() == Tag.THEN) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
@@ -4091,6 +4098,10 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.ELSE) {
+            // semantic functions
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("ELSE"));
+            parser.ast.buffer.push(parser.ast.lastNode);
+            // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.nt_else();
@@ -4099,6 +4110,9 @@ public class AnalyzeTable {
                 temp = parser.stack.pop();
                 if(temp == Tag.ELSE) {
                     parser.stack.push(Tag.END_ELSIF);
+                    // semantic functions
+                    parser.ast.buffer.pop();
+                    // end semantic functions
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.ELSE+"> but found <"+temp+">");
