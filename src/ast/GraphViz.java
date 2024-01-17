@@ -20,8 +20,8 @@ public class GraphViz {
             file = new FileWriter(filename + ".dot");
             file.write("graph" +
                     "{" +
-                    "fontname=\"Helvetica,Arial,sans-serif\"" +
-                    "node [fontname=\"Helvetica bold\"]" +
+                    "fontname=\"Arial bold\"" +
+                    "node [fontname=\"sans-serif bold\"]" +
                     "edge [fontname=\"Helvetica,Arial,sans-serif\"]" +
                     "{" +
                     "label=\"AST\"");
@@ -69,7 +69,7 @@ public class GraphViz {
         try {
             String graph = new String(Files.readAllBytes(Paths.get("ast.dot")));
             String layout = "dot";
-            String format = "png";
+            String format = "svg";
 
             String url = "https://quickchart.io/graphviz";
             String body = "{\"graph\": \"" + graph.replaceAll("\"", "\\\\\"") + "\", \"layout\": \"" + layout + "\", \"format\": \"" + format + "\"}";
@@ -86,7 +86,6 @@ public class GraphViz {
             con.setDoOutput(true);
             try (OutputStream os = con.getOutputStream()) {
                 byte[] input = body.getBytes(StandardCharsets.UTF_8);
-                System.out.println(body);
                 os.write(input, 0, input.length);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -97,13 +96,12 @@ public class GraphViz {
             int responseCode = con.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 try (InputStream in = new BufferedInputStream(con.getInputStream());
-                     FileOutputStream fos = new FileOutputStream("output.png")) {
+                     FileOutputStream fos = new FileOutputStream("ast.svg")) {
                     byte[] buffer = new byte[4096];
                     int bytesRead;
                     while ((bytesRead = in.read(buffer)) != -1) {
                         fos.write(buffer, 0, bytesRead);
                     }
-                    System.out.println("PNG saved to output.png");
                 }
             } else {
                 try (InputStream errorStream = con.getErrorStream()) {
