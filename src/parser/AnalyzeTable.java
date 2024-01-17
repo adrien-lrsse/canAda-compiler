@@ -21,7 +21,7 @@ public class AnalyzeTable {
             this.ficher();
          } catch (Error e) {
              parser.ast.close();
-             throw new Error("Error line " + parser.lexer.getLine() + " : expected <" + Tag.EOF + " 'EOF'> but found <" + current.getTag() + " '" + current.getStringValue() + "'>");
+             System.out.println(e.getMessage());
          }
         int temp = parser.stack.pop();
         if (temp != Tag.FICHIER) {
@@ -1563,7 +1563,6 @@ public class AnalyzeTable {
         }
         else if (current.getTag() == Tag.NEW){
             // semantic function
-            System.out.println(parser.ast.buffer);
             parser.ast.buffer.push(parser.ast.addNode("EXPRESSION_NEW"));
 
             // end semantic function
@@ -2665,7 +2664,6 @@ public class AnalyzeTable {
             parser.stack.push(Tag.EXPRESSION_ACCESS_IDENT);
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(".")){
-            System.out.println(parser.ast.buffer + "connard de ident");
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
@@ -2719,11 +2717,7 @@ public class AnalyzeTable {
         // EXPRESSION_ATOMS ::= false (lecture de false)
         // EXPRESSION_ATOMS ::= null (lecture de null)
         if (current.getTag() == Tag.ID){
-//            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("IDENT_EXPRESSION"));
-//            parser.ast.buffer.push(parser.ast.lastNode);
-//            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue()));
             // semantic function
-            System.out.println(parser.ast.buffer);
             if (parser.ast.buffer.lastElement() < 0){
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Word)current).getStringValue());
@@ -2784,6 +2778,7 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.NUMCONST) {
+            // semantic function
             if (parser.ast.buffer.lastElement() < 0){
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Num)current).getStringValue());
@@ -2797,6 +2792,7 @@ public class AnalyzeTable {
                 int ident = parser.ast.addNode(((Num)current).getStringValue());
                 parser.ast.buffer.push(ident);
             }
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
@@ -2808,8 +2804,21 @@ public class AnalyzeTable {
         }
         else if (current.getTag() == Tag.CHAR) {
             // semantic function
-            parser.ast.buffer.push(parser.ast.addNode(((Char)current).getStringValue()));
+            if (parser.ast.buffer.lastElement() < 0){
+                int moins = parser.ast.buffer.pop();
+                int ident = parser.ast.addNode("'" + ((Char)current).getStringValue() + "'");
+                int tmp = ident;
+                for (int i = 0; i < -moins; i++) {
+                    tmp = parser.ast.addNode("UNARY");
+                    parser.ast.addEdge(tmp,ident);
+                }
+                parser.ast.buffer.push(tmp);
+            } else {
+                int ident = parser.ast.addNode("'" + ((Char)current).getStringValue() + "'");
+                parser.ast.buffer.push(ident);
+            }
             // end semantic function
+            parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
             if (temp == Tag.CHAR) {
@@ -2820,8 +2829,21 @@ public class AnalyzeTable {
         }
         else if (current.getTag() == Tag.TRUE) {
             // semantic function
-            parser.ast.buffer.push(parser.ast.addNode(((Word)current).getStringValue()));
+            if (parser.ast.buffer.lastElement() < 0){
+                int moins = parser.ast.buffer.pop();
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                int tmp = ident;
+                for (int i = 0; i < -moins; i++) {
+                    tmp = parser.ast.addNode("UNARY");
+                    parser.ast.addEdge(tmp,ident);
+                }
+                parser.ast.buffer.push(tmp);
+            } else {
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                parser.ast.buffer.push(ident);
+            }
             // end semantic function
+            parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
             if (temp == Tag.TRUE) {
@@ -2832,8 +2854,21 @@ public class AnalyzeTable {
         }
         else if (current.getTag() == Tag.FALSE) {
             // semantic function
-            parser.ast.buffer.push(parser.ast.addNode(((Word)current).getStringValue()));
+            if (parser.ast.buffer.lastElement() < 0){
+                int moins = parser.ast.buffer.pop();
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                int tmp = ident;
+                for (int i = 0; i < -moins; i++) {
+                    tmp = parser.ast.addNode("UNARY");
+                    parser.ast.addEdge(tmp,ident);
+                }
+                parser.ast.buffer.push(tmp);
+            } else {
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                parser.ast.buffer.push(ident);
+            }
             // end semantic function
+            parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
             if (temp == Tag.FALSE) {
@@ -2844,8 +2879,21 @@ public class AnalyzeTable {
         }
         else if (current.getTag() == Tag.NULL) {
             // semantic function
-            parser.ast.buffer.push(parser.ast.addNode(((Word)current).getStringValue()));
+            if (parser.ast.buffer.lastElement() < 0){
+                int moins = parser.ast.buffer.pop();
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                int tmp = ident;
+                for (int i = 0; i < -moins; i++) {
+                    tmp = parser.ast.addNode("UNARY");
+                    parser.ast.addEdge(tmp,ident);
+                }
+                parser.ast.buffer.push(tmp);
+            } else {
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                parser.ast.buffer.push(ident);
+            }
             // end semantic function
+            parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
             if (temp == Tag.NULL) {
@@ -3066,7 +3114,6 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.instruction_ident_expression();
-            System.out.println(parser.ast.buffer);
             int temp = parser.stack.pop();
             if (temp == Tag.INSTRUCTION_IDENT_EXPRESSION){
                 temp = parser.stack.pop();
@@ -3222,7 +3269,6 @@ public class AnalyzeTable {
                 parser.ast.buffer.push(parser.ast.lastNode);
                 // end functions
                 this.generate_instructions();
-                System.out.println(parser.ast.buffer);
                 // semantic functions
                 parser.ast.buffer.pop();
                 // end functions
@@ -3414,7 +3460,6 @@ public class AnalyzeTable {
         // INSTRUCTION_IDENT_EXPRESSION ::= INSTRUCTION_IDENT_EXPRESSION1 (lecture de :=)
         // INSTRUCTION_IDENT_EXPRESSION ::= INSTRUCTION_IDENT_EXPRESSION2 (lecture de ( )
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(".")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.ASSIGNMENT)){
-
             this.instruction_ident_expression1();
             int temp = parser.stack.pop();
             if (temp == Tag.INSTRUCTION_IDENT_EXPRESSION1){
@@ -3448,6 +3493,15 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID) {
+                // semantic function
+                int expr = parser.ast.buffer.pop();
+                int accessIdent = parser.ast.addNode("ACCESS_IDENT");
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                parser.ast.addEdge(expr > 0 ? expr : -expr, accessIdent);
+                parser.ast.addEdge(accessIdent, ident);
+                parser.ast.buffer.push(expr);
+                parser.ast.buffer.push(-ident);
+                // end semantic function
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 this.instruction_ident_expression1();
@@ -3470,6 +3524,11 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {
+            // semantic functions
+            while (parser.ast.buffer.lastElement() < 0) { // remove access ident expect the first
+                parser.ast.buffer.pop();
+            }
+            // end semantic functions
             current = parser.lexer.scan();
             parser.stack.push(Tag.INSTRUCTION_IDENT_EXPRESSION1);
             // semantic functions
@@ -3478,6 +3537,11 @@ public class AnalyzeTable {
             // end semantic functions
         }
         else if (current.getTag() == Tag.ASSIGNMENT) {
+            // semantic functions
+            while (parser.ast.buffer.lastElement() < 0) { // remove access ident expect the first
+                parser.ast.buffer.pop();
+            }
+            // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
@@ -4915,7 +4979,7 @@ public class AnalyzeTable {
         //WI_EXPRESSION_6 ::= WI_EXPRESSION_ACCES_IDENT WI_EXPRESSION_MUL_DIV (lecture de false)
         //WI_EXPRESSION_6 ::= WI_EXPRESSION_ACCES_IDENT WI_EXPRESSION_MUL_DIV (lecture de null)
         if ((current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "(")) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
-            this.wi_expression_acces_ident();
+            this.wi_expression_access_ident();
             this.wi_expression_mul_div();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_MUL_DIV) {
@@ -4958,7 +5022,7 @@ public class AnalyzeTable {
             current = parser.lexer.scan();
             this.checkIdent = false;
             this.unary();
-            this.wi_expression_acces_ident();
+            this.wi_expression_access_ident();
             this.wi_expression_mul_div();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_MUL_DIV) {
@@ -4987,7 +5051,7 @@ public class AnalyzeTable {
             current = parser.lexer.scan();
             this.checkIdent = false;
             this.unary();
-            this.wi_expression_acces_ident();
+            this.wi_expression_access_ident();
             this.wi_expression_mul_div();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_MUL_DIV) {
@@ -5016,7 +5080,7 @@ public class AnalyzeTable {
             current = parser.lexer.scan();
             this.checkIdent = false;
             this.unary();
-            this.wi_expression_acces_ident();
+            this.wi_expression_access_ident();
             this.wi_expression_mul_div();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_MUL_DIV) {
@@ -5046,7 +5110,7 @@ public class AnalyzeTable {
     }
 
     //WI_EXPRESSION_ACCES_IDENT
-    private void wi_expression_acces_ident() throws IOException{
+    private void wi_expression_access_ident() throws IOException{
         //WI_EXPRESSION_ACCES_IDENT ::= WI_EXPRESSION_ATOMS EXPRESSION_ACCESS_IDENT (lecture de ()
         //WI_EXPRESSION_ACCES_IDENT ::= WI_EXPRESSION_ATOMS EXPRESSION_ACCESS_IDENT (lecture de entier)
         //WI_EXPRESSION_ACCES_IDENT ::= WI_EXPRESSION_ATOMS EXPRESSION_ACCESS_IDENT (lecture de caractere)
@@ -5108,6 +5172,21 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.NUMCONST) {
+            // semantic function
+            if (parser.ast.buffer.lastElement() < 0){
+                int moins = parser.ast.buffer.pop();
+                int ident = parser.ast.addNode(((Num)current).getStringValue());
+                int tmp = ident;
+                for (int i = 0; i < -moins; i++) {
+                    tmp = parser.ast.addNode("UNARY");
+                    parser.ast.addEdge(tmp,ident);
+                }
+                parser.ast.buffer.push(tmp);
+            } else {
+                int ident = parser.ast.addNode(((Num)current).getStringValue());
+                parser.ast.buffer.push(ident);
+            }
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.checkIdent = false;
@@ -5119,6 +5198,21 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.CHAR) {
+            // semantic function
+            if (parser.ast.buffer.lastElement() < 0){
+                int moins = parser.ast.buffer.pop();
+                int ident = parser.ast.addNode("'" + ((Char)current).getStringValue() + "'");
+                int tmp = ident;
+                for (int i = 0; i < -moins; i++) {
+                    tmp = parser.ast.addNode("UNARY");
+                    parser.ast.addEdge(tmp,ident);
+                }
+                parser.ast.buffer.push(tmp);
+            } else {
+                int ident = parser.ast.addNode("'" + ((Word)current).getStringValue() + "'");
+                parser.ast.buffer.push(ident);
+            }
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.checkIdent = false;
@@ -5130,6 +5224,21 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.TRUE) {
+            // semantic function
+            if (parser.ast.buffer.lastElement() < 0){
+                int moins = parser.ast.buffer.pop();
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                int tmp = ident;
+                for (int i = 0; i < -moins; i++) {
+                    tmp = parser.ast.addNode("UNARY");
+                    parser.ast.addEdge(tmp,ident);
+                }
+                parser.ast.buffer.push(tmp);
+            } else {
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                parser.ast.buffer.push(ident);
+            }
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.checkIdent = false;
@@ -5141,6 +5250,21 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.FALSE) {
+            // semantic function
+            if (parser.ast.buffer.lastElement() < 0){
+                int moins = parser.ast.buffer.pop();
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                int tmp = ident;
+                for (int i = 0; i < -moins; i++) {
+                    tmp = parser.ast.addNode("UNARY");
+                    parser.ast.addEdge(tmp,ident);
+                }
+                parser.ast.buffer.push(tmp);
+            } else {
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                parser.ast.buffer.push(ident);
+            }
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.checkIdent = false;
@@ -5152,6 +5276,21 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.NULL) {
+            // semantic function
+            if (parser.ast.buffer.lastElement() < 0){
+                int moins = parser.ast.buffer.pop();
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                int tmp = ident;
+                for (int i = 0; i < -moins; i++) {
+                    tmp = parser.ast.addNode("UNARY");
+                    parser.ast.addEdge(tmp,ident);
+                }
+                parser.ast.buffer.push(tmp);
+            } else {
+                int ident = parser.ast.addNode(((Word)current).getStringValue());
+                parser.ast.buffer.push(ident);
+            }
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.checkIdent = false;
