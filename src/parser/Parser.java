@@ -14,7 +14,7 @@ public class Parser {
     public Parser(Lexer lexer) {
         this.lexer = lexer;
         this.analyzeTable = new AnalyzeTable(this);
-        this.ast = new GraphViz("ast");
+        this.ast = new GraphViz(lexer.getFileName());
     }
     public void parse(boolean export) throws IOException {
         analyzeTable.analyze(export);

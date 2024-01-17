@@ -10,11 +10,9 @@ public class Lexer {
     private char currentChar = ' ';
     private boolean invalidToken = false;
     private final Hashtable<String, Word> words = new Hashtable<>();
-    void reserve(Word t) {
-        words.put(t.lexeme, t);
-    }
-    FileReader fileReader;
-    int character;
+    private final FileReader fileReader;
+    private final String fileName;
+    private int character;
     public Lexer(String fileName) throws FileNotFoundException {
         // keywords
         reserve(new Word(Tag.ACCESS, "access"));
@@ -55,8 +53,14 @@ public class Lexer {
         reserve(new Word(Tag.OR, "or"));
         reserve(new Word(Tag.ASSIGNMENT, ":="));
 
+        this.fileName = fileName;
         this.fileReader = new FileReader(fileName);
     }
+
+    void reserve(Word t) {
+        words.put(t.lexeme, t);
+    }
+
     public Token scan() throws IOException {
         // handle whitespaces
         while (((currentChar == ' ') || (currentChar == '\n') || (currentChar == '\t')) && ((character = fileReader.read()) != -1)) {
@@ -288,5 +292,9 @@ public class Lexer {
 
     public int getLine() {
         return line;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 }

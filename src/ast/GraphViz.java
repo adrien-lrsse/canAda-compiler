@@ -15,16 +15,19 @@ public class GraphViz {
     private FileWriter file;
     public int lastNode = -1;
     public Stack<Integer> buffer;
+    private String filename;
     public GraphViz(String filename) {
+        this.filename = filename;
         try {
-            file = new FileWriter(filename + ".dot");
-            file.write("graph" +
-                    "{" +
-                    "fontname=\"bold\"" +
-                    "node [fontname=\"bold\"]" +
-                    "edge [fontname=\"Helvetica,Arial,sans-serif\"]" +
-                    "{" +
-                    "label=\"AST\"");
+            file = new FileWriter(filename + "-ast.dot");
+            file.write("graph\n" +
+                    "\t{\n" +
+                    "\t\tfontname=\"Helvetica bold,bold\"\n" +
+                    "\t\tnode [fontname=\"Helvetica bold,bold\"]\n" +
+                    "\t\tedge [fontname=\"Helvetica,Arial,sans-serif\"]\n" +
+                    "\t\t{\n" +
+                    "\t\t\tlabel=\"AST\"\n");
+
             buffer = new Stack<>();
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
@@ -34,8 +37,8 @@ public class GraphViz {
     public int addNode(String node, boolean isLeaf) {
         try {
             lastNode++;
-            file.write("node" + lastNode + ";");
-            file.write("node" + lastNode + " [label=\"" + node + "\" shape=" + (isLeaf ? "plaintext" : "egg") + " fontcolor=" + (isLeaf ? "mediumseagreen" : "black") + (!isLeaf ? " style=filled fillcolor=antiquewhite" : "") + "];");
+            file.write("\t\t\tnode" + lastNode + ";\n");
+            file.write("\t\t\tnode" + lastNode + " [label=\"" + node + "\" shape=" + (isLeaf ? "plaintext" : "egg") + " fontcolor=" + (isLeaf ? "mediumseagreen" : "black") + (!isLeaf ? " style=filled fillcolor=antiquewhite" : "") + "];\n");
             return lastNode;
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
@@ -45,7 +48,7 @@ public class GraphViz {
 
     public void addEdge(int node1, int node2) {
         try {
-            file.write("node" + node1 + " -- node" + node2 + ";");
+            file.write("\t\t\tnode" + node1 + " -- node" + node2 + ";\n");
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
@@ -56,8 +59,8 @@ public class GraphViz {
 
     public void close() {
         try {
-            file.write("}" +
-                    "}");
+            file.write("\t\t}" +
+                    "\t}");
             file.flush();
             file.close();
         } catch (IOException e) {
@@ -67,12 +70,12 @@ public class GraphViz {
 
     public void export() {
         try {
-            String graph = new String(Files.readAllBytes(Paths.get("ast.dot")));
+            String graph = new String(Files.readAllBytes(Paths.get(filename + "-ast.dot")));
             String layout = "dot";
             String format = "svg";
 
             String url = "https://quickchart.io/graphviz";
-            String body = "{\"graph\": \"" + graph.replaceAll("\"", "\\\\\"") + "\", \"layout\": \"" + layout + "\", \"format\": \"" + format + "\"}";
+            String body = "{\"graph\": \"" + graph.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\"", "\\\\\"") + "\", \"layout\": \"" + layout + "\", \"format\": \"" + format + "\"}";
 
 
             URL obj = new URL(url);
@@ -96,7 +99,7 @@ public class GraphViz {
             int responseCode = con.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 try (InputStream in = new BufferedInputStream(con.getInputStream());
-                     FileOutputStream fos = new FileOutputStream("ast.svg")) {
+                     FileOutputStream fos = new FileOutputStream(filename + "-ast.svg")) {
                     byte[] buffer = new byte[4096];
                     int bytesRead;
                     while ((bytesRead = in.read(buffer)) != -1) {
