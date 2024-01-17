@@ -1503,9 +1503,15 @@ public class AnalyzeTable {
         // OUT_OR_NOT ::= ε (lecture de access)
         // OUT_OR_NOT ::= out (lecture de out)
         if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.ACCESS)){
+            // semantic functions
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("IN"));
+            // end semantic functions
             parser.stack.push(Tag.OUT_OR_NOT);
         }
         else if (current.getTag() == Tag.OUT){
+            // semantic functions
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("IN OUT"));
+            // end semantic functions
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();

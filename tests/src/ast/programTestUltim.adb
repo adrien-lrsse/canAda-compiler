@@ -43,7 +43,7 @@ procedure Gestion_Produit is
     end Ajuster_Prix;
 
     -- Fonction pour simuler la vente de plusieurs unités du produit
-    procedure Vendre_Produit(P : in out Produit; Quantite_Vendue : Integer) is
+    procedure Vendre_Produit(P : in Produit; Quantite_Vendue : Integer) is
     begin
         for I in 1..Quantite_Vendue loop
             if Est_En_Stock(P) then
