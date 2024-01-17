@@ -53,7 +53,7 @@ public class Lexer {
         reserve(new Word(Tag.OR, "or"));
         reserve(new Word(Tag.ASSIGNMENT, ":="));
 
-        this.fileName = fileName;
+        this.fileName = fileName.substring(0, fileName.lastIndexOf('.'));
         this.fileReader = new FileReader(fileName);
     }
 

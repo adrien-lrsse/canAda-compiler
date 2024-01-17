@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'com.adarshr.test-logger' version '3.2.0'
+    id 'application'
 }
 
 repositories {
@@ -10,6 +11,11 @@ repositories {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation group: 'args4j', name: 'args4j', version: '2.32'
+}
+
+application {
+    mainClass = 'CanAda'
 }
 
 sourceSets {

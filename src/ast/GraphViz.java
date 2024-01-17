@@ -59,7 +59,7 @@ public class GraphViz {
 
     public void close() {
         try {
-            file.write("\t\t}" +
+            file.write("\t\t}\n" +
                     "\t}");
             file.flush();
             file.close();
