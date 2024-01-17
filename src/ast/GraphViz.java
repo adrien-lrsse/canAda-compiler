@@ -18,25 +18,24 @@ public class GraphViz {
     public GraphViz(String filename) {
         try {
             file = new FileWriter(filename + ".dot");
-            file.write("graph" +
-                    "{" +
-                    "fontname=\"Helvetica,Arial,sans-serif\"" +
-                    "node [fontname=\"Helvetica,Arial,sans-serif\"]" +
-                    "edge [fontname=\"Helvetica,Arial,sans-serif\"]" +
-                    "subgraph cluster01" +
-                    "{" +
-                    "label=\"AST\"");
+            file.write("graph \"\"\n" +
+                    "\t{\n" +
+                    "\t\tfontname=\"Helvetica,Arial,sans-serif\"\n" +
+                    "\t\tnode [fontname=\"Helvetica bold\"]\n" +
+                    "\t\tedge [fontname=\"Helvetica,Arial,sans-serif\"]\n" +
+                    "\t\t{\n" +
+                    "\t\t\tlabel=\"AST\"\n");
             buffer = new Stack<>();
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
    }
 
-    public int addNode(String node) {
+    public int addNode(String node, boolean isLeaf) {
         try {
             lastNode++;
-            file.write("node" + lastNode + ";");
-            file.write("node" + lastNode + " [label=\"" + node + "\"];");
+            file.write("\t\t\tnode" + lastNode + ";\n");
+            file.write("\t\t\tnode" + lastNode + " [label=\"" + node + "\" shape=" + (isLeaf ? "plaintext" : "egg") + " fontcolor=" + (isLeaf ? "mediumseagreen" : "black") + (!isLeaf ? " style=filled fillcolor=antiquewhite" : "") + "];\n");
             return lastNode;
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
@@ -46,7 +45,7 @@ public class GraphViz {
 
     public void addEdge(int node1, int node2) {
         try {
-            file.write("node" + node1 + " -- node" + node2 + ";");
+            file.write("\t\t\tnode" + node1 + " -- node" + node2 + ";\n");
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
@@ -57,8 +56,8 @@ public class GraphViz {
 
     public void close() {
         try {
-            file.write("}" +
-                    "}");
+            file.write("\t\t}\n" +
+                    "\t}\n");
             file.flush();
             file.close();
         } catch (IOException e) {
