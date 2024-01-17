@@ -7,8 +7,8 @@ import java.io.IOException;
 
 public class ParserDemo {
     public static void main(String[] args) throws IOException {
-        Lexer lexer = new Lexer("tests/src/ast/programTestUltim.adb");
+        Lexer lexer = new Lexer("tests/src/parser/incorrect/testMissingEnd.adb");
         Parser parser = new Parser(lexer);
-        parser.parse();
+        parser.parse(true);
     }
 }

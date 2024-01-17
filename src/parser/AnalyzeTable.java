@@ -15,20 +15,22 @@ public class AnalyzeTable {
         this.parser = parser;
     }
 
-    public void analyze() throws IOException {
+    public void analyze(boolean export) throws IOException {
         current = parser.lexer.scan();
          try {
             this.ficher();
          } catch (Error e) {
              parser.ast.close();
-             System.out.println(e.getMessage());
+             throw e;
          }
         int temp = parser.stack.pop();
         if (temp != Tag.FICHIER) {
             throw new Error("Reduction/Stack error : expected <" + Tag.FICHIER + "> but found <" + current.getTag() + "> at line " + parser.lexer.getLine() + " '" + current.getStringValue() + "'");
         }
         parser.ast.close();
-        parser.ast.export();
+        if (export) {
+            parser.ast.export();
+        }
     }
 
     private void ficher() throws IOException {

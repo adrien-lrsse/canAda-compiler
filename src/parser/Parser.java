@@ -16,8 +16,8 @@ public class Parser {
         this.analyzeTable = new AnalyzeTable(this);
         this.ast = new GraphViz("ast");
     }
-    public void parse() throws IOException {
-        analyzeTable.analyze();
+    public void parse(boolean export) throws IOException {
+        analyzeTable.analyze(export);
         if (!stack.isEmpty()) {
             throw new RuntimeException("Stack is not empty");
         }
