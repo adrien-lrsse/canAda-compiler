@@ -14,7 +14,7 @@ public class CanAda {
     @Option(name = "-a", aliases = "--ast", usage = "Generate the .png AST")
     public boolean ast;
 
-    @Argument(required = true, usage = "Input file")
+    @Argument(required = true, usage = "Input file", metaVar = "INPUT")
     public String input;
 
     public static void main(String[] args) throws Exception {

@@ -85,15 +85,6 @@ PCL is a project developed in Java by a team of engineering students. It is a co
 
 To get a local copy up and running follow these simple steps.
 
-### Prerequisites
-
-TODO
-
-- TODO
-  ```sh
-  TODO
-  ```
-
 ### Installation
 
 1. Clone the repo
@@ -102,7 +93,8 @@ TODO
    ```
 2. Build all
    ```sh
-   TODO
+   cd mezureux1u
+   ./gradlew assemble
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -111,28 +103,29 @@ TODO
 
 ## Usage
 
-### TODO
+### Parse a file
 
 ```sh
-USAGE: ./canAda TODO
-
-OPTIONS:
-  -h                      Show this help message
-  TODO
+USAGE: ./gradlew run --args="parse [OPTIONS] FILE"
+  INPUT           : Input file
+  OPTIONS:
+     -a (--ast)   : Generate the .png AST (default: false)
+     -h (--help)  : Print this message (default: true)
+     -p (--parse) : Parse the input file (default: false)
 ```
 
 **Examples:**
 
-TODO
-
-<!-- ROADMAP -->
+```sh
+./gradlew run --args="parse -p -a tests/src/unDebut.adb"
+```
 
 ## Roadmap
 
 - [X] LEXER
 
-- [ ] PARSER
-  - [x] TODO
+- [X] PARSER
+  - [x] Display AST with Graphviz
 
 See the [open issues](https://gitlab.telecomnancy.univ-lorraine.fr/Stanislas.Mezureux/mezureux1u/-/issues) for a full list of proposed features (and known issues).
 
@@ -180,7 +173,7 @@ Project Link: [https://gitlab.telecomnancy.univ-lorraine.fr/Stanislas.Mezureux/m
 
 ## Acknowledgments
 
-- [TODO](https://www.google.com/)
+- [QuickChart GraphViz API](https://quickchart.io/documentation/graphviz-api/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
