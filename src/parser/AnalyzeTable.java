@@ -1567,12 +1567,13 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.NEW){
             // semantic function
             parser.ast.buffer.push(parser.ast.addNode("EXPRESSION_NEW", false));
-
             // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             if (current.getTag() == Tag.ID){
+                // semantic functions
                 parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme, true));
+                // end semantic functions
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 this.expression_or();
@@ -1602,8 +1603,7 @@ public class AnalyzeTable {
         }
         else if (current.getTag() == Tag.CHARACTERVAL){
             // semantic function
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("EXPRESSION_CHAR_VAL", false));
-            parser.ast.buffer.push(parser.ast.lastNode);
+            parser.ast.buffer.push(parser.ast.addNode("CHARACTER'VAL", false));
             // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
@@ -1612,6 +1612,10 @@ public class AnalyzeTable {
                 current = parser.lexer.scan();
                 this.unary();
                 this.expression();
+                // semantic function
+                int expr = parser.ast.buffer.pop();
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), expr);
+                // end semantic function
                 if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")){
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
@@ -1629,9 +1633,6 @@ public class AnalyzeTable {
                                         temp = parser.stack.pop();
                                         if (temp == Tag.CHARACTERVAL) {
                                             parser.stack.push(Tag.EXPRESSION);
-                                            // semantic function
-                                            parser.ast.buffer.pop();
-                                            // end semantic function
                                         } else {
                                             throw new Error("Reduction/Stack error : expected <" + Tag.CHARACTERVAL + "> but found <" + temp + ">");
                                         }
@@ -1670,32 +1671,22 @@ public class AnalyzeTable {
         // EXPRESSION_OR ::= ε (lecture de then)
         // EXPRESSION_OR ::= ε (lecture de loop)
         // EXPRESSION_OR ::= ε (lecture de .. )
-        // EXPRESSION_OR ::= or UNARY EXPRESSION_ELSE (lecture de or)
+        // EXPRESSION_OR ::= or EXPRESSION_ELSE (lecture de or)
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_OR);
         }
         else if (current.getTag() == Tag.OR){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("OR", false));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
-            this.unary();
             this.expression_else();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_ELSE){
                 temp = parser.stack.pop();
-                if (temp == Tag.UNARY){
-                    temp = parser.stack.pop();
-                    if (temp == Tag.OR){
-                        parser.stack.push(Tag.EXPRESSION_OR);
-                        parser.ast.buffer.pop();
-                    }
-                    else {
-                        throw new Error("Reduction/Stack error : expected <"+Tag.OR+"> but found <"+temp+">");
-                    }
+                if (temp == Tag.OR){
+                    parser.stack.push(Tag.EXPRESSION_OR);
                 }
                 else {
-                    throw new Error("Reduction/Stack error : expected <"+Tag.UNARY+"> but found <"+temp+">");
+                    throw new Error("Reduction/Stack error : expected <"+Tag.OR+"> but found <"+temp+">");
                 }
             }
             else {
@@ -1721,6 +1712,14 @@ public class AnalyzeTable {
         if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
             this.expression_1();
             this.expression_or();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("OR", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_OR) {
                 temp = parser.stack.pop();
@@ -1734,13 +1733,19 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.ELSE) {
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("OR_ELSE", false));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_1();
             this.expression_or();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("OR ELSE", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_OR) {
                 temp = parser.stack.pop();
@@ -1750,7 +1755,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.ELSE) {
                             parser.stack.push(Tag.EXPRESSION_ELSE);
-                            parser.ast.buffer.pop();
                         } else {
                             throw new Error("Reduction/Stack error : expected <" + Tag.ELSE + "> but found <" + temp + ">");
                         }
@@ -1811,32 +1815,23 @@ public class AnalyzeTable {
         // EXPRESSION_AND ::= ε (lecture de then)
         // EXPRESSION_AND ::= ε (lecture de loop)
         // EXPRESSION_AND ::= ε (lecture de .. )
-        // EXPRESSION_AND ::= and UNARY EXPRESSION_THEN (lecture de and)
+        // EXPRESSION_AND ::= and EXPRESSION_THEN (lecture de and)
         if ((current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(",")) || (current.getTag() == Tag.OR) || (current.getTag() == Tag.THEN) || (current.getTag() == Tag.LOOP) || (current.getTag() == Tag.DOUBLEPOINT)){
             parser.stack.push(Tag.EXPRESSION_AND);
         }
         else if (current.getTag() == Tag.AND){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("AND", false));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
-            this.unary();
             this.expression_then();
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_THEN){
                 temp = parser.stack.pop();
-                if (temp == Tag.UNARY){
-                    temp = parser.stack.pop();
-                    if (temp == Tag.AND){
-                        parser.stack.push(Tag.EXPRESSION_AND);
-                        parser.ast.buffer.pop();
-                    }
-                    else {
-                        throw new Error("Reduction/Stack error : expected <"+Tag.AND+"> but found <"+temp+">");
-                    }
+
+                if (temp == Tag.AND){
+                    parser.stack.push(Tag.EXPRESSION_AND);
                 }
                 else {
-                    throw new Error("Reduction/Stack error : expected <"+Tag.UNARY+"> but found <"+temp+">");
+                    throw new Error("Reduction/Stack error : expected <"+Tag.AND+"> but found <"+temp+">");
                 }
             }
             else {
@@ -1862,6 +1857,14 @@ public class AnalyzeTable {
         if ((current.getTag() == Tag.ID) || (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)){
             this.expression_not();
             this.expression_and();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("AND", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_AND){
                 temp = parser.stack.pop();
@@ -1877,13 +1880,19 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.THEN){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("THEN", false));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_not();
             this.expression_and();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("AND THEN", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_AND){
                 temp = parser.stack.pop();
@@ -1893,7 +1902,6 @@ public class AnalyzeTable {
                         temp = parser.stack.pop();
                         if (temp == Tag.THEN){
                             parser.stack.push(Tag.EXPRESSION_THEN);
-                            parser.ast.buffer.pop();
                         }
                         else {
                             throw new Error("Reduction/Stack error : expected <"+Tag.THEN+"> but found <"+temp+">");
@@ -1944,12 +1952,16 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.NOT){
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("NOT", false));
-            parser.ast.buffer.push(parser.ast.lastNode);
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.unary();
             this.expression_not();
+            // semantic function
+            int south = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("NOT", false);
+            parser.ast.addEdge(newNode, south);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.EXPRESSION_NOT){
                 temp = parser.stack.pop();
@@ -1957,7 +1969,6 @@ public class AnalyzeTable {
                     temp = parser.stack.pop();
                     if (temp == Tag.NOT){
                         parser.stack.push(Tag.EXPRESSION_NOT);
-                        parser.ast.buffer.pop();
                     }
                     else {
                         throw new Error("Reduction/Stack error : expected <"+Tag.NOT+"> but found <"+temp+">");
@@ -2895,7 +2906,7 @@ public class AnalyzeTable {
                 int ident = parser.ast.addNode(((Word)current).getStringValue(), true);
                 parser.ast.buffer.push(ident);
             }
-            // end semantic function
+            // end semantic functionnot
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             int temp = parser.stack.pop();
@@ -3135,7 +3146,8 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             // semantic function
-            parser.ast.buffer.push(parser.ast.addNode("BLOCK_INSTRCUTIONS", false));
+            parser.ast.addEdge(parser.ast.buffer.lastElement(),parser.ast.addNode("BLOCK_INSTRCUTIONS", false));
+            parser.ast.buffer.push(parser.ast.lastNode);
             // end semantic function
             this.generate_instructions();
             if (current.getTag() == Tag.END) {
@@ -4245,10 +4257,16 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.NEW) {
+            // semantic function
+            parser.ast.buffer.push(parser.ast.addNode("EXPRESSION_NEW", false));
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.checkIdent = false;
             if (current.getTag() == Tag.ID) {
+                // semantic functions
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).lexeme, true));
+                // end semantic functions
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 this.checkIdent = false;
@@ -4274,6 +4292,9 @@ public class AnalyzeTable {
             }
         }
         else if (current.getTag() == Tag.CHARACTERVAL) {
+            // semantic function
+            parser.ast.buffer.push(parser.ast.addNode("CHARACTER'VAL", false));
+            // end semantic function
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.checkIdent = false;
@@ -4283,6 +4304,10 @@ public class AnalyzeTable {
                 this.checkIdent = false;
                 this.unary();
                 this.expression();
+                // semantic functions
+                int expr = parser.ast.buffer.pop();
+                parser.ast.addEdge(parser.ast.buffer.lastElement(),expr);
+                // end semantic functions
                 if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(")")) {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
@@ -4332,7 +4357,7 @@ public class AnalyzeTable {
     //WI_EXPRESSION_OR
     private void wi_expression_or() throws IOException{
         //WI_EXPRESSION_OR ::= ε (lecture de :=)
-        //WI_EXPRESSION_OR ::= or UNARY WI_EXPRESSION_ELSE (lecture de or)
+        //WI_EXPRESSION_OR ::= or WI_EXPRESSION_ELSE (lecture de or)
         if (current.getTag() == Tag.ASSIGNMENT) {
             parser.stack.push(Tag.WI_EXPRESSION_OR);
         }
@@ -4340,19 +4365,12 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.checkIdent = false;
-            this.unary();
             this.wi_expression_else();
             int temp = parser.stack.pop();
             if(temp == Tag.WI_EXPRESSION_ELSE) {
                 temp = parser.stack.pop();
-                if(temp == Tag.UNARY) {
-                    temp = parser.stack.pop();
-                    if(temp == Tag.OR) {
-                        parser.stack.push(Tag.WI_EXPRESSION_OR);
-                    }
-                    else {
-                        throw new Error("Reduction/Stack error : expected <"+Tag.OR+"> but found <"+temp+">");
-                    }
+                if(temp == Tag.OR) {
+                    parser.stack.push(Tag.WI_EXPRESSION_OR);
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.UNARY+"> but found <"+temp+">");
@@ -4380,6 +4398,14 @@ public class AnalyzeTable {
         if ((current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "(")) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
             this.wi_expression_1();
             this.wi_expression_or();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("OR", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_OR) {
                 temp = parser.stack.pop();
@@ -4399,6 +4425,14 @@ public class AnalyzeTable {
             this.unary();
             this.wi_expression_1();
             this.wi_expression_or();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("OR ELSE", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_OR) {
                 temp = parser.stack.pop();
@@ -4459,7 +4493,7 @@ public class AnalyzeTable {
     private void wi_expression_and() throws IOException{
         //WI_EXPRESSION_AND ::= ε (lecture de :=)
         //WI_EXPRESSION_AND ::= ε (lecture de or)
-        //WI_EXPRESSION_AND ::= and UNARY WI_EXPRESSION_THEN (lecture de and)
+        //WI_EXPRESSION_AND ::= and WI_EXPRESSION_THEN (lecture de and)
         if (current.getTag() == Tag.ASSIGNMENT) {
             parser.stack.push(Tag.WI_EXPRESSION_AND);
         }
@@ -4470,19 +4504,12 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             this.checkIdent = false;
-            this.unary();
             this.wi_expression_then();
             int temp = parser.stack.pop();
             if(temp == Tag.WI_EXPRESSION_THEN) {
                 temp = parser.stack.pop();
-                if(temp == Tag.UNARY) {
-                    temp = parser.stack.pop();
-                    if(temp == Tag.AND) {
-                        parser.stack.push(Tag.WI_EXPRESSION_AND);
-                    }
-                    else {
-                        throw new Error("Reduction/Stack error : expected <"+Tag.AND+"> but found <"+temp+">");
-                    }
+                if(temp == Tag.AND) {
+                    parser.stack.push(Tag.WI_EXPRESSION_AND);
                 }
                 else {
                     throw new Error("Reduction/Stack error : expected <"+Tag.UNARY+"> but found <"+temp+">");
@@ -4510,6 +4537,14 @@ public class AnalyzeTable {
         if ((current.getTag() == Tag.SYMBOL && Objects.equals(current.getStringValue(), "(")) || (current.getTag() == Tag.NOT) || (current.getTag() == Tag.NUMCONST) || (current.getTag() == Tag.CHAR) || (current.getTag() == Tag.TRUE) || (current.getTag() == Tag.FALSE) || (current.getTag() == Tag.NULL)) {
             this.wi_expression_not();
             this.wi_expression_and();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("AND", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_AND) {
                 temp = parser.stack.pop();
@@ -4529,6 +4564,14 @@ public class AnalyzeTable {
             this.unary();
             this.wi_expression_not();
             this.wi_expression_and();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("AND THEN", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_AND) {
                 temp = parser.stack.pop();
@@ -4580,6 +4623,12 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_not();
+            // semantic function
+            int south = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("NOT", false);
+            parser.ast.addEdge(newNode, south);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_NOT) {
                 temp = parser.stack.pop();
@@ -4646,6 +4695,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_4();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("=", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_equals();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_EQUALS) {
@@ -4675,6 +4732,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_4();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("/=", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_equals();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_EQUALS) {
@@ -4751,6 +4816,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_5();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode(">", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_comparaison();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_COMPARAISON) {
@@ -4780,6 +4853,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_5();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode(">=", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_comparaison();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_COMPARAISON) {
@@ -4809,6 +4890,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_5();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("<", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_comparaison();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_COMPARAISON) {
@@ -4838,6 +4927,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_5();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("<=", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_comparaison();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_COMPARAISON) {
@@ -4916,6 +5013,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_6();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("+", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_plus_moins();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_PLUS_MOINS) {
@@ -4945,6 +5050,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_6();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("-", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_plus_moins();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_PLUS_MOINS) {
@@ -5026,6 +5139,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_access_ident();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("*", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_mul_div();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_MUL_DIV) {
@@ -5055,6 +5176,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_access_ident();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("/", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_mul_div();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_MUL_DIV) {
@@ -5084,6 +5213,14 @@ public class AnalyzeTable {
             this.checkIdent = false;
             this.unary();
             this.wi_expression_access_ident();
+            // semantic function
+            int right = parser.ast.buffer.pop();
+            int left = parser.ast.buffer.pop();
+            int newNode = parser.ast.addNode("REM", false);
+            parser.ast.addEdge(newNode,right);
+            parser.ast.addEdge(newNode,left);
+            parser.ast.buffer.push(newNode);
+            // end semantic function
             this.wi_expression_mul_div();
             int temp = parser.stack.pop();
             if (temp == Tag.WI_EXPRESSION_MUL_DIV) {
