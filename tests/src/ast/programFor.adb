@@ -9,10 +9,9 @@ begin
     Nombre := 13;
 
     -- Utilisation d'une boucle for pour afficher les carrés des nombres de 1 à N
-    Put("Les carrés sont : ");
+    -- Put("Les carrés sont : ");
 
     for I in 1..N loop
         Put(I * I);
-        Put(" ");
     end loop;
 end Programme_Boucle_For;
