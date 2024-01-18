@@ -31,6 +31,8 @@
     <a href="https://gitlab.telecomnancy.univ-lorraine.fr/Stanislas.Mezureux/mezureux1u/-/tree/main/docs"><strong>Explore the docs »</strong></a>
     <br />
     <br />
+    <a href="https://gitlab.telecomnancy.univ-lorraine.fr/pcd2k24/codingweek-12/-/commits/master"><img alt="pipeline status" src="https://gitlab.telecomnancy.univ-lorraine.fr/pcd2k24/codingweek-12/badges/master/pipeline.svg" /></a>
+    <br />
     <a href="https://gitlab.telecomnancy.univ-lorraine.fr/Stanislas.Mezureux/mezureux1u">View Demo</a>
     ·
     <a href="https://gitlab.telecomnancy.univ-lorraine.fr/Stanislas.Mezureux/mezureux1u/-/issues">Report Bug</a>

@@ -47,7 +47,7 @@ public class CanAda {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
             System.exit(1);
-        } catch (Exception e) {
+        } catch (Exception | Error e) {
             System.err.println("An \033[31merror occurred\033[0m:");
             System.err.println(e.getMessage());
             System.exit(1);
