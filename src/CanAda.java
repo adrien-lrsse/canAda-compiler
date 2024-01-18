@@ -40,7 +40,7 @@ public class CanAda {
                 System.out.println("Parsing completed \033[32msuccessfully\033[0m");
                 System.out.println("AST (.dot) generated at \033[4m" + l.getFileName() + "-ast.dot\033[0m");
                 if (ast) {
-                    System.out.println("AST (.png) generated at \033[4m" + l.getFileName() + "-ast.svg\033[0m");
+                    System.out.println("AST (.svg) generated at \033[4m" + l.getFileName() + "-ast.svg\033[0m");
                 }
             }
         } catch (org.kohsuke.args4j.CmdLineException e) {
