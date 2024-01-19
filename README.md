@@ -78,6 +78,8 @@ PCL is a project developed in Java by a team of engineering students. It is a co
 ### Built With
 
 - ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+- ![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white)
+- ![GitLab CI](https://img.shields.io/badge/gitlab%20ci-%23181717.svg?style=for-the-badge&logo=gitlab&logoColor=white)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -108,7 +110,7 @@ To get a local copy up and running follow these simple steps.
 ### Parse a file
 
 ```sh
-USAGE: ./gradlew run --args="parse [OPTIONS] FILE"
+USAGE: ./gradlew run --args="[OPTIONS] FILE"
   INPUT           : Input file
   OPTIONS:
      -a (--ast)   : Generate the .png AST (default: false)
