@@ -16,6 +16,8 @@ public class GraphViz {
     public int lastNode = -1;
     public Stack<Integer> buffer;
     private String filename;
+
+    private Tree tree;
     public GraphViz(String filename) {
         this.filename = filename;
         try {
@@ -32,6 +34,7 @@ public class GraphViz {
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
+        this.tree = new Tree();
    }
 
     public int addNode(String node, boolean isLeaf) {
@@ -39,6 +42,7 @@ public class GraphViz {
             lastNode++;
             file.write("\t\t\tnode" + lastNode + ";\n");
             file.write("\t\t\tnode" + lastNode + " [label=\"" + node + "\" shape=" + (isLeaf ? "plaintext" : "egg") + " fontcolor=" + (isLeaf ? "mediumseagreen" : "black") + (!isLeaf ? " style=filled fillcolor=antiquewhite" : "") + "];\n");
+            this.tree.addNode(lastNode, node);
             return lastNode;
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
@@ -49,6 +53,7 @@ public class GraphViz {
     public void addEdge(int node1, int node2) {
         try {
             file.write("\t\t\tnode" + node1 + " -- node" + node2 + ";\n");
+            this.tree.addEdge(node1, node2);
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
@@ -128,4 +133,7 @@ public class GraphViz {
         }
     }
 
+    public Tree getTree() {
+        return tree;
+    }
 }
