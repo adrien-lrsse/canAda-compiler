@@ -121,7 +121,7 @@ USAGE: ./gradlew run --args="[OPTIONS] FILE"
 **Examples:**
 
 ```sh
-./gradlew run --args="parse -p -a tests/src/unDebut.adb"
+./gradlew run --args="-p tests/src/unDebut.ad -a"
 ```
 
 ## Roadmap
