@@ -10,5 +10,7 @@ public class ParserDemo {
         Lexer lexer = new Lexer("tests/src/ast/programTestUltim.adb");
         Parser parser = new Parser(lexer);
         parser.parse(true);
+        // System.out.println("Depth First Traversal");
+        // parser.printDepthFirstTraversal();
     }
 }

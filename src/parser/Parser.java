@@ -22,4 +22,10 @@ public class Parser {
             throw new RuntimeException("Stack is not empty");
         }
     }
+
+    public void printDepthFirstTraversal() {
+        for (int i = 0; i < ast.getDepthFirstTraversal().size(); i++) {
+            System.out.println(ast.getDepthFirstTraversal().get(i).getLabel());
+        }
+    }
 }
