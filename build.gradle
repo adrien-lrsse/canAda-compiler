@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'com.adarshr.test-logger' version '3.2.0'
     id 'application'
+    id 'jacoco'
 }
 
 repositories {

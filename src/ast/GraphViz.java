@@ -3,6 +3,8 @@ package ast;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
@@ -84,7 +86,8 @@ public class GraphViz {
             String body = "{\"graph\": \"" + graph.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\"", "\\\\\"") + "\", \"layout\": \"" + layout + "\", \"format\": \"" + format + "\"}";
 
 
-            URL obj = new URL(url);
+            // URL obj = new URL(url);
+            URL obj = new URI(url).toURL();
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
             // Paramètres de la requête
@@ -131,6 +134,8 @@ public class GraphViz {
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("An error occurred: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
     }
 
