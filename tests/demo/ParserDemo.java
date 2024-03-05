@@ -1,5 +1,6 @@
 package demo;
 
+import ast.SemanticAnalyzer;
 import lexer.Lexer;
 import parser.Parser;
 
@@ -7,10 +8,11 @@ import java.io.IOException;
 
 public class ParserDemo {
     public static void main(String[] args) throws IOException {
-        Lexer lexer = new Lexer("tests/src/ast/programTestUltim.adb");
+        Lexer lexer = new Lexer("tests/src/unDebut.adb");
         Parser parser = new Parser(lexer);
         parser.parse(true);
-//        System.out.println("Depth First Traversal");
-//        parser.printDepthFirstTraversal();
+        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
+        semanticAnalyzer.analyze();
+        semanticAnalyzer.getTds().display();
     }
 }
