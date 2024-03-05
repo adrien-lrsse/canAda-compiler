@@ -133,6 +133,9 @@ public class Parser {
                     stack.push(tmp);
                     break;
                 case "STRUCTURE":
+                    if (node.getChildren().size() < 2) {
+                        break;
+                    }
                     tmp = stack.pop();
                     Record record = new Record(stack.size(), stack.lastElement());
                     stack.push(tmp);
