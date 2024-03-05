@@ -3280,7 +3280,7 @@ public class AnalyzeTable {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 // semantic functions
-                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("INSTRUCTIONS", false));
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("THEN", false));
                 parser.ast.buffer.push(parser.ast.lastNode);
                 // end functions
                 this.generate_instructions();
@@ -3391,7 +3391,7 @@ public class AnalyzeTable {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 // semantic functions
-                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("INSTRUCTIONS", false));
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("DO", false));
                 parser.ast.buffer.push(parser.ast.lastNode);
                 // end functions
                 this.generate_instructions();
@@ -3727,7 +3727,7 @@ public class AnalyzeTable {
                     parser.stack.push(current.getTag());
                     current = parser.lexer.scan();
                     // semantic functions
-                    parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("INSTRUCTIONS", false));
+                    parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("DO", false));
                     parser.ast.buffer.push(parser.ast.lastNode);
                     // end semantic functions
                     this.generate_instructions();

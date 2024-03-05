@@ -35,4 +35,16 @@ public class Param extends Symbol {
     public void setMode(int mode) {
         this.mode = mode;
     }
+
+    @Override
+    public String toString() {
+        return "Param{" +
+                "nestingLevel=" + getNestingLevel() +
+                ", father=" + getFather() +
+                ", name='" + getName() + '\'' +
+                ", type='" + type + '\'' +
+                ", offset=" + offset +
+                ", mode=" + mode +
+                '}';
+    }
 }

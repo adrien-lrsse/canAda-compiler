@@ -25,4 +25,15 @@ public class Var extends Symbol {
     public void setOffset(int offset) {
         this.offset = offset;
     }
+
+    @Override
+    public String toString() {
+        return "Var{" +
+                "nestingLevel=" + getNestingLevel() +
+                ", father=" + getFather() +
+                ", name='" + getName() + '\'' +
+                ", type='" + type + '\'' +
+                ", offset=" + offset +
+                '}';
+    }
 }
