@@ -3003,6 +3003,13 @@ public class AnalyzeTable {
         else if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            // semantic function
+            int ident = parser.ast.buffer.pop();
+            int callNode = parser.ast.addNode("CALL", false);
+            parser.ast.addEdge(callNode, ident);
+            parser.ast.buffer.push(callNode);
+            parser.ast.buffer.push(ident);
+            // end semantic function
             this.unary();
             this.generate_expression();
             int temp = parser.stack.pop();
@@ -3011,6 +3018,9 @@ public class AnalyzeTable {
                 if (temp == Tag.UNARY) {
                     temp = parser.stack.pop();
                     if (temp == Tag.SYMBOL) {
+                        // semantic function
+                        parser.ast.buffer.pop();
+                        // end semantic function
                         parser.stack.push(Tag.START_NEW_EXPRESSION);
                     } else {
                         throw new Error("Reduction/Stack error : expected <" + Tag.SYMBOL + "> but found <" + temp + ">");
@@ -3611,8 +3621,19 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
+            // semantic function
+            System.out.println(parser.ast.buffer);
+            int ident = parser.ast.buffer.pop();
+            int callNode = parser.ast.addNode("CALL", false);
+            parser.ast.addEdge(callNode, ident);
+            parser.ast.buffer.push(callNode);
+            parser.ast.buffer.push(ident);
+            // end semantic function
             this.unary();
             this.generate_expression();
+            // semantic function
+            parser.ast.buffer.pop();
+            // end semantic function
             this.instruction_ident_expression1();
             int temp = parser.stack.pop();
             if (temp == Tag.INSTRUCTION_IDENT_EXPRESSION1) {
