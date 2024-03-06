@@ -22,14 +22,12 @@ public class SemanticAnalyzer {
     public void analyze() {
         // init stack with imported functions
         stack.push(tds.newRegion());
-        Func putInt = new Func(0, -1);
+        Proc putInt = new Proc(0, -1);
         putInt.setName("put");
-        putInt.setReturnType("");
         putInt.addType("integer");
         tds.addSymbol(stack.lastElement(), putInt);
-        Func putChar = new Func(0, -1);
+        Proc putChar = new Proc(0, -1);
         putChar.setName("put");
-        putChar.setReturnType("");
         putChar.addType("character");
         tds.addSymbol(stack.lastElement(), putChar);
         Func characterVal = new Func(0, -1);
