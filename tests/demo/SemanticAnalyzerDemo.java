@@ -12,7 +12,11 @@ public class SemanticAnalyzerDemo {
         Parser parser = new Parser(lexer);
         parser.parse(false);
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
-        semanticAnalyzer.analyze();
-        semanticAnalyzer.getTds().display();
+        try {
+            semanticAnalyzer.analyze();
+            semanticAnalyzer.getTds().display();
+        } catch (ast.SemanticException e) {
+            System.exit(1);
+        }
     }
 }
