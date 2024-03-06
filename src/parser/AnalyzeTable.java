@@ -3622,7 +3622,6 @@ public class AnalyzeTable {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
             // semantic function
-            System.out.println(parser.ast.buffer);
             int ident = parser.ast.buffer.pop();
             int callNode = parser.ast.addNode("CALL", false);
             parser.ast.addEdge(callNode, ident);

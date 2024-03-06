@@ -136,10 +136,10 @@ public class SemanticAnalyzer {
 
 
     public void analyzeInstructions(int instructionNode,int currentDecl){
-        List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
-        for (Integer children : childrens) {
-            Node node = ast.getTree().nodes.get(children);
-            try {
+        try {
+            List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
+            for (Integer children : childrens) {
+                Node node = ast.getTree().nodes.get(children);
                 switch (node.getLabel()) {
                     case ":=":
                         analyzeAssignation(children);
@@ -151,23 +151,23 @@ public class SemanticAnalyzer {
                         analyseEnd(children, currentDecl);
                         break;
                 }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
             }
+        } catch (SemanticException e) {
+            throw new Error(e.getMessage());
         }
     }
 
-    private void analyzeAssignation(Integer nodeInt) throws IOException {
+    private void analyzeAssignation(Integer nodeInt) throws SemanticException {
         Node node = ast.getTree().nodes.get(nodeInt);
         if (!(isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()))){
-            throw new Error(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " is not defined") ;
+            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " is not defined") ;
         }
     }
 
-    private void analyzeIf(Integer node) throws Exception{
+    private void analyzeIf(Integer node) throws SemanticException{
     }
 
-    private void analyseEnd(Integer node, int currentDecl) throws Exception{
+    private void analyseEnd(Integer node, int currentDecl) throws SemanticException{
         String endLabel = "";
         if (!ast.getTree().nodes.get(node).getChildren().isEmpty()){
             endLabel = ast.getTree().nodes.get(ast.getTree().nodes.get(node).getChildren().get(0)).getLabel();
@@ -176,7 +176,7 @@ public class SemanticAnalyzer {
             int tmp = stack.pop();
             String wanted = tds.getTds().get(stack.lastElement()).get(currentDecl).getName();
             if (!(endLabel.equals(wanted))){
-                throw new Error("End label ("+endLabel+") is not the same as the declaration ("+tds.getTds().get(stack.lastElement()).get(currentDecl).getName()+")");
+                throw new SemanticException("End label ("+endLabel+") is not the same as the declaration ("+tds.getTds().get(stack.lastElement()).get(currentDecl).getName()+")");
             }
             stack.push(tmp);
         }

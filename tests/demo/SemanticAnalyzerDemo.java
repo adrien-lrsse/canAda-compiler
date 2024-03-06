@@ -6,10 +6,13 @@ import parser.Parser;
 
 import java.io.IOException;
 
-public class ParserDemo {
+public class SemanticAnalyzerDemo {
     public static void main(String[] args) throws IOException {
         Lexer lexer = new Lexer("tests/src/unDebut.adb");
         Parser parser = new Parser(lexer);
-        parser.parse(true);
+        parser.parse(false);
+        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
+        semanticAnalyzer.analyze();
+        semanticAnalyzer.getTds().display();
     }
 }
