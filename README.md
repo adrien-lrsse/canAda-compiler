@@ -113,15 +113,16 @@ To get a local copy up and running follow these simple steps.
 USAGE: ./gradlew run --args="[OPTIONS] FILE"
   INPUT           : Input file
   OPTIONS:
-     -a (--ast)   : Generate the .png AST (default: false)
-     -h (--help)  : Print this message (default: true)
-     -p (--parse) : Parse the input file (default: false)
+     -a (--ast)      : Generate the .png AST (default: false)
+     -h (--help)     : Print this message (default: true)
+     -p (--parse)    : Parse the input file (default: false)
+     -s (--semantic) : Run the semantic analysis (default: false)
 ```
 
 **Examples:**
 
 ```sh
-./gradlew run --args="-p tests/src/unDebut.ad -a"
+./gradlew run --args="-p tests/src/unDebut.adb -a"
 ```
 
 ## Roadmap
@@ -129,7 +130,9 @@ USAGE: ./gradlew run --args="[OPTIONS] FILE"
 - [X] LEXER
 
 - [X] PARSER
-  - [x] Display AST with Graphviz
+
+- [] SEMANTIC ANALYSIS
+    - [X] Symbol Table
 
 See the [open issues](https://gitlab.telecomnancy.univ-lorraine.fr/Stanislas.Mezureux/mezureux1u/-/issues) for a full list of proposed features (and known issues).
 
