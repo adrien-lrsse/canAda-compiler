@@ -1,5 +1,7 @@
 package tds;
 
+import ast.SemanticException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,12 @@ public class TDS {
         return region;
     }
 
-    public int addSymbol(int region, Symbol symbol) {
+    public int addSymbol(int region, Symbol symbol) throws SemanticException {
+        for (Symbol s : tds.get(region)) {
+            if (s.getName().equals(symbol.getName()) && !s.getName().equals("put")) {
+                throw new SemanticException("Label '" + symbol.getName() + "' already used in this scope");
+            }
+        }
         tds.get(region).add(symbol);
         return tds.get(region).size() - 1;
     }
