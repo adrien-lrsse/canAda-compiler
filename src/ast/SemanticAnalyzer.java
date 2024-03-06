@@ -158,8 +158,8 @@ public class SemanticAnalyzer {
 
     private void analyzeAssignation(Integer nodeInt) throws IOException {
         Node node = ast.getTree().nodes.get(nodeInt);
-        if (!(isDeclerationInMyParents(node.getChildren().getFirst(), stack.lastElement()))){
-            throw new Error(ast.getTree().nodes.get(node.getChildren().getFirst()).getLabel() + " is not defined") ;
+        if (!(isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()))){
+            throw new Error(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " is not defined") ;
         }
     }
 
