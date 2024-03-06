@@ -3,6 +3,7 @@ package ast;
 import tds.*;
 import tds.Record;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -127,11 +128,36 @@ public class SemanticAnalyzer {
                     tds.addSymbol(stack.lastElement(), record);
                     break;
                 case "INSTRUCTIONS":
+                    analyzeInstructions(node.getId());
                     stack.pop();
                     break;
             }
         }
     }
+
+
+    public void analyzeInstructions(int instructionNode){
+        List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
+        for (Integer children : childrens) {
+            Node node = ast.getTree().nodes.get(children);
+            switch (node.getLabel()) {
+                case ":=":
+                    analyzeAssignation(children);
+                    break;
+                case "IF":
+                    analyzeIf(children);
+                    break;
+            }
+        }
+    }
+
+    private void analyzeAssignation(Integer node) {
+    }
+
+    private void analyzeIf(Integer node) {
+    }
+
+
 
     public TDS getTds() {
         return tds;
