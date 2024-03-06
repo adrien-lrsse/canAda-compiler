@@ -140,21 +140,25 @@ public class SemanticAnalyzer {
         List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
         for (Integer children : childrens) {
             Node node = ast.getTree().nodes.get(children);
-            switch (node.getLabel()) {
-                case ":=":
-                    analyzeAssignation(children);
-                    break;
-                case "IF":
-                    analyzeIf(children);
-                    break;
+            try {
+                switch (node.getLabel()) {
+                    case ":=":
+                        analyzeAssignation(children);
+                        break;
+                    case "IF":
+                        analyzeIf(children);
+                        break;
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         }
     }
 
-    private void analyzeAssignation(Integer node) {
+    private void analyzeAssignation(Integer node) throws Exception {
     }
 
-    private void analyzeIf(Integer node) {
+    private void analyzeIf(Integer node) throws Exception{
     }
 
 
