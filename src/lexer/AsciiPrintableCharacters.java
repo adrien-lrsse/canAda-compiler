@@ -17,5 +17,4 @@ public class AsciiPrintableCharacters {
     public static boolean isAsciiPrintable(int c) {
         return c >= 32 && c <= 126;
     }
-
 }

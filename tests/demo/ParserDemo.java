@@ -10,7 +10,7 @@ public class ParserDemo {
     public static void main(String[] args) throws IOException {
         Lexer lexer = new Lexer("tests/src/unDebut.adb");
         Parser parser = new Parser(lexer);
-        parser.parse(true);
+        parser.parse(false);
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
         semanticAnalyzer.analyze();
         semanticAnalyzer.getTds().display();
