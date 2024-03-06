@@ -318,7 +318,9 @@ public class AnalyzeTable {
         }
         else if (current.getTag() == Tag.ID) {
             // semantic function
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode(((Word)current).getStringValue(), true));
+            int endNode = parser.ast.addNode("END", false);
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), endNode);
+            parser.ast.addEdge(endNode, parser.ast.addNode(((Word)current).getStringValue(), true));
             // end semantic function
             current = parser.lexer.scan();
             parser.stack.push(Tag.END_BEGIN_INSTRUCTION);
