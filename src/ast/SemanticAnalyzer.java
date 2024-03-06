@@ -129,7 +129,7 @@ public class SemanticAnalyzer {
                     tds.addSymbol(stack.lastElement(), record);
                     break;
                 case "INSTRUCTIONS":
-                    analyzeInstructions(node.getId());
+                    analyzeInstructions(node.getId(), currentDecl);
                     stack.pop();
                     break;
             }
@@ -137,7 +137,7 @@ public class SemanticAnalyzer {
     }
 
 
-    public void analyzeInstructions(int instructionNode){
+    public void analyzeInstructions(int instructionNode,int currentDecl){
         List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
         for (Integer children : childrens) {
             Node node = ast.getTree().nodes.get(children);
@@ -148,6 +148,9 @@ public class SemanticAnalyzer {
                         break;
                     case "IF":
                         analyzeIf(children);
+                        break;
+                    case "END":
+                        analyseEnd(children, currentDecl);
                         break;
                 }
             } catch (Exception e) {
@@ -164,6 +167,21 @@ public class SemanticAnalyzer {
     }
 
     private void analyzeIf(Integer node) throws Exception{
+    }
+
+    private void analyseEnd(Integer node, int currentDecl) throws Exception{
+        String endLabel = "";
+        if (!ast.getTree().nodes.get(node).getChildren().isEmpty()){
+            endLabel = ast.getTree().nodes.get(ast.getTree().nodes.get(node).getChildren().get(0)).getLabel();
+        }
+        if (!(endLabel.equals(""))){
+            int tmp = stack.pop();
+            String wanted = tds.getTds().get(stack.lastElement()).get(currentDecl).getName();
+            if (!(endLabel.equals(wanted))){
+                throw new Error("End label ("+endLabel+") is not the same as the declaration ("+tds.getTds().get(stack.lastElement()).get(currentDecl).getName()+")");
+            }
+            stack.push(tmp);
+        }
     }
 
 
