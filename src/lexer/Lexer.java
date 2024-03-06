@@ -160,7 +160,7 @@ public class Lexer {
             case '\'' : {
                 isCharacter = true;
                 char nextChar = (char) fileReader.read();
-                if (AsciiPrintableCharacters.isLetter(nextChar)) {
+                if (AsciiPrintableCharacters.isAsciiPrintable(nextChar)) {
                     t = new Char(nextChar);
                     character = fileReader.read();
                     currentChar = (char) character;
