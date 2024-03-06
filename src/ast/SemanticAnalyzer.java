@@ -3,6 +3,7 @@ package ast;
 import tds.*;
 import tds.Record;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
@@ -155,10 +156,30 @@ public class SemanticAnalyzer {
         }
     }
 
-    private void analyzeAssignation(Integer node) throws Exception {
+    private void analyzeAssignation(Integer nodeInt) throws IOException {
+        Node node = ast.getTree().nodes.get(nodeInt);
+        if (!(isDeclerationInMyParents(node.getChildren().getFirst(), stack.lastElement()))){
+            throw new Error(ast.getTree().nodes.get(node.getChildren().getFirst()).getLabel() + " is not defined") ;
+        }
     }
 
     private void analyzeIf(Integer node) throws Exception{
+    }
+
+
+    public boolean isDeclerationInMyParents(int node, int region){
+        int father = 0;
+        for (Symbol symbol : tds.getTds().get(region)){
+            father = symbol.getFather();
+            if (symbol.getName().equals(ast.getTree().nodes.get(node).getLabel())){
+                return true;
+            }
+        }
+        if (region != 0){
+            return isDeclerationInMyParents(node, father);
+        } else {
+            return false;
+        }
     }
 
 
