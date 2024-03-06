@@ -154,11 +154,12 @@ public class SemanticAnalyzer {
                 }
             }
         } catch (SemanticException e) {
-            System.err.println("SEMANTIC ERROR: " + e.getMessage());
-            while (!stack.empty()) {
-                System.err.println("\tin " + ast.getTree().nodes.get(stack.pop()).getLabel());
+            StringBuilder error = new StringBuilder("SEMANTIC ERROR: " + e.getMessage() + "\n");
+            while (stack.size() > 1) {
+                error.append("  ├in ").append(ast.getTree().nodes.get(stack.pop()).getLabel()).append("\n");
             }
-            throw e;
+            error.append("  └in ").append(ast.getTree().nodes.get(stack.pop()).getLabel()).append("\n");
+            throw new SemanticException(error.toString());
         }
     }
 
