@@ -540,7 +540,7 @@ public class AnalyzeTable {
         }
         else if (current.getTag() == Tag.TYPE) {
             // semantic functions
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("STRUCTURE", false));
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("TYPE", false));
             parser.ast.buffer.push(parser.ast.lastNode);
             // end semantic functions
             parser.stack.push(current.getTag());

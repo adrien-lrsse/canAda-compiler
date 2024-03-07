@@ -4,6 +4,7 @@ import tds.*;
 import tds.Record;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
@@ -41,12 +42,18 @@ public class SemanticAnalyzer {
 
             // DFT on AST
             int tmp;
+            List<String> undefinedTypes = new ArrayList<>();
             for (Node node : ast.getDepthFirstTraversal()) {
                 switch (node.getLabel()) {
                     case "ROOT":
                         stack.push(tds.newRegion());
                         break;
                     case "PROCEDURE":
+                        // check if all the declared types are defined
+                        if (!undefinedTypes.isEmpty()) {
+                            throw new SemanticException("Following types are declared but not defined (or defined too late): " + undefinedTypes);
+                        }
+
                         // insert procedure in TDS
                         tmp = stack.pop();
                         Proc proc = new Proc(stack.size(), stack.lastElement());
@@ -58,6 +65,11 @@ public class SemanticAnalyzer {
                         stack.push(tds.newRegion());
                         break;
                     case "FUNCTION":
+                        // check if all the declared types are defined
+                        if (!undefinedTypes.isEmpty()) {
+                            throw new SemanticException("Undefined types: " + undefinedTypes);
+                        }
+
                         // insert function in TDS
                         tmp = stack.pop();
                         Func func = new Func(stack.size(), stack.lastElement());
@@ -111,10 +123,18 @@ public class SemanticAnalyzer {
                         }
                         stack.push(tmp);
                         break;
-                    case "STRUCTURE":
+                    case "TYPE":
+                        String name = ast.getTree().nodes.get(node.getChildren().get(0)).getLabel();
+                        // if type is only declared
                         if (node.getChildren().size() < 2) {
+                            if (undefinedTypes.contains(name)) {
+                                throw new SemanticException("Type '" + name + "' already declared");
+                            }
+                            undefinedTypes.add(name);
                             break;
                         }
+
+                        // if type is declared and defined
                         tmp = stack.pop();
                         tds.Record record = new Record(stack.size(), stack.lastElement());
                         stack.push(tmp);
@@ -127,8 +147,15 @@ public class SemanticAnalyzer {
                             }
                         }
                         tds.addSymbol(stack.lastElement(), record);
+                        // remove type from undefined types
+                        undefinedTypes.remove(name);
                         break;
                     case "INSTRUCTIONS":
+                        // check if all the declared types are defined
+                        if (!undefinedTypes.isEmpty()) {
+                            throw new SemanticException("Undefined types: " + undefinedTypes);
+                        }
+
                         analyzeInstructions(node.getId(), currentDecl.lastElement());
                         stack.pop();
                         currentDecl.pop();
