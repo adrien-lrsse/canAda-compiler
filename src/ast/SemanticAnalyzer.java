@@ -12,11 +12,13 @@ public class SemanticAnalyzer {
     private Stack<Integer> stack;
     private GraphViz ast;
     private TDS tds;
+    private Stack<Integer> currentDecl;
 
     public SemanticAnalyzer(GraphViz ast) {
         this.stack = new Stack<>();
         this.ast = ast;
         this.tds = new TDS();
+        this.currentDecl = new Stack<>();
     }
 
     public void analyze() throws SemanticException {
@@ -39,7 +41,6 @@ public class SemanticAnalyzer {
 
             // DFT on AST
             int tmp;
-            Stack<Integer> currentDecl = new Stack<>();
             for (Node node : ast.getDepthFirstTraversal()) {
                 switch (node.getLabel()) {
                     case "ROOT":
@@ -136,8 +137,9 @@ public class SemanticAnalyzer {
             }
         } catch (SemanticException e) {
             StringBuilder error = new StringBuilder("SEMANTIC ERROR: " + e.getMessage() + "\n");
-            while (stack.size() > 1) {
-                error.append("  ├in ").append(ast.getTree().nodes.get(stack.pop()).getLabel()).append("\n");
+            if (stack.size() == currentDecl.size() + 2) {stack.pop();}
+            while (!currentDecl.empty()) {
+                error.append("  ├in ").append(tds.getTds().get(stack.pop()).get(currentDecl.pop()).getName()).append("\n");
             }
             error.append("  └in ").append(ast.getTree().nodes.get(stack.pop()).getLabel()).append("\n");
             throw new SemanticException(error.toString());
@@ -166,7 +168,7 @@ public class SemanticAnalyzer {
     private void analyzeAssignation(Integer nodeInt) throws SemanticException {
         Node node = ast.getTree().nodes.get(nodeInt);
         if (!(isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()))){
-            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " is not defined") ;
+            throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is not defined") ;
         }
     }
 
@@ -182,7 +184,7 @@ public class SemanticAnalyzer {
             int tmp = stack.pop();
             String wanted = tds.getTds().get(stack.lastElement()).get(currentDecl).getName();
             if (!(endLabel.equals(wanted))){
-                throw new SemanticException("End label ("+endLabel+") does not match the declaration ("+tds.getTds().get(stack.lastElement()).get(currentDecl).getName()+")");
+                throw new SemanticException("End label ('"+endLabel+"') does not match the declaration ('"+tds.getTds().get(stack.lastElement()).get(currentDecl).getName()+"')");
             }
             stack.push(tmp);
         }
