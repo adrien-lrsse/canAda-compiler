@@ -293,13 +293,17 @@ public class SemanticAnalyzer {
         for (Symbol symbol : tds.getTds().get(region)){
             father = symbol.getFather();
             if (symbol.getName().equals(ast.getTree().nodes.get(nodeInt).getLabel())) {
-                return switch (symbol) {
-                    case Var var -> var.getType();
-                    case Param param -> param.getType();
-                    case Record record -> record.getName();
-                    case Func func -> func.getReturnType();
-                    default -> "undefined";
-                };
+                if (symbol instanceof Record){
+                    return symbol.getName();
+                } else if (symbol instanceof Func){
+                    return ((Func) symbol).getReturnType();
+                } else if (symbol instanceof Var){
+                    return ((Var) symbol).getType();
+                } else if (symbol instanceof Param) {
+                    return ((Param) symbol).getType();
+                } else {
+                    return "undefined";
+                }
             }
         }
         if (region != 0){
