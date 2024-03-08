@@ -270,6 +270,8 @@ public class SemanticAnalyzer {
                 return "integer";
             } else if (node.getLabel().charAt(0) == '\'') {
                 return "character";
+            } else if (node.getLabel().equals("true") || node.getLabel().equals("false")) {
+                return "boolean";
             } else {
             return getTypeOfLabel(nodeInt, stack.lastElement());
             }
