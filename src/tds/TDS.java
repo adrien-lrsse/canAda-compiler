@@ -24,6 +24,9 @@ public class TDS {
     }
 
     public int addSymbol(int region, Symbol symbol) throws SemanticException {
+        if (region != 0 && symbol.getName().equals("put")) {
+            throw new SemanticException("'put' is a reserved word, it cannot be redefined");
+        }
         for (Symbol s : tds.get(region)) {
             if (s.getName().equals(symbol.getName()) && !s.getName().equals("put")) {
                 throw new SemanticException("Label '" + symbol.getName() + "' already used in this scope");
