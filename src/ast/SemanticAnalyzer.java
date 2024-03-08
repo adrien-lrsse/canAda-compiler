@@ -185,6 +185,9 @@ public class SemanticAnalyzer {
                 case "IF":
                     analyzeIf(children);
                     break;
+                case "FOR":
+                    analyzeFor(children);
+                    break;
                 case "END":
                     analyseEnd(children, currentDecl);
                     break;
@@ -194,12 +197,27 @@ public class SemanticAnalyzer {
 
     private void analyzeAssignation(Integer nodeInt) throws SemanticException {
         Node node = ast.getTree().nodes.get(nodeInt);
-        if (!(isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()))){
+        if (isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()) == 1){
             throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is not defined") ;
+        } else if (isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()) == 2){
+            throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is a loop index and cannot be modified") ;
         }
     }
 
     private void analyzeIf(Integer node) throws SemanticException{
+    }
+
+    private void analyzeFor(Integer nodeInt) throws SemanticException{
+        List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
+        Node node = ast.getTree().nodes.get(childrens.get(0));
+        Var incr = new Var(stack.size(), stack.lastElement());
+        incr.setProtected(true);
+        incr.setName(node.getLabel());
+        incr.setType("integer");
+        incr.setOffset(4);
+        tds.addSymbol(stack.lastElement(), incr);
+        analyzeInstructions(childrens.get(childrens.size()-1), currentDecl.lastElement());
+        tds.getTds().get(stack.lastElement()).remove(incr);
     }
 
     private void analyseEnd(Integer node, int currentDecl) throws SemanticException{
@@ -218,18 +236,22 @@ public class SemanticAnalyzer {
     }
 
 
-    public boolean isDeclerationInMyParents(int node, int region){
+    public int isDeclerationInMyParents(int node, int region){
         int father = 0;
         for (Symbol symbol : tds.getTds().get(region)){
             father = symbol.getFather();
             if (symbol.getName().equals(ast.getTree().nodes.get(node).getLabel())){
-                return true;
+                if (((Var)symbol).isProtected()) {
+                    return 2;
+                } else {
+                    return 0;
+                }
             }
         }
         if (region != 0){
             return isDeclerationInMyParents(node, father);
         } else {
-            return false;
+            return 1;
         }
     }
 
