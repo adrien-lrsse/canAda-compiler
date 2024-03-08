@@ -11,5 +11,8 @@ public class ParserDemo {
         Lexer lexer = new Lexer("tests/src/unDebut.adb");
         Parser parser = new Parser(lexer);
         parser.parse(true);
+        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
+        semanticAnalyzer.analyze();
+        semanticAnalyzer.getTds().display();
     }
 }

@@ -3,7 +3,6 @@ package ast;
 import tds.*;
 import tds.Record;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,12 +13,16 @@ public class SemanticAnalyzer {
     private GraphViz ast;
     private TDS tds;
     private Stack<Integer> currentDecl;
+    private int returnNeeded;
+    private int returnNeededTmp;
 
     public SemanticAnalyzer(GraphViz ast) {
         this.stack = new Stack<>();
         this.ast = ast;
         this.tds = new TDS();
         this.currentDecl = new Stack<>();
+        this.returnNeeded = 0;
+        this.returnNeededTmp = 0;
     }
 
     public void analyze() throws SemanticException {
@@ -80,6 +83,7 @@ public class SemanticAnalyzer {
 
                         // create new region
                         stack.push(tds.newRegion());
+                        returnNeeded = returnNeeded + 1;
                         break;
                     case "PARAM":
                         // insert param in TDS
@@ -156,9 +160,15 @@ public class SemanticAnalyzer {
                             throw new SemanticException("Undefined types: " + undefinedTypes);
                         }
 
-                        analyzeInstructions(node.getId(), currentDecl.lastElement());
+
+                        analyzeInstructions(node.getId(), currentDecl.lastElement(), returnNeeded);
                         stack.pop();
-                        currentDecl.pop();
+                        int index = currentDecl.pop();
+
+                        // check if a return is no more needed
+                        if (tds.getTds().get(stack.lastElement()).get(index) instanceof Func) {
+                            returnNeeded = returnNeeded - 1;
+                        }
                         break;
                 }
             }
@@ -174,8 +184,9 @@ public class SemanticAnalyzer {
     }
 
 
-    public void analyzeInstructions(int instructionNode,int currentDecl) throws SemanticException {
+    public void analyzeInstructions(int instructionNode,int currentDecl, int returnNeeded) throws SemanticException {
         List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
+        returnNeededTmp = returnNeeded;
         for (Integer children : childrens) {
             Node node = ast.getTree().nodes.get(children);
             switch (node.getLabel()) {
@@ -188,8 +199,12 @@ public class SemanticAnalyzer {
                 case "END":
                     analyseEnd(children, currentDecl);
                     break;
+                case "RETURN_EXPRESSION":
+                    analseReturnExpression(children, currentDecl);
+                    break;
             }
         }
+
     }
 
     private void analyzeAssignation(Integer nodeInt) throws SemanticException {
@@ -200,15 +215,99 @@ public class SemanticAnalyzer {
     }
 
     private void analyzeIf(Integer node) throws SemanticException{
+        returnNeededTmp = returnNeededTmp + 1;
+        List<Integer> childrens = ast.getTree().nodes.get(node).getChildren();
+        for (Integer children : childrens) {
+            Node nodeChild = ast.getTree().nodes.get(children);
+            switch (nodeChild.getLabel()) {
+                case "IF":
+                    analyzeIf(children);
+                case "THEN":
+                    analyzeThen(children);
+                    break;
+                case "ELSIF":
+                    analyzeElsif(children);
+                    break;
+                case "ELSE":
+                    analyzeElse(children);
+                    break;
+            }
+        }
+        if (returnNeededTmp > returnNeeded) {
+            returnNeededTmp = returnNeededTmp - 1;
+        }
+    }
+
+    private void analyzeThen(Integer node) throws SemanticException{
+        for (Integer children : ast.getTree().nodes.get(node).getChildren()) {
+            Node nodeChild = ast.getTree().nodes.get(children);
+            switch (nodeChild.getLabel()) {
+                case "RETURN_EXPRESSION":
+                    analseReturnExpression(children, currentDecl.lastElement());
+                    break;
+            }
+        }
+    }
+
+    private void analyzeElsif(Integer node) throws SemanticException{
+        returnNeededTmp = returnNeededTmp + 1;
+        List<Integer> childrens = ast.getTree().nodes.get(node).getChildren();
+        for (Integer children : childrens) {
+            Node nodeChild = ast.getTree().nodes.get(children);
+            switch (nodeChild.getLabel()) {
+                case "IF":
+                    analyzeIf(children);
+                case "THEN":
+                    analyzeThen(children);
+                    break;
+                case "ELSIF":
+                    analyzeElsif(children);
+                    break;
+                case "ELSE":
+                    analyzeElse(children);
+                    break;
+            }
+        }
+        if (returnNeededTmp > returnNeeded) {
+            returnNeededTmp = returnNeededTmp - 1;
+        }
+    }
+
+    private void analyzeElse(Integer node) throws SemanticException{
+        for (Integer children : ast.getTree().nodes.get(node).getChildren()) {
+            Node nodeChild = ast.getTree().nodes.get(children);
+            switch (nodeChild.getLabel()) {
+                case "RETURN_EXPRESSION":
+                    analseReturnExpression(children, currentDecl.lastElement());
+                    break;
+            }
+        }
+    }
+
+    private void analseReturnExpression(Integer node, int currentDecl) throws SemanticException {
+        returnNeededTmp = returnNeededTmp - 1;
     }
 
     private void analyseEnd(Integer node, int currentDecl) throws SemanticException{
+
+        System.out.println("\ncurrentDecl : " + currentDecl);
+        System.out.println("returnNeededTmp : " + returnNeededTmp);
+        System.out.println("returnNeeded : " + returnNeeded);
+
+        int tmp = stack.pop();
+        if (tds.getTds().get(stack.lastElement()).get(this.currentDecl.lastElement()) instanceof Func) {
+            if (returnNeededTmp == returnNeeded) {
+                throw new SemanticException("Return needed");
+            }
+        }
+        stack.push(tmp);
+
         String endLabel = "";
         if (!ast.getTree().nodes.get(node).getChildren().isEmpty()){
             endLabel = ast.getTree().nodes.get(ast.getTree().nodes.get(node).getChildren().get(0)).getLabel();
         }
         if (!(endLabel.isEmpty())){
-            int tmp = stack.pop();
+            tmp = stack.pop();
             String wanted = tds.getTds().get(stack.lastElement()).get(currentDecl).getName();
             if (!(endLabel.equals(wanted))){
                 throw new SemanticException("End label ('"+endLabel+"') does not match the declaration ('"+tds.getTds().get(stack.lastElement()).get(currentDecl).getName()+"')");
