@@ -21,6 +21,10 @@ public class Func extends Symbol {
         this.types.add(type);
     }
 
+    public String getReturnType() {
+        return returnType;
+    }
+
     @Override
     public String toString() {
         return "Func{" +

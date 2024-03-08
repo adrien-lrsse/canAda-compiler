@@ -202,6 +202,13 @@ public class SemanticAnalyzer {
         } else if (isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()) == 2){
             throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is a loop index and cannot be modified") ;
         }
+        String rightType = typeOfOperands(node.getChildren().get(1));
+        String leftType = getTypeOfLabel(node.getChildren().get(0), stack.lastElement());
+        if (typeOfOperands(node.getChildren().get(1)).equals("undefined")){
+            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel()+" operation between different types") ;
+        } else if (!(rightType.equals(leftType))) {
+            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " is type " + leftType + " and cannot be assigned to type " + rightType) ;
+        }
     }
 
     private void analyzeIf(Integer node) throws SemanticException{
@@ -254,6 +261,52 @@ public class SemanticAnalyzer {
             return 1;
         }
     }
+
+    public String typeOfOperands(int nodeInt){
+        Node node = ast.getTree().nodes.get(nodeInt);
+        // Cas de base
+        if (node.getChildren().isEmpty()){
+            if (node.getLabel().matches("\\d+")) {
+                return "integer";
+            } else if (node.getLabel().charAt(0) == '\'') {
+                return "character";
+            } else {
+            return getTypeOfLabel(nodeInt, stack.lastElement());
+            }
+        }
+        if (node.getChildren().size() == 1 && node.getLabel().equals("CALL")){
+            List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
+            return getTypeOfLabel(childrens.get(0), stack.lastElement());
+        }
+        else {
+            // Cas récursif
+            Node nodeLeft = ast.getTree().nodes.get(node.getChildren().get(0));
+            Node nodeRight = ast.getTree().nodes.get(node.getChildren().get(1));
+            return Objects.equals(typeOfOperands(nodeLeft.getId()), typeOfOperands(nodeRight.getId())) ? typeOfOperands(nodeLeft.getId()) : "undefined";
+        }
+    }
+
+    public String getTypeOfLabel(int nodeInt, int region) {
+        int father = 0;
+        for (Symbol symbol : tds.getTds().get(region)){
+            father = symbol.getFather();
+            if (symbol.getName().equals(ast.getTree().nodes.get(nodeInt).getLabel())) {
+                return switch (symbol) {
+                    case Var var -> var.getType();
+                    case Param param -> param.getType();
+                    case Record record -> record.getName();
+                    case Func func -> func.getReturnType();
+                    default -> "undefined";
+                };
+            }
+        }
+        if (region != 0){
+            return getTypeOfLabel(nodeInt, father);
+        } else {
+            return "undefined";
+        }
+    }
+
 
 
 
