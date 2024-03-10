@@ -286,13 +286,21 @@ public class SemanticAnalyzer {
 
     private void analseReturnExpression(Integer node, int currentDecl) throws SemanticException {
         returnNeededTmp = returnNeededTmp - 1;
+
+        String returnType = returnExpressionType(node, currentDecl);
+        String wanted;
+
+        if (tds.getTds().get(stack.lastElement()).get(currentDecl) instanceof Func) {
+            wanted = ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl)).getReturnType();
+        } else {
+            throw new SemanticException("Return expression in a procedure");
+        }
+        if (!(returnType.equals(wanted))){
+            throw new SemanticException("Return type ('"+returnType+"') does not match the declaration ('"+wanted+"')");
+        }
     }
 
     private void analyseEnd(Integer node, int currentDecl) throws SemanticException{
-
-        System.out.println("\ncurrentDecl : " + currentDecl);
-        System.out.println("returnNeededTmp : " + returnNeededTmp);
-        System.out.println("returnNeeded : " + returnNeeded);
 
         int tmp = stack.pop();
         if (tds.getTds().get(stack.lastElement()).get(this.currentDecl.lastElement()) instanceof Func) {
@@ -330,6 +338,12 @@ public class SemanticAnalyzer {
         } else {
             return false;
         }
+    }
+
+    private String returnExpressionType(Integer node, int currentDecl) {
+
+        return "";
+
     }
 
 
