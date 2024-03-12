@@ -21,6 +21,10 @@ public class Func extends Symbol {
         this.types.add(type);
     }
 
+    public List<String> getTypes() {
+        return types;
+    }
+
     public String getReturnType() {
         return returnType;
     }

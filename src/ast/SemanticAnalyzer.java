@@ -188,6 +188,9 @@ public class SemanticAnalyzer {
                 case "FOR":
                     analyzeFor(children);
                     break;
+                case "CALL":
+                    analyzeCall(children);
+                    break;
                 case "END":
                     analyseEnd(children, currentDecl);
                     break;
@@ -242,6 +245,35 @@ public class SemanticAnalyzer {
         }
     }
 
+    public void analyzeCall(int nodeInt) throws SemanticException {
+        Node callNode = ast.getTree().nodes.get(nodeInt);
+        Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
+        Symbol symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
+        if (symbol == null){
+            throw new SemanticException("Function or procedure '" + labelNode.getLabel() + "' is not defined") ;
+        } else if (symbol instanceof Func) {
+            if (labelNode.getChildren().size() != ((Func) symbol).getTypes().size()) {
+                throw new SemanticException("Expected " + ((Func) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for function '" + labelNode.getLabel() + "'");
+            }
+            for (int i = 0; i < labelNode.getChildren().size(); i++) {
+                if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Func) symbol).getTypes().get(i))) {
+                    throw new SemanticException("Expected type " + ((Func) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)));
+                }
+            }
+        } else if (symbol instanceof Proc) {
+            if (labelNode.getChildren().size() != ((Proc) symbol).getTypes().size()) {
+                throw new SemanticException("Expected " + ((Proc) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'");
+            }
+            for (int i = 0; i < labelNode.getChildren().size(); i++) {
+                if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
+                    throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)));
+                }
+            }
+        } else {
+            throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable");
+        }
+    }
+
 
     public int isDeclerationInMyParents(int node, int region){
         int father = 0;
@@ -262,7 +294,7 @@ public class SemanticAnalyzer {
         }
     }
 
-    public String typeOfOperands(int nodeInt){
+    public String typeOfOperands(int nodeInt) throws SemanticException {
         Node node = ast.getTree().nodes.get(nodeInt);
         // Cas de base
         if (node.getChildren().isEmpty()){
@@ -277,6 +309,7 @@ public class SemanticAnalyzer {
             }
         }
         if (node.getChildren().size() == 1 && node.getLabel().equals("CALL")){
+            analyzeCall(nodeInt);
             List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
             return getTypeOfLabel(childrens.get(0), stack.lastElement());
         }
@@ -310,6 +343,21 @@ public class SemanticAnalyzer {
             return getTypeOfLabel(nodeInt, father);
         } else {
             return "undefined";
+        }
+    }
+
+    public Symbol getSymbolFromLabel(String label, int region){
+        int father = 0;
+        for (Symbol symbol : tds.getTds().get(region)){
+            father = symbol.getFather();
+            if (symbol.getName().equals(label)) {
+                return symbol;
+            }
+        }
+        if (region != 0){
+            return getSymbolFromLabel(label, father);
+        } else {
+            return null;
         }
     }
 
