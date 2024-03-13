@@ -29,16 +29,16 @@ public class SemanticAnalyzer {
             Proc putInt = new Proc(0, -1);
             putInt.setName("put");
             putInt.addType("integer");
-            tds.addSymbol(stack.lastElement(), putInt);
+            tds.addSymbol(stack.lastElement(), putInt, -1);
             Proc putChar = new Proc(0, -1);
             putChar.setName("put");
             putChar.addType("character");
-            tds.addSymbol(stack.lastElement(), putChar);
+            tds.addSymbol(stack.lastElement(), putChar, -1);
             Func characterVal = new Func(0, -1);
             characterVal.setName("character'val");
             characterVal.setReturnType("character");
             characterVal.addType("integer");
-            tds.addSymbol(stack.lastElement(), characterVal);
+            tds.addSymbol(stack.lastElement(), characterVal, -1);
 
             // DFT on AST
             int tmp;
@@ -51,7 +51,7 @@ public class SemanticAnalyzer {
                     case "PROCEDURE":
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
-                            throw new SemanticException("Following types are declared but not defined (or defined too late): " + undefinedTypes);
+                            throw new SemanticException("Following types are declared but not defined (or defined too late): " + undefinedTypes, node.getLine());
                         }
 
                         // insert procedure in TDS
@@ -59,7 +59,7 @@ public class SemanticAnalyzer {
                         Proc proc = new Proc(stack.size(), stack.lastElement());
                         stack.push(tmp);
                         proc.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-                        currentDecl.push(tds.addSymbol(stack.lastElement(), proc));
+                        currentDecl.push(tds.addSymbol(stack.lastElement(), proc, node.getLine()));
 
                         // create new region
                         stack.push(tds.newRegion());
@@ -67,7 +67,7 @@ public class SemanticAnalyzer {
                     case "FUNCTION":
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
-                            throw new SemanticException("Undefined types: " + undefinedTypes);
+                            throw new SemanticException("Undefined types: " + undefinedTypes, node.getLine());
                         }
 
                         // insert function in TDS
@@ -76,7 +76,7 @@ public class SemanticAnalyzer {
                         stack.push(tmp);
                         func.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
                         func.setReturnType("");
-                        currentDecl.push(tds.addSymbol(stack.lastElement(), func));
+                        currentDecl.push(tds.addSymbol(stack.lastElement(), func, node.getLine()));
 
                         // create new region
                         stack.push(tds.newRegion());
@@ -96,7 +96,7 @@ public class SemanticAnalyzer {
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel());
                         }
                         param.setOffset(4);
-                        tds.addSymbol(stack.lastElement(), param);
+                        tds.addSymbol(stack.lastElement(), param, node.getLine());
 
                         // update current declaration
                         tmp = stack.pop();
@@ -114,7 +114,7 @@ public class SemanticAnalyzer {
                         var.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
                         var.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
                         var.setOffset(4);
-                        tds.addSymbol(stack.lastElement(), var);
+                        tds.addSymbol(stack.lastElement(), var, node.getLine());
                         break;
                     case "RETURN_TYPE":
                         tmp = stack.pop();
@@ -128,7 +128,7 @@ public class SemanticAnalyzer {
                         // if type is only declared
                         if (node.getChildren().size() < 2) {
                             if (undefinedTypes.contains(name)) {
-                                throw new SemanticException("Type '" + name + "' already declared");
+                                throw new SemanticException("Type '" + name + "' already declared", node.getLine());
                             }
                             undefinedTypes.add(name);
                             break;
@@ -143,17 +143,17 @@ public class SemanticAnalyzer {
                             Node child;
                             for (int i = 0; i < ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().size(); i++) {
                                 child = ast.getTree().nodes.get(ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().get(i));
-                                record.addField(ast.getTree().nodes.get(child.getChildren().get(0)).getLabel(), ast.getTree().nodes.get(child.getChildren().get(1)).getLabel());
+                                record.addField(ast.getTree().nodes.get(child.getChildren().get(0)).getLabel(), ast.getTree().nodes.get(child.getChildren().get(1)).getLabel(), child.getLine());
                             }
                         }
-                        tds.addSymbol(stack.lastElement(), record);
+                        tds.addSymbol(stack.lastElement(), record, node.getLine());
                         // remove type from undefined types
                         undefinedTypes.remove(name);
                         break;
                     case "INSTRUCTIONS":
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
-                            throw new SemanticException("Undefined types: " + undefinedTypes);
+                            throw new SemanticException("Undefined types: " + undefinedTypes, node.getLine());
                         }
 
                         analyzeInstructions(node.getId(), currentDecl.lastElement());
@@ -169,7 +169,7 @@ public class SemanticAnalyzer {
                 error.append("  ├in ").append(tds.getTds().get(stack.pop()).get(currentDecl.pop()).getName()).append("\n");
             }
             error.append("  └in ").append(ast.getTree().nodes.get(stack.pop()).getLabel()).append("\n");
-            throw new SemanticException(error.toString());
+            throw new SemanticException(error.toString(), -1);
         }
     }
 
@@ -201,16 +201,16 @@ public class SemanticAnalyzer {
     private void analyzeAssignation(Integer nodeInt) throws SemanticException {
         Node node = ast.getTree().nodes.get(nodeInt);
         if (isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()) == 1){
-            throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is not defined") ;
+            throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is not defined", node.getLine()) ;
         } else if (isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()) == 2){
-            throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is a loop index and cannot be modified") ;
+            throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is a loop index and cannot be modified", node.getLine()) ;
         }
         String rightType = typeOfOperands(node.getChildren().get(1));
         String leftType = getTypeOfLabel(node.getChildren().get(0), stack.lastElement());
         if (typeOfOperands(node.getChildren().get(1)).equals("undefined")){
-            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel()+" operation between different types") ;
+            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel()+" operation between different types", node.getLine()) ;
         } else if (!(rightType.equals(leftType))) {
-            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " is type " + leftType + " and cannot be assigned to type " + rightType) ;
+            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " is type " + leftType + " and cannot be assigned to type " + rightType, node.getLine());
         }
     }
 
@@ -225,7 +225,7 @@ public class SemanticAnalyzer {
         incr.setName(node.getLabel());
         incr.setType("integer");
         incr.setOffset(4);
-        tds.addSymbol(stack.lastElement(), incr);
+        tds.addSymbol(stack.lastElement(), incr, node.getLine());
         analyzeInstructions(childrens.get(childrens.size()-1), currentDecl.lastElement());
         tds.getTds().get(stack.lastElement()).remove(incr);
     }
@@ -239,7 +239,7 @@ public class SemanticAnalyzer {
             int tmp = stack.pop();
             String wanted = tds.getTds().get(stack.lastElement()).get(currentDecl).getName();
             if (!(endLabel.equals(wanted))){
-                throw new SemanticException("End label ('"+endLabel+"') does not match the declaration ('"+tds.getTds().get(stack.lastElement()).get(currentDecl).getName()+"')");
+                throw new SemanticException("End label ('"+endLabel+"') does not match the declaration ('"+tds.getTds().get(stack.lastElement()).get(currentDecl).getName()+"')", ast.getTree().nodes.get(node).getLine());
             }
             stack.push(tmp);
         }
@@ -250,27 +250,27 @@ public class SemanticAnalyzer {
         Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
         Symbol symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
         if (symbol == null){
-            throw new SemanticException("Function or procedure '" + labelNode.getLabel() + "' is not defined") ;
+            throw new SemanticException("Function or procedure '" + labelNode.getLabel() + "' is not defined", callNode.getLine()) ;
         } else if (symbol instanceof Func) {
             if (labelNode.getChildren().size() != ((Func) symbol).getTypes().size()) {
-                throw new SemanticException("Expected " + ((Func) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for function '" + labelNode.getLabel() + "'");
+                throw new SemanticException("Expected " + ((Func) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for function '" + labelNode.getLabel() + "'", callNode.getLine());
             }
             for (int i = 0; i < labelNode.getChildren().size(); i++) {
                 if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Func) symbol).getTypes().get(i))) {
-                    throw new SemanticException("Expected type " + ((Func) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)));
+                    throw new SemanticException("Expected type " + ((Func) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                 }
             }
         } else if (symbol instanceof Proc) {
             if (labelNode.getChildren().size() != ((Proc) symbol).getTypes().size()) {
-                throw new SemanticException("Expected " + ((Proc) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'");
+                throw new SemanticException("Expected " + ((Proc) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'", callNode.getLine());
             }
             for (int i = 0; i < labelNode.getChildren().size(); i++) {
                 if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
-                    throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)));
+                    throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                 }
             }
         } else {
-            throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable");
+            throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable", callNode.getLine());
         }
     }
 
