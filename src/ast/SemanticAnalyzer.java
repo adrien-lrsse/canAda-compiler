@@ -311,13 +311,13 @@ public class SemanticAnalyzer {
         if (tds.getTds().get(stack.lastElement()).get(currentDecl) instanceof Func) {
             wanted = ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl)).getReturnType();
         } else {
-            throw new SemanticException("Return statement in a procedure");
+            throw new SemanticException("Return statement in a procedure", ast.getTree().nodes.get(node).getLine());
         }
 
         stack.push(tmp);
 
         if (!(returnType.equals(wanted))){
-            throw new SemanticException("Return type ('"+returnType+"') does not match the declaration ('"+wanted+"')");
+            throw new SemanticException("Return type ('"+returnType+"') does not match the declaration ('"+wanted+"')", ast.getTree().nodes.get(node).getLine());
         }
     }
 
@@ -339,7 +339,7 @@ public class SemanticAnalyzer {
         int tmp = stack.pop();
         if (tds.getTds().get(stack.lastElement()).get(this.currentDecl.lastElement()) instanceof Func) {
             if (returnNeededTmp == returnNeeded) {
-                throw new SemanticException("Return needed");
+                throw new SemanticException("Return needed", ast.getTree().nodes.get(node).getLine());
             }
         }
         stack.push(tmp);
