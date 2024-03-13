@@ -307,7 +307,7 @@ public class SemanticAnalyzer {
         if (tds.getTds().get(stack.lastElement()).get(currentDecl) instanceof Func) {
             wanted = ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl)).getReturnType();
         } else {
-            throw new SemanticException("Return expression in a procedure");
+            wanted = "";
         }
         if (!(returnType.equals(wanted))){
             throw new SemanticException("Return type ('"+returnType+"') does not match the declaration ('"+wanted+"')");
@@ -323,7 +323,7 @@ public class SemanticAnalyzer {
         incr.setType("integer");
         incr.setOffset(4);
         tds.addSymbol(stack.lastElement(), incr);
-        analyzeInstructions(childrens.get(childrens.size()-1), currentDecl.lastElement());
+        analyzeInstructions(childrens.get(childrens.size()-1), currentDecl.lastElement(), returnNeededTmp);
         tds.getTds().get(stack.lastElement()).remove(incr);
     }
 

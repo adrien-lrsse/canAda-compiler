@@ -29,10 +29,6 @@ public class Func extends Symbol {
         return types;
     }
 
-    public String getReturnType() {
-        return returnType;
-    }
-
     @Override
     public String toString() {
         return "Func{" +
