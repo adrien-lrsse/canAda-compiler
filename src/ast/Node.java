@@ -7,11 +7,13 @@ public class Node {
     private int id;
     private String label;
     private List<Integer> children;
+    private int line;
 
-    public Node(int id, String label) {
+    public Node(int id, String label, int line) {
         this.id = id;
         this.label = label;
         this.children = new ArrayList<>();
+        this.line = line;
     }
 
     public void addChild(int child) {
@@ -28,6 +30,10 @@ public class Node {
 
     public List<Integer> getChildren() {
         return children;
+    }
+
+    public int getLine() {
+        return line;
     }
 
     public boolean isLeaf(){
