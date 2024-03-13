@@ -26,6 +26,7 @@ public class GraphViz {
     private Tree tree;
     public GraphViz(Lexer lexer) {
         this.lexer = lexer;
+        this.filename = lexer.getFileName();
         try {
             file = new FileWriter(filename + "-ast.dot");
             file.write("graph\n" +
