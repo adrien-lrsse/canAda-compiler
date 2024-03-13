@@ -10,7 +10,7 @@ public class SemanticAnalyzerDemo {
     public static void main(String[] args) throws IOException {
         Lexer lexer = new Lexer("tests/src/semanticControls/ReturnNeeded.adb");
         Parser parser = new Parser(lexer);
-        parser.parse(false);
+        parser.parse(true);
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
         semanticAnalyzer.analyze();
         // semanticAnalyzer.getTds().display();

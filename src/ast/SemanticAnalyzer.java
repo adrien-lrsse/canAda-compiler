@@ -196,6 +196,12 @@ public class SemanticAnalyzer {
                 case "IF":
                     analyzeIf(children);
                     break;
+                case "FOR":
+                    analyzeFor(children);
+                    break;
+                case "CALL":
+                    analyzeCall(children);
+                    break;
                 case "END":
                     analyseEnd(children, currentDecl);
                     break;
@@ -204,13 +210,21 @@ public class SemanticAnalyzer {
                     break;
             }
         }
-
     }
 
     private void analyzeAssignation(Integer nodeInt) throws SemanticException {
         Node node = ast.getTree().nodes.get(nodeInt);
-        if (!(isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()))){
+        if (isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()) == 1){
             throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is not defined") ;
+        } else if (isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()) == 2){
+            throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is a loop index and cannot be modified") ;
+        }
+        String rightType = typeOfOperands(node.getChildren().get(1));
+        String leftType = getTypeOfLabel(node.getChildren().get(0), stack.lastElement());
+        if (typeOfOperands(node.getChildren().get(1)).equals("undefined")){
+            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel()+" operation between different types") ;
+        } else if (!(rightType.equals(leftType))) {
+            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " is type " + leftType + " and cannot be assigned to type " + rightType) ;
         }
     }
 
@@ -300,6 +314,19 @@ public class SemanticAnalyzer {
         }
     }
 
+    private void analyzeFor(Integer nodeInt) throws SemanticException{
+        List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
+        Node node = ast.getTree().nodes.get(childrens.get(0));
+        Var incr = new Var(stack.size(), stack.lastElement());
+        incr.setProtected(true);
+        incr.setName(node.getLabel());
+        incr.setType("integer");
+        incr.setOffset(4);
+        tds.addSymbol(stack.lastElement(), incr);
+        analyzeInstructions(childrens.get(childrens.size()-1), currentDecl.lastElement());
+        tds.getTds().get(stack.lastElement()).remove(incr);
+    }
+
     private void analyseEnd(Integer node, int currentDecl) throws SemanticException{
 
         int tmp = stack.pop();
@@ -324,21 +351,122 @@ public class SemanticAnalyzer {
         }
     }
 
+    public void analyzeCall(int nodeInt) throws SemanticException {
+        Node callNode = ast.getTree().nodes.get(nodeInt);
+        Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
+        Symbol symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
+        if (symbol == null){
+            throw new SemanticException("Function or procedure '" + labelNode.getLabel() + "' is not defined") ;
+        } else if (symbol instanceof Func) {
+            if (labelNode.getChildren().size() != ((Func) symbol).getTypes().size()) {
+                throw new SemanticException("Expected " + ((Func) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for function '" + labelNode.getLabel() + "'");
+            }
+            for (int i = 0; i < labelNode.getChildren().size(); i++) {
+                if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Func) symbol).getTypes().get(i))) {
+                    throw new SemanticException("Expected type " + ((Func) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)));
+                }
+            }
+        } else if (symbol instanceof Proc) {
+            if (labelNode.getChildren().size() != ((Proc) symbol).getTypes().size()) {
+                throw new SemanticException("Expected " + ((Proc) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'");
+            }
+            for (int i = 0; i < labelNode.getChildren().size(); i++) {
+                if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
+                    throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)));
+                }
+            }
+        } else {
+            throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable");
+        }
+    }
 
-    public boolean isDeclerationInMyParents(int node, int region){
+
+    public int isDeclerationInMyParents(int node, int region){
         int father = 0;
         for (Symbol symbol : tds.getTds().get(region)){
             father = symbol.getFather();
             if (symbol.getName().equals(ast.getTree().nodes.get(node).getLabel())){
-                return true;
+                if (((Var)symbol).isProtected()) {
+                    return 2;
+                } else {
+                    return 0;
+                }
             }
         }
         if (region != 0){
             return isDeclerationInMyParents(node, father);
         } else {
-            return false;
+            return 1;
         }
     }
+
+    public String typeOfOperands(int nodeInt) throws SemanticException {
+        Node node = ast.getTree().nodes.get(nodeInt);
+        // Cas de base
+        if (node.getChildren().isEmpty()){
+            if (node.getLabel().matches("\\d+")) {
+                return "integer";
+            } else if (node.getLabel().charAt(0) == '\'') {
+                return "character";
+            } else if (node.getLabel().equals("true") || node.getLabel().equals("false")) {
+                return "boolean";
+            } else {
+            return getTypeOfLabel(nodeInt, stack.lastElement());
+            }
+        }
+        if (node.getChildren().size() == 1 && node.getLabel().equals("CALL")){
+            analyzeCall(nodeInt);
+            List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
+            return getTypeOfLabel(childrens.get(0), stack.lastElement());
+        }
+        else {
+            // Cas récursif
+            Node nodeLeft = ast.getTree().nodes.get(node.getChildren().get(0));
+            Node nodeRight = ast.getTree().nodes.get(node.getChildren().get(1));
+            return Objects.equals(typeOfOperands(nodeLeft.getId()), typeOfOperands(nodeRight.getId())) ? typeOfOperands(nodeLeft.getId()) : "undefined";
+        }
+    }
+
+    public String getTypeOfLabel(int nodeInt, int region) {
+        int father = 0;
+        for (Symbol symbol : tds.getTds().get(region)){
+            father = symbol.getFather();
+            if (symbol.getName().equals(ast.getTree().nodes.get(nodeInt).getLabel())) {
+                if (symbol instanceof Record){
+                    return symbol.getName();
+                } else if (symbol instanceof Func){
+                    return ((Func) symbol).getReturnType();
+                } else if (symbol instanceof Var){
+                    return ((Var) symbol).getType();
+                } else if (symbol instanceof Param) {
+                    return ((Param) symbol).getType();
+                } else {
+                    return "undefined";
+                }
+            }
+        }
+        if (region != 0){
+            return getTypeOfLabel(nodeInt, father);
+        } else {
+            return "undefined";
+        }
+    }
+
+    public Symbol getSymbolFromLabel(String label, int region){
+        int father = 0;
+        for (Symbol symbol : tds.getTds().get(region)){
+            father = symbol.getFather();
+            if (symbol.getName().equals(label)) {
+                return symbol;
+            }
+        }
+        if (region != 0){
+            return getSymbolFromLabel(label, father);
+        } else {
+            return null;
+        }
+    }
+
 
     private String returnExpressionType(Integer node, int currentDecl) {
 
