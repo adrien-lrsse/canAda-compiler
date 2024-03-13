@@ -178,6 +178,7 @@ public class SemanticAnalyzer {
         List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
         for (Integer children : childrens) {
             Node node = ast.getTree().nodes.get(children);
+            System.out.println(node.getLabel());
             switch (node.getLabel()) {
                 case ":=":
                     analyzeAssignation(children);
@@ -200,11 +201,29 @@ public class SemanticAnalyzer {
 
     private void analyzeAssignation(Integer nodeInt) throws SemanticException {
         Node node = ast.getTree().nodes.get(nodeInt);
-        if (isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()) == 1){
+        Symbol symbol = getSymbolFromLabel(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel(),stack.lastElement());
+        // Not defined
+        if (symbol == null){
             throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is not defined") ;
-        } else if (isDeclerationInMyParents(node.getChildren().get(0), stack.lastElement()) == 2){
-            throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is a loop index and cannot be modified") ;
         }
+        // Procedure and funtions cannot be assigned
+        if (symbol instanceof Func){
+            throw new SemanticException("'"+ast.getTree().nodes.get(node.getChildren().get(0)).getLabel()+ "' is a function  and cannot be assigned");
+        }
+        if (symbol instanceof Proc){
+            throw new SemanticException("'"+ast.getTree().nodes.get(node.getChildren().get(0)).getLabel()+ "' is a procedure  and cannot be assigned");
+        }
+        // Left side of assignation is variable
+        if (symbol instanceof Var){
+            if (((Var)(symbol)).isProtected()){
+                throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is a loop index and cannot be modified") ;
+            }
+        }
+        // Left side of the assignation is a record
+        // TODO
+
+        // Control the matching of type between left and right value
+
         String rightType = typeOfOperands(node.getChildren().get(1));
         String leftType = getTypeOfLabel(node.getChildren().get(0), stack.lastElement());
         if (typeOfOperands(node.getChildren().get(1)).equals("undefined")){
@@ -220,12 +239,17 @@ public class SemanticAnalyzer {
     private void analyzeFor(Integer nodeInt) throws SemanticException{
         List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
         Node node = ast.getTree().nodes.get(childrens.get(0));
+        int temp = stack.pop();
         Var incr = new Var(stack.size(), stack.lastElement());
+        stack.push(temp);
         incr.setProtected(true);
         incr.setName(node.getLabel());
         incr.setType("integer");
         incr.setOffset(4);
         tds.addSymbol(stack.lastElement(), incr);
+        //System.out.println(ast.getTree().nodes.get(childrens.get(childrens.size()-1)).getLabel());
+        tds.display();
+
         analyzeInstructions(childrens.get(childrens.size()-1), currentDecl.lastElement());
         tds.getTds().get(stack.lastElement()).remove(incr);
     }
@@ -280,11 +304,13 @@ public class SemanticAnalyzer {
         for (Symbol symbol : tds.getTds().get(region)){
             father = symbol.getFather();
             if (symbol.getName().equals(ast.getTree().nodes.get(node).getLabel())){
-                if (((Var)symbol).isProtected()) {
-                    return 2;
-                } else {
-                    return 0;
+                if ((symbol instanceof Var)) {
+                    if (((Var)(symbol)).isProtected()){
+                        return 2;
+                    }
                 }
+                return 0;
+
             }
         }
         if (region != 0){
@@ -313,6 +339,15 @@ public class SemanticAnalyzer {
             List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
             return getTypeOfLabel(childrens.get(0), stack.lastElement());
         }
+        // if ((node.getChildren().size() == 1)){
+        //    List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
+        //    Node child = ast.getTree().nodes.get(childrens.get(0));
+        //    switch (child.getLabel()){
+        //        case "ACCESS_IDENT":
+        //    }
+        //    return "integer";
+        //}
+
         else {
             // Cas récursif
             Node nodeLeft = ast.getTree().nodes.get(node.getChildren().get(0));
@@ -362,9 +397,12 @@ public class SemanticAnalyzer {
     }
 
 
-
+    public String typeOfField(int nodeInt){
+        return "god doesnt exist";
+    }
 
     public TDS getTds() {
         return tds;
     }
+
 }
