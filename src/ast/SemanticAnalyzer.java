@@ -301,14 +301,21 @@ public class SemanticAnalyzer {
     private void analseReturnExpression(Integer node, int currentDecl) throws SemanticException {
         returnNeededTmp = returnNeededTmp - 1;
 
-        String returnType = returnExpressionType(node, currentDecl);
+        int child = ast.getTree().nodes.get(node).getChildren().get(0);
+
+        String returnType = typeOfOperands(child);
         String wanted;
+
+        int tmp = stack.pop();
 
         if (tds.getTds().get(stack.lastElement()).get(currentDecl) instanceof Func) {
             wanted = ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl)).getReturnType();
         } else {
-            wanted = "";
+            throw new SemanticException("Return statement in a procedure");
         }
+
+        stack.push(tmp);
+
         if (!(returnType.equals(wanted))){
             throw new SemanticException("Return type ('"+returnType+"') does not match the declaration ('"+wanted+"')");
         }
@@ -466,15 +473,6 @@ public class SemanticAnalyzer {
             return null;
         }
     }
-
-
-    private String returnExpressionType(Integer node, int currentDecl) {
-
-        return "";
-
-    }
-
-
 
     public TDS getTds() {
         return tds;
