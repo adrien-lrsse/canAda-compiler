@@ -19,6 +19,10 @@ public class Record extends Symbol {
         this.fields.put(name, type);
     }
 
+    public HashMap<String, String> getFields() {
+        return fields;
+    }
+
     @Override
     public String toString() {
         return "Record{" +
