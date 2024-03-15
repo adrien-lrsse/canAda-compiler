@@ -4,10 +4,7 @@ import tds.*;
 import tds.Record;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 public class SemanticAnalyzer {
     private Stack<Integer> stack;
@@ -178,7 +175,6 @@ public class SemanticAnalyzer {
         List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
         for (Integer children : childrens) {
             Node node = ast.getTree().nodes.get(children);
-            System.out.println(node.getLabel());
             switch (node.getLabel()) {
                 case ":=":
                     analyzeAssignation(children);
@@ -225,11 +221,11 @@ public class SemanticAnalyzer {
         // Control the matching of type between left and right value
 
         String rightType = typeOfOperands(node.getChildren().get(1));
-        String leftType = getTypeOfLabel(node.getChildren().get(0), stack.lastElement());
+        String leftType = typeOfOperands(node.getChildren().get(0));
         if (typeOfOperands(node.getChildren().get(1)).equals("undefined")){
             throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel()+" operation between different types") ;
         } else if (!(rightType.equals(leftType))) {
-            throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " is type " + leftType + " and cannot be assigned to type " + rightType) ;
+            throw new SemanticException(leftType + " cannot be assigned to type " + rightType);
         }
     }
 
@@ -237,8 +233,8 @@ public class SemanticAnalyzer {
     }
 
     private void analyzeFor(Integer nodeInt) throws SemanticException{
-        List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
-        Node node = ast.getTree().nodes.get(childrens.get(0));
+        List<Integer> children = ast.getTree().nodes.get(nodeInt).getChildren();
+        Node node = ast.getTree().nodes.get(children.get(0));
         int temp = stack.pop();
         Var incr = new Var(stack.size(), stack.lastElement());
         stack.push(temp);
@@ -247,10 +243,7 @@ public class SemanticAnalyzer {
         incr.setType("integer");
         incr.setOffset(4);
         tds.addSymbol(stack.lastElement(), incr);
-        //System.out.println(ast.getTree().nodes.get(childrens.get(childrens.size()-1)).getLabel());
-        tds.display();
-
-        analyzeInstructions(childrens.get(childrens.size()-1), currentDecl.lastElement());
+        analyzeInstructions(children.get(children.size()-1), currentDecl.lastElement());
         tds.getTds().get(stack.lastElement()).remove(incr);
     }
 
@@ -331,25 +324,48 @@ public class SemanticAnalyzer {
             } else if (node.getLabel().equals("true") || node.getLabel().equals("false")) {
                 return "boolean";
             } else {
-            return getTypeOfLabel(nodeInt, stack.lastElement());
+                return getTypeOfLabel(nodeInt, stack.lastElement());
             }
         }
         if (node.getChildren().size() == 1 && node.getLabel().equals("CALL")){
             analyzeCall(nodeInt);
             List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
+            Node nodeCall = ast.getTree().nodes.get(childrens.get(0));
+            Symbol symbol = getSymbolFromLabel(nodeCall.getLabel(), stack.lastElement());
+            if (symbol instanceof Proc){
+                throw new SemanticException("'"+ast.getTree().nodes.get(childrens.get(0)).getLabel()+"' is a procedure and return nothing");
+            }
             return getTypeOfLabel(childrens.get(0), stack.lastElement());
         }
-        // if ((node.getChildren().size() == 1)){
-        //    List<Integer> childrens = ast.getTree().nodes.get(nodeInt).getChildren();
-        //    Node child = ast.getTree().nodes.get(childrens.get(0));
-        //    switch (child.getLabel()){
-        //        case "ACCESS_IDENT":
-        //    }
-        //    return "integer";
-        //}
-
+        if (node.getChildren().size() == 1 && node.getLabel().equals("NOT")){
+            // TODO
+            return "boolean";
+        }
+        Node nodeSon = ast.getTree().nodes.get(node.getChildren().get(0));
+        if (node.getChildren().size() == 1 && nodeSon.getLabel().equals("ACCESS_IDENT")){
+            Symbol symbol = getSymbolFromLabel(node.getLabel(), stack.lastElement());
+            if (symbol == null){
+                throw new SemanticException("Symbol '" + node.getLabel() + "' is not defined") ;
+            } else if (symbol instanceof Var){
+                Symbol record = getSymbolFromLabel(((Var) symbol).getType(), stack.lastElement());
+                if (record instanceof Record){
+                    return typeOfField((Record) record, nodeSon.getChildren().get(0));
+                } else {
+                    throw new SemanticException("'"+((Var) symbol).getType()+"' is not a record");
+                }
+            }  else if (symbol instanceof Param){
+                Symbol record = getSymbolFromLabel(((Param) symbol).getType(), stack.lastElement());
+                if (record instanceof Record){
+                    return typeOfField((Record) record, nodeSon.getChildren().get(0));
+                } else {
+                    throw new SemanticException("'"+((Param) symbol).getType()+"' is not a record");
+                }
+            } else {
+                throw new SemanticException("Symbol '" + node.getLabel() + "' is not a record") ;
+            }
+        }
+        // Cas récursif
         else {
-            // Cas récursif
             Node nodeLeft = ast.getTree().nodes.get(node.getChildren().get(0));
             Node nodeRight = ast.getTree().nodes.get(node.getChildren().get(1));
             return Objects.equals(typeOfOperands(nodeLeft.getId()), typeOfOperands(nodeRight.getId())) ? typeOfOperands(nodeLeft.getId()) : "undefined";
@@ -397,8 +413,34 @@ public class SemanticAnalyzer {
     }
 
 
-    public String typeOfField(int nodeInt){
-        return "god doesnt exist";
+    public String typeOfField(Record record, int nodeInt) throws SemanticException {
+        Node node = ast.getTree().nodes.get(nodeInt);
+
+        if (node.getChildren().isEmpty()){
+            if (record.getFields().containsKey(node.getLabel())){
+                return record.getFields().get(node.getLabel());
+            } else {
+                throw new SemanticException("'"+node.getLabel()+"' is not a field of '"+record.getName()+"'");
+            }
+        }
+        else {
+            Node nodeSon = ast.getTree().nodes.get(node.getChildren().get(0));
+            System.out.println(nodeSon.getLabel());
+            Node nodeSonSon = ast.getTree().nodes.get(nodeSon.getChildren().get(0));
+            if (record.getFields().containsKey(node.getLabel())){
+                Symbol symbol = getSymbolFromLabel(record.getFields().get(node.getLabel()),stack.lastElement());
+                if (symbol == null){
+                    throw new SemanticException("'"+node.getLabel()+"' has type '"+record.getFields().get(node.getLabel())+"'. But type '"+record.getFields().get(node.getLabel())+"' is not defined");
+                } else if (symbol instanceof Record){
+                    return typeOfField((Record) symbol, nodeSonSon.getId());
+                } else {
+                    throw new SemanticException("'"+record.getFields().get(node.getLabel())+"' must be a record type");
+                }
+            } else {
+                throw new SemanticException("'"+node.getLabel()+"' is not a field of '"+record.getName()+"'");
+            }
+
+        }
     }
 
     public TDS getTds() {
