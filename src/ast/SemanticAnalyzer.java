@@ -235,7 +235,7 @@ public class SemanticAnalyzer {
             }
         }
         String rightType = typeOfOperands(node.getChildren().get(1));
-        String leftType = getTypeOfLabel(node.getChildren().get(0), stack.lastElement());
+        String leftType = typeOfOperands(node.getChildren().get(0));
         if (typeOfOperands(node.getChildren().get(1)).equals("undefined")){
             throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel()+" operation between different types", node.getLine()) ;
         } else if (!(rightType.equals(leftType))) {
@@ -543,11 +543,11 @@ public class SemanticAnalyzer {
             if (record.getFields().containsKey(node.getLabel())){
                 Symbol symbol = getSymbolFromLabel(record.getFields().get(node.getLabel()),stack.lastElement());
                 if (symbol == null){
-                    throw new SemanticException("'"+node.getLabel()+"' has type '"+record.getFields().get(node.getLabel())+"'. But type '"+record.getFields().get(node.getLabel())+"' is not defined");
+                    throw new SemanticException("'"+node.getLabel()+"' has type '"+record.getFields().get(node.getLabel())+"'. But type '"+record.getFields().get(node.getLabel())+"' is not defined", node.getLine());
                 } else if (symbol instanceof Record){
                     return typeOfField((Record) symbol, nodeSonSon.getId());
                 } else {
-                    throw new SemanticException("'"+record.getFields().get(node.getLabel())+"' must be a record type");
+                    throw new SemanticException("'"+record.getFields().get(node.getLabel())+"' must be a record type", node.getLine());
                 }
             } else {
                 throw new SemanticException("'"+node.getLabel()+"' is not a field of '"+record.getName()+"'", node.getLine());

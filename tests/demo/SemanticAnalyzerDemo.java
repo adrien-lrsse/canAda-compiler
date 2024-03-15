@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class SemanticAnalyzerDemo {
     public static void main(String[] args) throws IOException {
-        Lexer lexer = new Lexer("tests/src/semanticControls/Definition.adb");
+        Lexer lexer = new Lexer("tests/src/unDebut.adb");
         Parser parser = new Parser(lexer);
         parser.parse(true);
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
