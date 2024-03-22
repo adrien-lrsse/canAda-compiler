@@ -1,6 +1,8 @@
 package ast;
 
 
+import lexer.Lexer;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;

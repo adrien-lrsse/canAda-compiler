@@ -587,11 +587,12 @@ public class SemanticAnalyzer {
         this.codeGen = codeGen;
     }
 
-    public String typeOfField(Record record, int nodeInt) throws SemanticException {
-        Node node = ast.getTree().nodes.get(nodeInt);
     public void setCodeGenOn(Boolean codeGenOn) {
         this.codeGenOn = codeGenOn;
     }
+
+    public String typeOfField(Record record, int nodeInt) throws SemanticException {
+        Node node = ast.getTree().nodes.get(nodeInt);
 
         if (node.getChildren().isEmpty()){
             if (record.getFields().containsKey(node.getLabel())){
