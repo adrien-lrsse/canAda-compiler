@@ -19,6 +19,9 @@ public class GraphViz {
     public int lastNode = -1;
     public Stack<Integer> buffer;
     private String filename;
+    public String getFilename() {
+        return filename;
+    }
 
     private Tree tree;
     public GraphViz(String filename) {
