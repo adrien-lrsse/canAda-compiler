@@ -177,7 +177,7 @@ public class SemanticAnalyzer {
                         // if type is only declared
                         if (node.getChildren().size() < 2) {
                             if (undefinedTypes.contains(name)) {
-                                throw new SemanticException("Type '" + name + "' already declared");
+                                throw new SemanticException("Type '" + name + "' ar11, lready declared");
                             }
                             undefinedTypes.add(name);
                             break;
