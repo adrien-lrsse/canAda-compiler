@@ -220,7 +220,6 @@ public class SemanticAnalyzer {
                         if (tds.getTds().get(stack.lastElement()).get(index) instanceof Func) {
                             returnNeeded = returnNeeded - 1;
                         }
-                        currentDecl.pop();
 
                         //oskour end of block for code generation
                         if(codeGenOn){
