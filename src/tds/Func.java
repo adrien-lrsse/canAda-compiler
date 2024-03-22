@@ -17,16 +17,16 @@ public class Func extends Symbol {
         this.returnType = returnType;
     }
 
+    public String getReturnType() {
+        return returnType;
+    }
+
     public void addType(String type) {
         this.types.add(type);
     }
 
     public List<String> getTypes() {
         return types;
-    }
-
-    public String getReturnType() {
-        return returnType;
     }
 
     @Override

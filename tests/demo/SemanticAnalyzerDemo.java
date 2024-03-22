@@ -13,6 +13,6 @@ public class SemanticAnalyzerDemo {
         parser.parse(true);
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
         semanticAnalyzer.analyze();
-        semanticAnalyzer.getTds().display();
+        // semanticAnalyzer.getTds().display();
     }
 }

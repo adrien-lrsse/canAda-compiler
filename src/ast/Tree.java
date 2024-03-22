@@ -13,8 +13,8 @@ public class Tree {
         nodes.get(parent).addChild(child);
     }
 
-    public void addNode(int id, String label) {
-        nodes.put(id, new Node(id, label));
+    public void addNode(int id, String label, int line) {
+        nodes.put(id, new Node(id, label, line));
     }
 
     public void display() {

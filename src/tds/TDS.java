@@ -23,13 +23,13 @@ public class TDS {
         return region;
     }
 
-    public int addSymbol(int region, Symbol symbol) throws SemanticException {
+    public int addSymbol(int region, Symbol symbol, int line) throws SemanticException {
         if (region != 0 && symbol.getName().equals("put")) {
-            throw new SemanticException("'put' is a reserved word, it cannot be redefined");
+            throw new SemanticException("'put' is a reserved word, it cannot be redefined", line);
         }
         for (Symbol s : tds.get(region)) {
             if (s.getName().equals(symbol.getName()) && !s.getName().equals("put")) {
-                throw new SemanticException("Label '" + symbol.getName() + "' already used in this scope");
+                throw new SemanticException("Label '" + symbol.getName() + "' already used in this scope", line);
             }
         }
         tds.get(region).add(symbol);

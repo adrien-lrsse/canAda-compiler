@@ -19,13 +19,14 @@ public class GraphViz {
     public int lastNode = -1;
     public Stack<Integer> buffer;
     private String filename;
+    private Lexer lexer;
     public String getFilename() {
         return filename;
     }
-
     private Tree tree;
-    public GraphViz(String filename) {
-        this.filename = filename;
+    public GraphViz(Lexer lexer) {
+        this.lexer = lexer;
+        this.filename = lexer.getFileName();
         try {
             file = new FileWriter(filename + "-ast.dot");
             file.write("graph\n" +
@@ -48,7 +49,7 @@ public class GraphViz {
             lastNode++;
             file.write("\t\t\tnode" + lastNode + ";\n");
             file.write("\t\t\tnode" + lastNode + " [label=\"" + node + "\" shape=" + (isLeaf ? "plaintext" : "egg") + " fontcolor=" + (isLeaf ? "mediumseagreen" : "black") + (!isLeaf ? " style=filled fillcolor=antiquewhite" : "") + "];\n");
-            this.tree.addNode(lastNode, node);
+            this.tree.addNode(lastNode, node, lexer.getLine());
             return lastNode;
         } catch (IOException e) {
             System.out.println("An error occurred: " + e.getMessage());
