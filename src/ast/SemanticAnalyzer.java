@@ -28,6 +28,7 @@ public class SemanticAnalyzer {
         this.currentDecl = new Stack<>();
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
+        this.codeGen = new CodeGenerator(this.ast);
     }
 
     public void analyze() throws SemanticException {
@@ -220,7 +221,6 @@ public class SemanticAnalyzer {
                         if (tds.getTds().get(stack.lastElement()).get(index) instanceof Func) {
                             returnNeeded = returnNeeded - 1;
                         }
-                        currentDecl.pop();
 
                         //oskour end of block for code generation
                         if(codeGenOn){
@@ -230,7 +230,7 @@ public class SemanticAnalyzer {
                         break;
                 }
             }
-            codeGen.close();
+            this.codeGen.close();
         } catch (SemanticException e) {
             StringBuilder error = new StringBuilder("SEMANTIC ERROR: " + e.getMessage() + "\n");
             if (stack.size() == currentDecl.size() + 2) {stack.pop();}
