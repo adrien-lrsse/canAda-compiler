@@ -291,6 +291,12 @@ public class SemanticAnalyzer {
                 throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is a loop index and cannot be modified", node.getLine()) ;
             }
         }
+        // In parameter cannot be assigned
+        if (symbol instanceof Param){
+            if (((Param)(symbol)).getMode() == 1){
+                throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is an 'in' parameter and cannot be modified", node.getLine()) ;
+            }
+        }
         String rightType = typeOfOperands(node.getChildren().get(1));
         String leftType = typeOfOperands(node.getChildren().get(0));
         if (typeOfOperands(node.getChildren().get(1)).equals("undefined")){

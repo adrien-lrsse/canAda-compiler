@@ -4,9 +4,15 @@ procedure test is
 
     a : integer := 0;
 
-    function func (p : in out integer) return integer is
+    type struct is
+        record
+            champsA : integer;
+            champsB : integer;
+        end record;
+
+    function func (p : in struct) return integer is
         begin
-            p := 1;
+            p.champsA := 1;
         end;
 
     begin
