@@ -28,6 +28,7 @@ public class SemanticAnalyzer {
         this.currentDecl = new Stack<>();
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
+        this.codeGen = new CodeGenerator(this.ast);
     }
 
     public void analyze() throws SemanticException {
@@ -229,7 +230,7 @@ public class SemanticAnalyzer {
                         break;
                 }
             }
-            codeGen.close();
+            this.codeGen.close();
         } catch (SemanticException e) {
             StringBuilder error = new StringBuilder("SEMANTIC ERROR: " + e.getMessage() + "\n");
             if (stack.size() == currentDecl.size() + 2) {stack.pop();}
@@ -288,6 +289,12 @@ public class SemanticAnalyzer {
         if (symbol instanceof Var){
             if (((Var)(symbol)).isProtected()){
                 throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is a loop index and cannot be modified", node.getLine()) ;
+            }
+        }
+        // In parameter cannot be assigned
+        if (symbol instanceof Param){
+            if (((Param)(symbol)).getMode() == 1){
+                throw new SemanticException("'" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "' is an 'in' parameter and cannot be modified", node.getLine()) ;
             }
         }
         String rightType = typeOfOperands(node.getChildren().get(1));
