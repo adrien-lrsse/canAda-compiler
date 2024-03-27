@@ -59,6 +59,7 @@ public class CodeGenerator {
             for (StringBuilder s : mainProcedureBuffer) {
                 fileWriter.write(s.toString());
             }
+            mainProcedureBuffer.clear();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

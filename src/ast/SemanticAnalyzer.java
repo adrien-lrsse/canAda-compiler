@@ -74,9 +74,9 @@ public class SemanticAnalyzer {
                         //oskour code generation
                         if(codeGenOn){
                             if (tds.getTds().get(2) == null) {
-                                // procedure main
+                                // procedure main®®
                                 codeGen.write("b    "+proc.getName()+stack.lastElement()+"\n\n");
-                                codeGen.addMainProcedureBuffer(new StringBuilder(proc.getName()+stack.lastElement()+"   mov r11, r13\n\n"));
+                                codeGen.addMainProcedureBuffer(new StringBuilder(proc.getName()+stack.lastElement()+"   mov r11, r13\n"));
                             }
                             else {
                                 codeGen.write(proc.getName() + stack.lastElement() + "  stmfd    r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of procedure " + proc.getName() + stack.lastElement() + "\n" +
@@ -203,17 +203,25 @@ public class SemanticAnalyzer {
                     case "INSTRUCTIONS":
                         // oskour code generation
                         if(codeGenOn){
+                            //checking if we are in the main procedure
+                            int temp = stack.pop();
+                            if (tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()).getFather() == 0) {
+                                // procedure main
+                                codeGen.writeMainBuffer();
+                            }
+                            stack.push(temp);
+
                             codeGen.write(";VARIABLES\n");
                             List<Symbol> symbolsOfRegion =  tds.getTds().get(stack.lastElement());
+                            int lastOffset = -1;
                             for (Symbol symbol : symbolsOfRegion){
-                                int lastOffset = -1;
                                 if (symbol instanceof Var){
                                     lastOffset = ((Var) symbol).getOffset();
                                     codeGen.write(" ;"+((Var) symbol).getType()+"    "+symbol.getName()+"\n");
                                 }
-                                if(lastOffset != -1){
-                                    codeGen.write("sub r13, r13, #"+lastOffset+"\n");
-                                }
+                            }
+                            if(lastOffset != -1){
+                                codeGen.write(" sub r13, r13, #"+lastOffset+"\n");
                             }
                             codeGen.write("\n\n");
                         }
@@ -236,14 +244,9 @@ public class SemanticAnalyzer {
 
                         //oskour end of block for code generation
                         if(codeGenOn){
-                            if (tds.getTds().get(stack.lastElement()).get(index).getFather() == 0) {
-                                // procedure main
-                                codeGen.writeMainBuffer();
-                            }
-                            else {
+                            if (tds.getTds().get(stack.lastElement()).get(index).getFather() != 0) {
                                 codeGen.writeLastBuffer();
                             }
-
                         }
 
                         break;
