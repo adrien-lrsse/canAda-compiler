@@ -7,9 +7,14 @@ import java.util.HashMap;
 public class Record extends Symbol {
     private HashMap<String, String> fields;
 
+    private HashMap<String, Integer> offsets;
+
+    private int offset;
+
     public Record(int nestingLevel, int father) {
         super(nestingLevel, father);
         this.fields = new HashMap<>();
+        this.offsets = new HashMap<>();
     }
 
     public void addField(String name, String type, int line) throws SemanticException {
@@ -17,10 +22,24 @@ public class Record extends Symbol {
             throw new SemanticException("Field '" + name + "' already defined in record + '" + getName() + "'", line);
         }
         this.fields.put(name, type);
+        this.offset += TDS.offsets.get(type);
+        this.offsets.put(name, TDS.offsets.get(type));
     }
 
     public HashMap<String, String> getFields() {
         return fields;
+    }
+
+    public int getOffset() {
+        return this.offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public int getOffset(String field) {
+        return offsets.get(field);
     }
 
     @Override
@@ -30,6 +49,8 @@ public class Record extends Symbol {
                 ", father=" + getFather() +
                 ", name='" + getName() + '\'' +
                 ", fields=" + fields +
+                ", offsets=" + offsets +
+                ", offset=" + getOffset() +
                 '}';
     }
 }
