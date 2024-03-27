@@ -309,11 +309,15 @@ public class SemanticAnalyzer {
     private void analyzeIf(Integer node) throws SemanticException{
         returnNeededTmp = returnNeededTmp + 1;
         List<Integer> childrens = ast.getTree().nodes.get(node).getChildren();
+        System.out.println(childrens);
         for (Integer children : childrens) {
             Node nodeChild = ast.getTree().nodes.get(children);
             switch (nodeChild.getLabel()) {
                 case "IF":
                     analyzeIf(children);
+                case "CONDITION":
+                    analyseCondition(children);
+                    break;
                 case "THEN":
                     analyzeThen(children);
                     break;
@@ -330,15 +334,15 @@ public class SemanticAnalyzer {
         }
     }
 
-    private void analyzeThen(Integer node) throws SemanticException{
-        for (Integer children : ast.getTree().nodes.get(node).getChildren()) {
-            Node nodeChild = ast.getTree().nodes.get(children);
-            switch (nodeChild.getLabel()) {
-                case "RETURN_EXPRESSION":
-                    analseReturnExpression(children, currentDecl.lastElement());
-                    break;
-            }
+    private void analyseCondition(Integer nodeInt) throws SemanticException {
+        Node node = ast.getTree().nodes.get(nodeInt);
+        if (!typeOfOperands(node.getChildren().get(0)).equals("boolean")){
+            throw new SemanticException("Expected boolean in condition, got " + typeOfOperands(node.getChildren().get(0)), node.getLine());
         }
+    }
+
+    private void analyzeThen(Integer node) throws SemanticException{
+        analyzeInstructions(node, currentDecl.lastElement(), returnNeededTmp);
     }
 
     private void analyzeElsif(Integer node) throws SemanticException{
@@ -349,6 +353,9 @@ public class SemanticAnalyzer {
             switch (nodeChild.getLabel()) {
                 case "IF":
                     analyzeIf(children);
+                case "CONDITION":
+                    analyseCondition(children);
+                    break;
                 case "THEN":
                     analyzeThen(children);
                     break;
@@ -366,14 +373,7 @@ public class SemanticAnalyzer {
     }
 
     private void analyzeElse(Integer node) throws SemanticException{
-        for (Integer children : ast.getTree().nodes.get(node).getChildren()) {
-            Node nodeChild = ast.getTree().nodes.get(children);
-            switch (nodeChild.getLabel()) {
-                case "RETURN_EXPRESSION":
-                    analseReturnExpression(children, currentDecl.lastElement());
-                    break;
-            }
-        }
+        analyzeInstructions(node, currentDecl.lastElement(), returnNeededTmp);
     }
 
     private void analseReturnExpression(Integer node, int currentDecl) throws SemanticException {
