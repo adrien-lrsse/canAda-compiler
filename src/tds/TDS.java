@@ -9,6 +9,12 @@ import java.util.List;
 public class TDS {
     private HashMap<Integer, List<Symbol>> tds;
 
+    public static HashMap<String, Integer> offsets = new HashMap<>() {{
+        put("integer", 4);
+        put("character", 4);
+        put("boolean", 4);
+    }};
+
     public TDS() {
         this.tds = new HashMap<>();
     }

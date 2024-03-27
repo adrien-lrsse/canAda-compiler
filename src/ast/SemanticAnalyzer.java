@@ -51,6 +51,8 @@ public class SemanticAnalyzer {
 
             // DFT on AST
             int tmp;
+            Stack<Integer> offset = new Stack<>();
+            offset.push(0);
             List<String> undefinedTypes = new ArrayList<>();
             for (Node node : ast.getDepthFirstTraversal()) {
                 switch (node.getLabel()) {
@@ -58,6 +60,9 @@ public class SemanticAnalyzer {
                         stack.push(tds.newRegion());
                         break;
                     case "PROCEDURE":
+                        // reset offset
+                        offset.push(0);
+
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
                             throw new SemanticException("Following types are declared but not defined (or defined too late): " + undefinedTypes, node.getLine());
@@ -88,6 +93,9 @@ public class SemanticAnalyzer {
                         stack.push(tds.newRegion());
                         break;
                     case "FUNCTION":
+                        // reset offset
+                        offset.push(0);
+
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
                             throw new SemanticException("Undefined types: " + undefinedTypes, node.getLine());
@@ -131,7 +139,9 @@ public class SemanticAnalyzer {
                             param.setMode(Objects.equals(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel(), "IN") ? 0 : 1);
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel());
                         }
-                        param.setOffset(4);
+                        // update offset
+                        offset.push(offset.pop() + TDS.offsets.get(param.getType()));
+                        param.setOffset(offset.lastElement());
                         tds.addSymbol(stack.lastElement(), param, node.getLine());
 
                         // update current declaration
@@ -159,7 +169,9 @@ public class SemanticAnalyzer {
                         stack.push(tmp);
                         var.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
                         var.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
-                        var.setOffset(4);
+                        // update offset
+                        offset.push(offset.pop() + TDS.offsets.get(var.getType()));
+                        var.setOffset(offset.lastElement());
                         tds.addSymbol(stack.lastElement(), var, node.getLine());
                         break;
                     case "RETURN_TYPE":
@@ -195,16 +207,24 @@ public class SemanticAnalyzer {
                         tds.Record record = new Record(stack.size(), stack.lastElement());
                         stack.push(tmp);
                         record.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
+                        record.setOffset(offset.lastElement());
                         if (ast.getTree().nodes.get(node.getChildren().get(1)).getLabel().equals("RECORD")) {
                             Node child;
                             for (int i = 0; i < ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().size(); i++) {
                                 child = ast.getTree().nodes.get(ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().get(i));
                                 record.addField(ast.getTree().nodes.get(child.getChildren().get(0)).getLabel(), ast.getTree().nodes.get(child.getChildren().get(1)).getLabel(), child.getLine());
                             }
+                            offset.push(offset.pop() + record.getOffset());
+                            TDS.offsets.put(record.getName(), record.getOffset());
                         }
                         tds.addSymbol(stack.lastElement(), record, node.getLine());
                         // remove type from undefined types
                         undefinedTypes.remove(name);
+                        break;
+                    case "DECLARATIONS":
+                        // reset offset
+                        offset.pop();
+                        offset.push(0);
                         break;
                     case "INSTRUCTIONS":
                         // check if all the declared types are defined
@@ -227,6 +247,8 @@ public class SemanticAnalyzer {
                             codeGen.writeLastBuffer();
                         }
 
+                        // pop offset
+                        offset.pop();
                         break;
                 }
             }
@@ -408,7 +430,7 @@ public class SemanticAnalyzer {
         incr.setProtected(true);
         incr.setName(node.getLabel());
         incr.setType("integer");
-        incr.setOffset(4);
+        incr.setOffset(TDS.offsets.get("integer"));
         tds.addSymbol(stack.lastElement(), incr, node.getLine());
         analyzeInstructions(children.get(children.size()-1), currentDecl.lastElement(), returnNeededTmp);
         tds.getTds().get(stack.lastElement()).remove(incr);
