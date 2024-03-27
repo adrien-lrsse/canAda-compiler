@@ -127,7 +127,6 @@ public class SemanticAnalyzer {
                             param.setMode(0);
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
                             // check if type is defined
-                            System.out.println(!param.getType().equals("character"));
                             if (!(param.getType().equals("boolean") || param.getType().equals("integer") || param.getType().equals("character") || (getSymbolFromLabel(param.getType(), stack.lastElement()) instanceof Record))) {
                                 throw new SemanticException("Type '" + param.getType() + "' is not defined", node.getLine());
                             }
@@ -347,7 +346,6 @@ public class SemanticAnalyzer {
     private void analyzeIf(Integer node) throws SemanticException{
         returnNeededTmp = returnNeededTmp + 1;
         List<Integer> childrens = ast.getTree().nodes.get(node).getChildren();
-        System.out.println(childrens);
         for (Integer children : childrens) {
             Node nodeChild = ast.getTree().nodes.get(children);
             switch (nodeChild.getLabel()) {
@@ -674,7 +672,6 @@ public class SemanticAnalyzer {
         }
         else {
             Node nodeSon = ast.getTree().nodes.get(node.getChildren().get(0));
-            System.out.println(nodeSon.getLabel());
             Node nodeSonSon = ast.getTree().nodes.get(nodeSon.getChildren().get(0));
             if (record.getFields().containsKey(node.getLabel())){
                 Symbol symbol = getSymbolFromLabel(record.getFields().get(node.getLabel()),stack.lastElement());
