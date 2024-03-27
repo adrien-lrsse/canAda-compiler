@@ -468,26 +468,6 @@ public class SemanticAnalyzer {
     }
 
 
-    public int isDeclerationInMyParents(int node, int region){
-        int father = 0;
-        for (Symbol symbol : tds.getTds().get(region)){
-            father = symbol.getFather();
-            if (symbol.getName().equals(ast.getTree().nodes.get(node).getLabel())){
-                if ((symbol instanceof Var)) {
-                    if (((Var)(symbol)).isProtected()){
-                        return 2;
-                    }
-                }
-                return 0;
-
-            }
-        }
-        if (region != 0){
-            return isDeclerationInMyParents(node, father);
-        } else {
-            return 1;
-        }
-    }
 
     public String typeOfOperands(int nodeInt) throws SemanticException {
         Node node = ast.getTree().nodes.get(nodeInt);
