@@ -52,7 +52,6 @@ public class SemanticAnalyzer {
             // DFT on AST
             int tmp;
             Stack<Integer> offset = new Stack<>();
-            offset.push(0);
             List<String> undefinedTypes = new ArrayList<>();
             for (Node node : ast.getDepthFirstTraversal()) {
                 switch (node.getLabel()) {
@@ -182,7 +181,6 @@ public class SemanticAnalyzer {
                         if (!(var.getType().equals("boolean") || var.getType().equals("integer") || var.getType().equals("character") || (getSymbolFromLabel(var.getType(), stack.lastElement()) instanceof Record))) {
                             throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
                         }
-                        var.setOffset(4);
                         tds.addSymbol(stack.lastElement(), var, node.getLine());
                         break;
                     case "RETURN_TYPE":
