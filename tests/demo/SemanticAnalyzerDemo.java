@@ -8,11 +8,11 @@ import java.io.IOException;
 
 public class SemanticAnalyzerDemo {
     public static void main(String[] args) throws IOException {
-        Lexer lexer = new Lexer("tests/src/semanticControls/InParam.adb");
+        Lexer lexer = new Lexer("tests/src/semanticControls/InOutParam.adb");
         Parser parser = new Parser(lexer);
         parser.parse(false);
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
         semanticAnalyzer.analyze();
-        semanticAnalyzer.getTds().display();
+        //semanticAnalyzer.getTds().display();
     }
 }
