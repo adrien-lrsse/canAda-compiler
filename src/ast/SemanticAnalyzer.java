@@ -73,13 +73,16 @@ public class SemanticAnalyzer {
 
                         //oskour code generation
                         if(codeGenOn){
-                            try {
-                                codeGen.getfileWriter().write(proc.getName()+stack.lastElement()+"  stmfd    r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of procedure "+proc.getName()+stack.lastElement()+"\n" +
+                            if (tds.getTds().get(2) == null) {
+                                // procedure main
+                                codeGen.write("b "+proc.getName()+stack.lastElement()+"\n\n");
+                                codeGen.addMainProcedureBuffer(new StringBuilder(proc.getName()+stack.lastElement()+"   mov r11, r13\n\n"));
+                            }
+                            else {
+                                codeGen.write(proc.getName() + stack.lastElement() + "  stmfd    r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of procedure " + proc.getName() + stack.lastElement() + "\n" +
                                         "mov r11, r13\n\n");
                                 codeGen.addBuffer(new StringBuilder("\nmov  r11, r13\n" +
-                                        "ldmfd  r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, pc} ; End of procedure "+proc.getName()+stack.lastElement()+"\n\n\n"));
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                                        "ldmfd  r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, pc} ; End of procedure " + proc.getName() + stack.lastElement() + "\n\n\n"));
                             }
                         }
 
@@ -103,14 +106,10 @@ public class SemanticAnalyzer {
 
                         //oskour code generation
                         if(codeGenOn){
-                            try {
-                                codeGen.getfileWriter().write(func.getName()+stack.lastElement()+ " stmfd    r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of function "+func.getName()+stack.lastElement()+"\n" +
+                            codeGen.write(func.getName()+stack.lastElement()+ " stmfd    r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of function "+func.getName()+stack.lastElement()+"\n" +
                                         "mov r11, r13\n ;PARAMS\n");
-                                codeGen.addBuffer(new StringBuilder("\nmov  r11, r13\n" +
+                            codeGen.addBuffer(new StringBuilder("\nmov  r11, r13\n" +
                                         "ldmfd  r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, pc} ; End of function "+func.getName()+stack.lastElement()+"\n\n\n"));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
                         }
 
                         // create new region
@@ -144,11 +143,7 @@ public class SemanticAnalyzer {
 
                         //oskour code generation gestion des paramètres
                         if(codeGenOn){
-                            try {
-                                codeGen.getfileWriter().write("     ;"+param.getType()+"    "+param.getName()+"\n");
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                            codeGen.write("     ;"+param.getType()+"    "+param.getName()+"\n");
                         }
 
                         stack.push(tmp);
@@ -170,11 +165,7 @@ public class SemanticAnalyzer {
 
                         //oskour code generation gestion du type de retour
                         if(codeGenOn){
-                            try {
-                                codeGen.getfileWriter().write(" ;RETURN_TYPE\n      ;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n\n");
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                            codeGen.write(" ;RETURN_TYPE\n      ;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
                         }
 
                         stack.push(tmp);
@@ -206,7 +197,28 @@ public class SemanticAnalyzer {
                         // remove type from undefined types
                         undefinedTypes.remove(name);
                         break;
+                    case "DECLARATIONS":
+                        break;
+
                     case "INSTRUCTIONS":
+                        // oskour code generation
+                        if(codeGenOn){
+                            codeGen.write(";VARIABLES\n");
+                            List<Symbol> symbolsOfRegion =  tds.getTds().get(stack.lastElement());
+                            for (Symbol symbol : symbolsOfRegion){
+                                int lastOffset = -1;
+                                if (symbol instanceof Var){
+                                    lastOffset = ((Var) symbol).getOffset();
+                                    codeGen.write(" ;"+((Var) symbol).getType()+"    "+symbol.getName()+"\n");
+                                }
+                                if(lastOffset != -1){
+                                    codeGen.write("sub r13, r13, #"+lastOffset+"\n");
+                                }
+                            }
+                            codeGen.write("\n\n");
+                        }
+
+
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
                             throw new SemanticException("Undefined types: " + undefinedTypes, node.getLine());
@@ -224,13 +236,19 @@ public class SemanticAnalyzer {
 
                         //oskour end of block for code generation
                         if(codeGenOn){
-                            codeGen.writeLastBuffer();
+                            if (tds.getTds().get(stack.lastElement()).get(index).getFather() == 0) {
+                                // procedure main
+                                codeGen.writeMainBuffer();
+                            }
+                            else {
+                                codeGen.writeLastBuffer();
+                            }
+
                         }
 
                         break;
                 }
             }
-            this.codeGen.close();
         } catch (SemanticException e) {
             StringBuilder error = new StringBuilder("SEMANTIC ERROR: " + e.getMessage() + "\n");
             if (stack.size() == currentDecl.size() + 2) {stack.pop();}
@@ -240,6 +258,7 @@ public class SemanticAnalyzer {
             error.append("  └in ").append(ast.getTree().nodes.get(stack.pop()).getLabel()).append("\n");
             throw new SemanticException(error.toString(), -1);
         }
+        this.codeGen.close();
     }
 
 
