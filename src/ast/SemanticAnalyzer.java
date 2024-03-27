@@ -51,6 +51,8 @@ public class SemanticAnalyzer {
 
             // DFT on AST
             int tmp;
+            Stack<Integer> offset = new Stack<>();
+            offset.push(0);
             List<String> undefinedTypes = new ArrayList<>();
             for (Node node : ast.getDepthFirstTraversal()) {
                 switch (node.getLabel()) {
@@ -58,6 +60,9 @@ public class SemanticAnalyzer {
                         stack.push(tds.newRegion());
                         break;
                     case "PROCEDURE":
+                        // reset offset
+                        offset.push(0);
+
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
                             throw new SemanticException("Following types are declared but not defined (or defined too late): " + undefinedTypes, node.getLine());
@@ -91,6 +96,9 @@ public class SemanticAnalyzer {
                         stack.push(tds.newRegion());
                         break;
                     case "FUNCTION":
+                        // reset offset
+                        offset.push(0);
+
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
                             throw new SemanticException("Undefined types: " + undefinedTypes, node.getLine());
@@ -126,7 +134,6 @@ public class SemanticAnalyzer {
                             param.setMode(0);
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
                             // check if type is defined
-                            System.out.println(!param.getType().equals("character"));
                             if (!(param.getType().equals("boolean") || param.getType().equals("integer") || param.getType().equals("character") || (getSymbolFromLabel(param.getType(), stack.lastElement()) instanceof Record))) {
                                 throw new SemanticException("Type '" + param.getType() + "' is not defined", node.getLine());
                             }
@@ -141,7 +148,9 @@ public class SemanticAnalyzer {
                             );
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel());
                         }
-                        param.setOffset(4);
+                        // update offset
+                        offset.push(offset.pop() + TDS.offsets.get(param.getType()));
+                        param.setOffset(offset.lastElement());
                         tds.addSymbol(stack.lastElement(), param, node.getLine());
 
                         // update current declaration
@@ -167,6 +176,9 @@ public class SemanticAnalyzer {
                         stack.push(tmp);
                         var.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
                         var.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
+                        // update offset
+                        offset.push(offset.pop() + TDS.offsets.get(var.getType()));
+                        var.setOffset(offset.lastElement());
                         if (!(var.getType().equals("boolean") || var.getType().equals("integer") || var.getType().equals("character") || (getSymbolFromLabel(var.getType(), stack.lastElement()) instanceof Record))) {
                             throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
                         }
@@ -202,6 +214,7 @@ public class SemanticAnalyzer {
                         tds.Record record = new Record(stack.size(), stack.lastElement());
                         stack.push(tmp);
                         record.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
+                        record.setOffset(offset.lastElement());
                         if (ast.getTree().nodes.get(node.getChildren().get(1)).getLabel().equals("RECORD")) {
                             Node child;
                             for (int i = 0; i < ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().size(); i++) {
@@ -211,14 +224,18 @@ public class SemanticAnalyzer {
                                     throw new SemanticException("Type '" + ast.getTree().nodes.get(child.getChildren().get(1)).getLabel() + "' is not defined", node.getLine());
                                 }
                             }
+                            offset.push(offset.pop() + record.getOffset());
+                            TDS.offsets.put(record.getName(), record.getOffset());
                         }
                         tds.addSymbol(stack.lastElement(), record, node.getLine());
                         // remove type from undefined types
                         undefinedTypes.remove(name);
                         break;
                     case "DECLARATIONS":
+                        // reset offset
+                        offset.pop();
+                        offset.push(0);
                         break;
-
                     case "INSTRUCTIONS":
                         //  code generation
                         if(codeGenOn){
@@ -268,6 +285,8 @@ public class SemanticAnalyzer {
                             }
                         }
 
+                        // pop offset
+                        offset.pop();
                         break;
                 }
             }
@@ -371,7 +390,6 @@ public class SemanticAnalyzer {
     private void analyzeIf(Integer node) throws SemanticException{
         returnNeededTmp = returnNeededTmp + 1;
         List<Integer> childrens = ast.getTree().nodes.get(node).getChildren();
-        System.out.println(childrens);
         for (Integer children : childrens) {
             Node nodeChild = ast.getTree().nodes.get(children);
             switch (nodeChild.getLabel()) {
@@ -470,7 +488,7 @@ public class SemanticAnalyzer {
         incr.setProtected(true);
         incr.setName(node.getLabel());
         incr.setType("integer");
-        incr.setOffset(4);
+        incr.setOffset(TDS.offsets.get("integer"));
         tds.addSymbol(stack.lastElement(), incr, node.getLine());
         analyzeInstructions(children.get(children.size()-1), currentDecl.lastElement(), returnNeededTmp);
         tds.getTds().get(stack.lastElement()).remove(incr);
@@ -600,7 +618,6 @@ public class SemanticAnalyzer {
             Node nodeLeft = ast.getTree().nodes.get(node.getChildren().get(0));
             Node nodeRight = ast.getTree().nodes.get(node.getChildren().get(1));
             if (node.getLabel().equals(("AND")) || node.getLabel().equals("OR") || node.getLabel().equals("=") || node.getLabel().equals("<") || node.getLabel().equals(">") || node.getLabel().equals("<=") || node.getLabel().equals(">=") ||  node.getLabel().equals("/=")){
-                System.out.println(typeOfOperands(nodeLeft.getId()));
                 if (typeOfOperands(nodeLeft.getId()).equals(typeOfOperands(nodeRight.getId())) && !typeOfOperands(nodeLeft.getId()).equals("undefined") && !typeOfOperands(nodeRight.getId()).equals("undefined")){
 
                     return "boolean";
@@ -698,7 +715,6 @@ public class SemanticAnalyzer {
         }
         else {
             Node nodeSon = ast.getTree().nodes.get(node.getChildren().get(0));
-            System.out.println(nodeSon.getLabel());
             Node nodeSonSon = ast.getTree().nodes.get(nodeSon.getChildren().get(0));
             if (record.getFields().containsKey(node.getLabel())){
                 Symbol symbol = getSymbolFromLabel(record.getFields().get(node.getLabel()),stack.lastElement());
