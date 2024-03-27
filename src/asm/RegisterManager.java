@@ -24,11 +24,23 @@ public class RegisterManager {
         registers[register] = false;
     }
 
-    public int getHighestUsedRegister() {
-        return highestUsedRegister;
+    public String generateStmfd() {
+        StringBuilder stmfd = new StringBuilder();
+        stmfd.append("r13!, {");
+        for (int i = 0; i <= highestUsedRegister; i++) {
+            stmfd.append("r").append(i).append(", ");
+        }
+        stmfd.append("lr}");
+        return stmfd.toString();
     }
 
-    public void setHighestUsedRegister(int highestUsedRegister) {
-        this.highestUsedRegister = highestUsedRegister;
+    public String generateLdmfd() {
+        StringBuilder ldmfd = new StringBuilder();
+        ldmfd.append("r13!, {");
+        for (int i = 0; i <= highestUsedRegister; i++) {
+            ldmfd.append("r").append(i).append(", ");
+        }
+        ldmfd.append("pc}");
+        return ldmfd.toString();
     }
 }

@@ -28,7 +28,6 @@ public class SemanticAnalyzer {
         this.currentDecl = new Stack<>();
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
-        this.codeGen = new CodeGenerator(this.ast);
     }
 
     public void analyze() throws SemanticException {
@@ -76,7 +75,9 @@ public class SemanticAnalyzer {
 
 
                         // code generation
-                        codeGen.procedureGen(tds, proc.getName(), String.valueOf(stack.lastElement()));
+                        if (codeGenOn) {
+                            codeGen.procedureGen(proc.getName(), String.valueOf(stack.lastElement()));
+                        }
 
 
                         // create new region
@@ -100,7 +101,9 @@ public class SemanticAnalyzer {
                         currentDecl.push(tds.addSymbol(stack.lastElement(), func, node.getLine()));
 
                         // code generation
-                        codeGen.functionGen(func.getName(), String.valueOf(stack.lastElement()));
+                        if (codeGenOn) {
+                            codeGen.functionGen(func.getName(), String.valueOf(stack.lastElement()));
+                        }
 
                         // create new region
                         stack.push(tds.newRegion());
@@ -146,7 +149,9 @@ public class SemanticAnalyzer {
                         }
 
                         // code generation gestion des paramètres
-                        codeGen.write("\t;"+param.getType()+"\t"+param.getName()+"\n");
+                        if (codeGenOn) {
+                            codeGen.appendToBuffer("\t\t;"+param.getType()+"\t"+param.getName()+"\n");
+                        }
 
                         stack.push(tmp);
                         break;
@@ -171,8 +176,9 @@ public class SemanticAnalyzer {
                         }
 
                         // code generation gestion du type de retour
-                        codeGen.write(";RETURN_TYPE\n\t;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
-
+                        if (codeGenOn) {
+                            codeGen.appendToBuffer("\t;RETURN_TYPE\n\t\t;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
+                        }
 
                         stack.push(tmp);
                         break;
@@ -216,9 +222,9 @@ public class SemanticAnalyzer {
                         break;
                     case "INSTRUCTIONS":
                         //  code generation
-                        int temp = stack.pop();
-                        this.codeGen.varGen(tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()).getFather(), tds.getTds().get(stack.lastElement()));
-                        stack.push(temp);
+                        if (codeGenOn) {
+                            this.codeGen.varGen(tds.getTds().get(stack.lastElement()));
+                        }
 
 
                         // check if all the declared types are defined
@@ -228,7 +234,7 @@ public class SemanticAnalyzer {
 
                         // code generation
                         if(codeGenOn){
-                            this.codeGen.write(";BEGIN of instructions\n");
+                            this.codeGen.appendToBuffer("\t;BEGIN of instructions\n");
                         }
                         analyzeInstructions(node.getId(), currentDecl.lastElement(), returnNeeded);
                         stack.pop();
@@ -240,7 +246,10 @@ public class SemanticAnalyzer {
                         }
 
                         // end of block for code generation
-                        codeGen.endOfBlockGen(tds.getTds().get(stack.lastElement()).get(index).getFather());
+                        if (codeGenOn) {
+                            this.codeGen.appendToBuffer("\t;END of instructions\n");
+                            codeGen.endBlock();
+                        }
 
                         // pop offset
                         offset.pop();
@@ -256,7 +265,9 @@ public class SemanticAnalyzer {
             error.append("  └in ").append(ast.getTree().nodes.get(stack.pop()).getLabel()).append("\n");
             throw new SemanticException(error.toString(), -1);
         }
-        this.codeGen.close();
+        if (codeGenOn) {
+            codeGen.writeDownBlocks();
+        }
     }
 
 
@@ -283,7 +294,6 @@ public class SemanticAnalyzer {
                     break;
                 case "END":
                     analyseEnd(children, currentDecl);
-                    this.codeGen.write(";END of instructions\n\n");
                     break;
                 case "RETURN_EXPRESSION":
                     analseReturnExpression(children, currentDecl);
@@ -653,10 +663,6 @@ public class SemanticAnalyzer {
     public void setCodeGen(CodeGenerator codeGen) {
         this.codeGenOn = Boolean.TRUE;
         this.codeGen = codeGen;
-    }
-
-    public void setCodeGenOn(Boolean codeGenOn) {
-        this.codeGenOn = codeGenOn;
     }
 
     public String typeOfField(Record record, int nodeInt) throws SemanticException {

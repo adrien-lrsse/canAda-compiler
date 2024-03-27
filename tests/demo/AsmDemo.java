@@ -13,7 +13,8 @@ public class AsmDemo {
         Parser parser = new Parser(lexer);
         parser.parse(true);
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
-        semanticAnalyzer.setCodeGen(new CodeGenerator(parser.getAst()));
+        CodeGenerator codeGenerator = new CodeGenerator(parser.getAst().getFilename());
+        semanticAnalyzer.setCodeGen(codeGenerator);
         semanticAnalyzer.analyze();
     }
 }
