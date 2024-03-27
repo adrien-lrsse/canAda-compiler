@@ -16,6 +16,7 @@ build/
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+*.s
 
 # AWS User-specific
 .idea/**/aws.xml
