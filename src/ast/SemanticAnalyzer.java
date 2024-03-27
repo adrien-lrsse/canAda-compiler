@@ -514,8 +514,11 @@ public class SemanticAnalyzer {
             return getTypeOfLabel(childrens.get(0), stack.lastElement());
         }
         if (node.getChildren().size() == 1 && node.getLabel().equals("NOT")){
-            // TODO
-            return "boolean";
+            if (typeOfOperands(node.getChildren().get(0)).equals("boolean")){
+                return "boolean";
+            } else {
+                throw new SemanticException("Expected boolean, got " + typeOfOperands(node.getChildren().get(0)), node.getLine());
+            }
         }
         Node nodeSon = ast.getTree().nodes.get(node.getChildren().get(0));
         if (node.getChildren().size() == 1 && nodeSon.getLabel().equals("ACCESS_IDENT")){
@@ -544,6 +547,15 @@ public class SemanticAnalyzer {
         else {
             Node nodeLeft = ast.getTree().nodes.get(node.getChildren().get(0));
             Node nodeRight = ast.getTree().nodes.get(node.getChildren().get(1));
+            if (node.getLabel().equals(("AND")) || node.getLabel().equals("OR") || node.getLabel().equals("=") || node.getLabel().equals("<") || node.getLabel().equals(">") || node.getLabel().equals("<=") || node.getLabel().equals(">=") ||  node.getLabel().equals("/=")){
+                System.out.println(typeOfOperands(nodeLeft.getId()));
+                if (typeOfOperands(nodeLeft.getId()).equals(typeOfOperands(nodeRight.getId())) && !typeOfOperands(nodeLeft.getId()).equals("undefined") && !typeOfOperands(nodeRight.getId()).equals("undefined")){
+
+                    return "boolean";
+                }
+                return "undefined";
+            }
+
             return Objects.equals(typeOfOperands(nodeLeft.getId()), typeOfOperands(nodeRight.getId())) ? typeOfOperands(nodeLeft.getId()) : "undefined";
         }
     }
