@@ -76,19 +76,7 @@ public class SemanticAnalyzer {
 
 
                         // code generation
-                        if(codeGenOn){
-                            if (tds.getTds().get(2) == null) {
-                                // procedure main®®
-                                codeGen.write("b\t"+proc.getName()+stack.lastElement()+"\n\n");
-                                codeGen.addMainProcedureBuffer(new StringBuilder(proc.getName()+stack.lastElement()+"\tmov r11, r13\n"));
-                            }
-                            else {
-                                codeGen.write(proc.getName() + stack.lastElement() + "\tstmfd r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of procedure " + proc.getName() + stack.lastElement() + "\n" +
-                                        "mov r11, r13\n\n");
-                                codeGen.addBuffer(new StringBuilder("\nmov  r11, r13\n" +
-                                        "ldmfd  r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, pc} ; End of procedure " + proc.getName() + stack.lastElement() + "\n\n\n"));
-                            }
-                        }
+                        codeGen.procedureGen(tds, proc.getName(), String.valueOf(stack.lastElement()));
 
 
                         // create new region
@@ -112,12 +100,7 @@ public class SemanticAnalyzer {
                         currentDecl.push(tds.addSymbol(stack.lastElement(), func, node.getLine()));
 
                         // code generation
-                        if(codeGenOn){
-                            codeGen.write(func.getName()+stack.lastElement()+ "\tstmfd r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of function "+func.getName()+stack.lastElement()+"\n" +
-                                        "mov r11, r13\n;PARAMS\n");
-                            codeGen.addBuffer(new StringBuilder("\nmov  r11, r13\n" +
-                                        "ldmfd  r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, pc} ; End of function "+func.getName()+stack.lastElement()+"\n\n\n"));
-                        }
+                        codeGen.functionGen(func.getName(), String.valueOf(stack.lastElement()));
 
                         // create new region
                         stack.push(tds.newRegion());
@@ -163,9 +146,7 @@ public class SemanticAnalyzer {
                         }
 
                         // code generation gestion des paramètres
-                        if(codeGenOn){
-                            codeGen.write("\t;"+param.getType()+"\t"+param.getName()+"\n");
-                        }
+                        codeGen.write("\t;"+param.getType()+"\t"+param.getName()+"\n");
 
                         stack.push(tmp);
                         break;
@@ -190,9 +171,8 @@ public class SemanticAnalyzer {
                         }
 
                         // code generation gestion du type de retour
-                        if(codeGenOn){
-                            codeGen.write(";RETURN_TYPE\n\t;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
-                        }
+                        codeGen.write(";RETURN_TYPE\n\t;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
+
 
                         stack.push(tmp);
                         break;
@@ -236,30 +216,9 @@ public class SemanticAnalyzer {
                         break;
                     case "INSTRUCTIONS":
                         //  code generation
-                        if(codeGenOn){
-                            //checking if we are in the main procedure
-                            int temp = stack.pop();
-                            if (tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()).getFather() == 0) {
-                                // procedure main
-                                codeGen.writeMainBuffer();
-                            }
-                            stack.push(temp);
-
-                            codeGen.write(";VARIABLES\n");
-                            List<Symbol> symbolsOfRegion =  tds.getTds().get(stack.lastElement());
-                            int lastOffset = -1;
-                            System.out.println(symbolsOfRegion);
-                            for (Symbol symbol : symbolsOfRegion){
-                                if (symbol instanceof Var){
-                                    lastOffset = ((Var) symbol).getOffset();
-                                    codeGen.write("\t;"+((Var) symbol).getType()+"    "+symbol.getName()+"\n");
-                                }
-                            }
-                            if(lastOffset != -1){
-                                codeGen.write("sub r13, r13, #"+lastOffset+"\n");
-                            }
-                            codeGen.write("\n\n");
-                        }
+                        int temp = stack.pop();
+                        this.codeGen.varGen(tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()).getFather(), tds.getTds().get(stack.lastElement()));
+                        stack.push(temp);
 
 
                         // check if all the declared types are defined
@@ -281,11 +240,7 @@ public class SemanticAnalyzer {
                         }
 
                         // end of block for code generation
-                        if(codeGenOn){
-                            if (tds.getTds().get(stack.lastElement()).get(index).getFather() != 0) {
-                                codeGen.writeLastBuffer();
-                            }
-                        }
+                        codeGen.endOfBlockGen(tds.getTds().get(stack.lastElement()).get(index).getFather());
 
                         // pop offset
                         offset.pop();
