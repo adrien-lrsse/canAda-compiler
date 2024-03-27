@@ -71,15 +71,15 @@ public class SemanticAnalyzer {
                         currentDecl.push(tds.addSymbol(stack.lastElement(), proc, node.getLine()));
 
 
-                        //oskour code generation
+                        // code generation
                         if(codeGenOn){
                             if (tds.getTds().get(2) == null) {
                                 // procedure main®®
-                                codeGen.write("b    "+proc.getName()+stack.lastElement()+"\n\n");
-                                codeGen.addMainProcedureBuffer(new StringBuilder(proc.getName()+stack.lastElement()+"   mov r11, r13\n"));
+                                codeGen.write("b\t"+proc.getName()+stack.lastElement()+"\n\n");
+                                codeGen.addMainProcedureBuffer(new StringBuilder(proc.getName()+stack.lastElement()+"\tmov r11, r13\n"));
                             }
                             else {
-                                codeGen.write(proc.getName() + stack.lastElement() + "  stmfd    r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of procedure " + proc.getName() + stack.lastElement() + "\n" +
+                                codeGen.write(proc.getName() + stack.lastElement() + "\tstmfd r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of procedure " + proc.getName() + stack.lastElement() + "\n" +
                                         "mov r11, r13\n\n");
                                 codeGen.addBuffer(new StringBuilder("\nmov  r11, r13\n" +
                                         "ldmfd  r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, pc} ; End of procedure " + proc.getName() + stack.lastElement() + "\n\n\n"));
@@ -104,10 +104,10 @@ public class SemanticAnalyzer {
                         func.setReturnType("");
                         currentDecl.push(tds.addSymbol(stack.lastElement(), func, node.getLine()));
 
-                        //oskour code generation
+                        // code generation
                         if(codeGenOn){
-                            codeGen.write(func.getName()+stack.lastElement()+ " stmfd    r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of function "+func.getName()+stack.lastElement()+"\n" +
-                                        "mov r11, r13\n ;PARAMS\n");
+                            codeGen.write(func.getName()+stack.lastElement()+ "\tstmfd r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, lr} ; Begin of function "+func.getName()+stack.lastElement()+"\n" +
+                                        "mov r11, r13\n;PARAMS\n");
                             codeGen.addBuffer(new StringBuilder("\nmov  r11, r13\n" +
                                         "ldmfd  r13!,{r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, pc} ; End of function "+func.getName()+stack.lastElement()+"\n\n\n"));
                         }
@@ -154,9 +154,9 @@ public class SemanticAnalyzer {
                             ((Proc) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addMode(param.getMode());
                         }
 
-                        //oskour code generation gestion des paramètres
+                        // code generation gestion des paramètres
                         if(codeGenOn){
-                            codeGen.write("     ;"+param.getType()+"    "+param.getName()+"\n");
+                            codeGen.write("\t;"+param.getType()+"\t"+param.getName()+"\n");
                         }
 
                         stack.push(tmp);
@@ -179,9 +179,9 @@ public class SemanticAnalyzer {
                             ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).setReturnType(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
                         }
 
-                        //oskour code generation gestion du type de retour
+                        // code generation gestion du type de retour
                         if(codeGenOn){
-                            codeGen.write(" ;RETURN_TYPE\n      ;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
+                            codeGen.write(";RETURN_TYPE\n\t;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
                         }
 
                         stack.push(tmp);
@@ -220,7 +220,7 @@ public class SemanticAnalyzer {
                         break;
 
                     case "INSTRUCTIONS":
-                        // oskour code generation
+                        //  code generation
                         if(codeGenOn){
                             //checking if we are in the main procedure
                             int temp = stack.pop();
@@ -236,11 +236,11 @@ public class SemanticAnalyzer {
                             for (Symbol symbol : symbolsOfRegion){
                                 if (symbol instanceof Var){
                                     lastOffset = ((Var) symbol).getOffset();
-                                    codeGen.write(" ;"+((Var) symbol).getType()+"    "+symbol.getName()+"\n");
+                                    codeGen.write("\t;"+((Var) symbol).getType()+"    "+symbol.getName()+"\n");
                                 }
                             }
                             if(lastOffset != -1){
-                                codeGen.write(" sub r13, r13, #"+lastOffset+"\n");
+                                codeGen.write("sub r13, r13, #"+lastOffset+"\n");
                             }
                             codeGen.write("\n\n");
                         }
@@ -261,7 +261,7 @@ public class SemanticAnalyzer {
                             returnNeeded = returnNeeded - 1;
                         }
 
-                        //oskour end of block for code generation
+                        // end of block for code generation
                         if(codeGenOn){
                             if (tds.getTds().get(stack.lastElement()).get(index).getFather() != 0) {
                                 codeGen.writeLastBuffer();
@@ -285,6 +285,7 @@ public class SemanticAnalyzer {
 
 
     public void analyzeInstructions(int instructionNode,int currentDecl, int returnNeeded) throws SemanticException {
+        this.codeGen.write(";BEGIN of instructions\n");
         List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
         returnNeededTmp = returnNeeded;
         for (Integer children : childrens) {
@@ -307,6 +308,7 @@ public class SemanticAnalyzer {
                     break;
                 case "END":
                     analyseEnd(children, currentDecl);
+                    this.codeGen.write(";END of instructions\n\n");
                     break;
                 case "RETURN_EXPRESSION":
                     analseReturnExpression(children, currentDecl);
