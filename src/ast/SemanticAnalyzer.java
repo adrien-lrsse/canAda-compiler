@@ -250,6 +250,7 @@ public class SemanticAnalyzer {
                             codeGen.write(";VARIABLES\n");
                             List<Symbol> symbolsOfRegion =  tds.getTds().get(stack.lastElement());
                             int lastOffset = -1;
+                            System.out.println(symbolsOfRegion);
                             for (Symbol symbol : symbolsOfRegion){
                                 if (symbol instanceof Var){
                                     lastOffset = ((Var) symbol).getOffset();
@@ -268,7 +269,10 @@ public class SemanticAnalyzer {
                             throw new SemanticException("Undefined types: " + undefinedTypes, node.getLine());
                         }
 
-
+                        // code generation
+                        if(codeGenOn){
+                            this.codeGen.write(";BEGIN of instructions\n");
+                        }
                         analyzeInstructions(node.getId(), currentDecl.lastElement(), returnNeeded);
                         stack.pop();
                         int index = currentDecl.pop();
@@ -304,7 +308,6 @@ public class SemanticAnalyzer {
 
 
     public void analyzeInstructions(int instructionNode,int currentDecl, int returnNeeded) throws SemanticException {
-        this.codeGen.write(";BEGIN of instructions\n");
         List<Integer> childrens = ast.getTree().nodes.get(instructionNode).getChildren();
         returnNeededTmp = returnNeeded;
         for (Integer children : childrens) {

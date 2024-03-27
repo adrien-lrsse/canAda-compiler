@@ -9,13 +9,11 @@ import java.util.List;
 
 
 public class CodeGenerator {
-    private GraphViz ast;
     private final FileWriter fileWriter;
     private List<StringBuilder> buffer;
     private List<StringBuilder> mainProcedureBuffer;
 
     public CodeGenerator(GraphViz ast) {
-        this.ast = ast;
         this.buffer = new ArrayList<>();
         this.mainProcedureBuffer = new ArrayList<>();
         try {
@@ -23,10 +21,6 @@ public class CodeGenerator {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public FileWriter getfileWriter() {
-        return fileWriter;
     }
 
     public void addBuffer(StringBuilder s) {
