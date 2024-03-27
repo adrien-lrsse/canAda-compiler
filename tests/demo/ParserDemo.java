@@ -1,6 +1,5 @@
 package demo;
 
-import ast.SemanticAnalyzer;
 import lexer.Lexer;
 import parser.Parser;
 
