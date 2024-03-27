@@ -128,7 +128,10 @@ public class SemanticAnalyzer {
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
                         } else {
                             param.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-                            param.setMode(Objects.equals(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel(), "IN") ? 0 : 1);
+                            param.setMode(
+                                    Objects.equals(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel(), null) ? 0 :
+                                            Objects.equals(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel(), "in") ? 1 : 2
+                            );
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel());
                         }
                         param.setOffset(4);
@@ -138,8 +141,10 @@ public class SemanticAnalyzer {
                         tmp = stack.pop();
                         if (tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()) instanceof Func) {
                             ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addType(param.getType());
+                            ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addMode(param.getMode());
                         } else {
                             ((Proc) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addType(param.getType());
+                            ((Proc) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addMode(param.getMode());
                         }
 
                         //oskour code generation gestion des paramètres
@@ -439,12 +444,16 @@ public class SemanticAnalyzer {
     }
 
     public void analyzeCall(int nodeInt) throws SemanticException {
+
         Node callNode = ast.getTree().nodes.get(nodeInt);
         Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
         Symbol symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
+
         if (symbol == null){
             throw new SemanticException("Function or procedure '" + labelNode.getLabel() + "' is not defined", callNode.getLine()) ;
+
         } else if (symbol instanceof Func) {
+
             if (labelNode.getChildren().size() != ((Func) symbol).getTypes().size()) {
                 throw new SemanticException("Expected " + ((Func) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for function '" + labelNode.getLabel() + "'", callNode.getLine());
             }
@@ -452,7 +461,13 @@ public class SemanticAnalyzer {
                 if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Func) symbol).getTypes().get(i))) {
                     throw new SemanticException("Expected type " + ((Func) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                 }
+                if (((Func) symbol).getModes().get(i) == 2) {
+                    if ((!getNatureOfLabel(labelNode.getChildren().get(i), stack.lastElement()).equals("variable"))) {
+                        throw new SemanticException("Expected a 'variable' or 'x.f' with x type record for parameter 'in out' " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + getNatureOfLabel(labelNode.getChildren().get(i), stack.lastElement()), callNode.getLine());
+                    }
+                }
             }
+
         } else if (symbol instanceof Proc) {
             if (labelNode.getChildren().size() != ((Proc) symbol).getTypes().size()) {
                 throw new SemanticException("Expected " + ((Proc) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'", callNode.getLine());
@@ -568,6 +583,31 @@ public class SemanticAnalyzer {
         }
         if (region != 0){
             return getTypeOfLabel(nodeInt, father);
+        } else {
+            return "undefined";
+        }
+    }
+
+    public String getNatureOfLabel(int nodeInt, int region) {
+        int father = 0;
+        for (Symbol symbol : tds.getTds().get(region)){
+            father = symbol.getFather();
+            if (symbol.getName().equals(ast.getTree().nodes.get(nodeInt).getLabel())) {
+                if (symbol instanceof Record){
+                    return "record";
+                } else if (symbol instanceof Func){
+                    return "function";
+                } else if (symbol instanceof Var){
+                    return "variable";
+                } else if (symbol instanceof Param) {
+                    return "parameter";
+                } else {
+                    return "undefined";
+                }
+            }
+        }
+        if (region != 0){
+            return getNatureOfLabel(nodeInt, father);
         } else {
             return "undefined";
         }
