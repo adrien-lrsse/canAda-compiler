@@ -258,6 +258,9 @@ public class SemanticAnalyzer {
                 case "FOR":
                     analyzeFor(children);
                     break;
+                case "WHILE":
+                    analyseWhile(children);
+                    break;
                 case "CALL":
                     analyzeCall(children);
                     break;
@@ -266,6 +269,22 @@ public class SemanticAnalyzer {
                     break;
                 case "RETURN_EXPRESSION":
                     analseReturnExpression(children, currentDecl);
+                    break;
+            }
+        }
+    }
+
+    private void analyseWhile(Integer nodeInt) throws SemanticException {
+        Node node = ast.getTree().nodes.get(nodeInt);
+        List<Integer> childrens = node.getChildren();
+        for (Integer children : childrens) {
+            Node nodeChild = ast.getTree().nodes.get(children);
+            switch (nodeChild.getLabel()) {
+                case "CONDITION":
+                    analyseCondition(children);
+                    break;
+                case "DO":
+                    analyzeInstructions(children, currentDecl.lastElement(), returnNeededTmp);
                     break;
             }
         }
