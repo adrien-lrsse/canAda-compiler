@@ -4116,7 +4116,14 @@ public class AnalyzeTable {
             if (current.getTag() == Tag.THEN) {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
+                // semantic functions
+                parser.ast.addEdge(parser.ast.buffer.lastElement(), parser.ast.addNode("THEN", false));
+                parser.ast.buffer.push(parser.ast.lastNode);
+                // end functions
                 this.generate_instructions();
+                // semantic functions
+                parser.ast.buffer.pop();
+                // end semantic functions
                 this.end_elsif();
                 int temp = parser.stack.pop();
                 if(temp == Tag.END_ELSIF) {
