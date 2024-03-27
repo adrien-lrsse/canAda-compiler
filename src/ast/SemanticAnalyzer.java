@@ -75,7 +75,7 @@ public class SemanticAnalyzer {
                         if(codeGenOn){
                             if (tds.getTds().get(2) == null) {
                                 // procedure main
-                                codeGen.write("b "+proc.getName()+stack.lastElement()+"\n\n");
+                                codeGen.write("b    "+proc.getName()+stack.lastElement()+"\n\n");
                                 codeGen.addMainProcedureBuffer(new StringBuilder(proc.getName()+stack.lastElement()+"   mov r11, r13\n\n"));
                             }
                             else {
