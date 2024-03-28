@@ -30,7 +30,7 @@ public class RegisterManager {
         for (int i = 0; i <= highestUsedRegister; i++) {
             stmfd.append("r").append(i).append(", ");
         }
-        stmfd.append("lr}");
+        stmfd.append("r11, lr}");
         return stmfd.toString();
     }
 
@@ -40,7 +40,7 @@ public class RegisterManager {
         for (int i = 0; i <= highestUsedRegister; i++) {
             ldmfd.append("r").append(i).append(", ");
         }
-        ldmfd.append("pc}");
+        ldmfd.append("r11, pc}");
         return ldmfd.toString();
     }
 }
