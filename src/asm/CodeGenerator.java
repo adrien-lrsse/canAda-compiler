@@ -113,44 +113,72 @@ public class CodeGenerator {
 
     public int expressionGen(GraphViz ast, Integer nodeInt, List<Symbol> symbols) {
         if(codeGenOn){
+            int register1;
+            int register2;
+            int result;
+
+//            try { // need minimum 2 registers to handle expression
+//                register1 = stackFrames.peek().getRegisterManager().borrowRegister();
+//            } catch (Exception e) {
+//                throw new RuntimeException("Not enough registers to handle expression");
+//            }
+//            try {
+//                register2 = stackFrames.peek().getRegisterManager().borrowRegister();
+//            } catch (Exception e) {
+//                stackFrames.peek().getRegisterManager().freeRegister(register1);
+//                throw new RuntimeException("Not enough registers to handle expression");
+//            }
+//            stackFrames.peek().getRegisterManager().freeRegister(register2);
+
+
             Node node = ast.getTree().nodes.get(nodeInt);
             String type = node.getLabel();
             try {
                 int number = Integer.parseInt(type);
                 int register = stackFrames.peek().getRegisterManager().borrowRegister();
                 if(number > 1020){
-                    appendToBuffer("\tldr\tr" + register + ", =" + number + "\n");
+                    appendToBuffer("\tldr\tr" + register + ", =" + number + " ; Generating number for expression\n");
                 } else {
-                    appendToBuffer("\tmov\tr" + register + ", #" + number + "\n");
+                    appendToBuffer("\tmov\tr" + register + ", #" + number + " ; Generating number for expression\n");
                 }
                 return register;
             } catch (Exception e) {
                 // Not a number so we continue
             }
-            int register1;
-            int register2;
-            int result;
+
             switch (type) {
                 case "*" :
                     thereIsMult = true;
                     register1 = expressionGen(ast, node.getChildren().get(0), symbols);
                     register2 = expressionGen(ast, node.getChildren().get(1), symbols);
-                    result = stackFrames.peek().getRegisterManager().borrowRegister();
-                    appendToBuffer("\tstmfd\tr13!, {r" + register1 + ",r" + register2 + "}\n\tsub\tr13, r13, #4\n\tbl\tmul\n\tldr r" + result + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n");
-                    stackFrames.peek().getRegisterManager().freeRegister(register1);
+                    result = register1;
+                    appendToBuffer("\n\tstmfd\tr13!, {r" + register1 + ",r" + register2 + "} ; Block for multiplication : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " * " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\tsub\tr13, r13, #4\n\tbl\tmul\n\tldr r" + result + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
                     stackFrames.peek().getRegisterManager().freeRegister(register2);
                     return result;
                 case "/" :
                     thereIsDiv = true;
                     register1 = expressionGen(ast, node.getChildren().get(0), symbols);
                     register2 = expressionGen(ast, node.getChildren().get(1), symbols);
-                    result = stackFrames.peek().getRegisterManager().borrowRegister();
-                    appendToBuffer("\tstmfd\tr13!, {r" + register1 + ",r" + register2 + "}\n\tsub\tr13, r13, #4\n\tbl\tdiv\n\tldr r" + result + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n");
-                    stackFrames.peek().getRegisterManager().freeRegister(register1);
+                    result = register1;
+                    appendToBuffer("\tstmfd\tr13!, {r" + register1 + ",r" + register2 + "} ; Block for division : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " / " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\tsub\tr13, r13, #4\n\tbl\tdiv\n\tldr r" + result + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
+                    stackFrames.peek().getRegisterManager().freeRegister(register2);
+                    return result;
+                case "+" :
+                    register1 = expressionGen(ast, node.getChildren().get(0), symbols);
+                    register2 = expressionGen(ast, node.getChildren().get(1), symbols);
+                    result = register1;
+                    appendToBuffer("\tadd\tr" + result + ", r" + register1 + ", r" + register2 + " ; Block for addition : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " + " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\n");
+                    stackFrames.peek().getRegisterManager().freeRegister(register2);
+                    return result;
+                case "-" :
+                    register1 = expressionGen(ast, node.getChildren().get(0), symbols);
+                    register2 = expressionGen(ast, node.getChildren().get(1), symbols);
+                    result = register1;
+                    appendToBuffer("\tsub\tr" + result + ", r" + register1 + ", r" + register2 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\n");
                     stackFrames.peek().getRegisterManager().freeRegister(register2);
                     return result;
             }
-
+            throw new RuntimeException("Unhandeled expression : " + type);
         }
         return -1;
     }
