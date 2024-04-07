@@ -151,10 +151,10 @@ public class CodeGenerator {
                     stackFrames.peek().getRegisterManager().freeRegister(register2);
                     return result;
                 case "+" :
-                    register1 = expressionGen(ast, node.getChildren().get(1), symbols);
-                    register2 = expressionGen(ast, node.getChildren().get(0), symbols);
+                    register1 = expressionGen(ast, node.getChildren().get(0), symbols);
+                    register2 = expressionGen(ast, node.getChildren().get(1), symbols);
                     result = register1;
-                    appendToBuffer("\tadd\tr" + result + ", r" + register1 + ", r" + register2 + " ; Block for addition : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " + " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    appendToBuffer("\tadd\tr" + result + ", r" + register1 + ", r" + register2 + " ; Block for addition : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " + " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\n");
                     stackFrames.peek().getRegisterManager().freeRegister(register2);
                     return result;
                 case "-" :
