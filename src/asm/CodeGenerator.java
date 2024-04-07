@@ -1,6 +1,7 @@
 package asm;
 
 import ast.GraphViz;
+import ast.Node;
 import tds.Symbol;
 import tds.TDS;
 import tds.Var;
@@ -65,7 +66,7 @@ public class CodeGenerator {
                 }
             }
             if (lastOffset != -1) {
-                this.appendToBuffer("\tsub\tr13, r13, #" + lastOffset + "\n");
+                this.appendToBuffer("\tsub\tr11, r11, #" + lastOffset + "\n\tmov\tr13, r11\n");
             }
         }
     }
@@ -100,4 +101,36 @@ public class CodeGenerator {
             }
         }
     }
+
+    public int expressionGen(GraphViz ast, Integer nodeInt, List<Symbol> symbols) {
+        if(codeGenOn){
+            Node node = ast.getTree().nodes.get(nodeInt);
+            String type = node.getLabel();
+            try {
+                int number = Integer.parseInt(type);
+                int register = stackFrames.peek().getRegisterManager().borrowRegister();
+                if(number > 1020){
+                    appendToBuffer("\tldr\tr" + register + ", =" + number + "\n");
+                } else {
+                    appendToBuffer("\tmov\tr" + register + ", #" + number + "\n");
+                }
+                return register;
+            } catch (Exception e) {
+                // Not a number
+            }
+            switch (type) {
+                case "*" :
+                    Integer register1 = expressionGen(ast, node.getChildren().get(0), symbols);
+                    Integer register2 = expressionGen(ast, node.getChildren().get(1), symbols);
+                    stackFrames.peek().getRegisterManager().borrowRegister();
+
+                    stackFrames.peek().getRegisterManager().freeRegister(register1);
+                    stackFrames.peek().getRegisterManager().freeRegister(register2);
+                    break;
+            }
+
+        }
+        return 0;
+    }
+
 }
