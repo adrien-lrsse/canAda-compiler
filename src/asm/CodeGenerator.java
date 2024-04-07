@@ -18,6 +18,8 @@ public class CodeGenerator {
     private Stack<StackFrame> stackFrames;
     private Stack<String> asmStack;
     private Boolean codeGenOn = true;
+    private Boolean thereIsMult = false;
+    private Boolean thereIsDiv = false;
 
     public CodeGenerator(String fileName) {
         try {
@@ -116,21 +118,34 @@ public class CodeGenerator {
                 }
                 return register;
             } catch (Exception e) {
-                // Not a number
+                // Not a number so we continue
             }
+            int register1;
+            int register2;
+            int result;
             switch (type) {
                 case "*" :
-                    Integer register1 = expressionGen(ast, node.getChildren().get(0), symbols);
-                    Integer register2 = expressionGen(ast, node.getChildren().get(1), symbols);
-                    stackFrames.peek().getRegisterManager().borrowRegister();
-
+                    thereIsMult = true;
+                    register1 = expressionGen(ast, node.getChildren().get(0), symbols);
+                    register2 = expressionGen(ast, node.getChildren().get(1), symbols);
+                    result = stackFrames.peek().getRegisterManager().borrowRegister();
+                    appendToBuffer("\tstmfd\tr13!, {r" + register1 + ",r" + register2 + "}\n\tsub\tr13, r13, #4\n\tbl\tmul\n\tldr r" + result + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n");
                     stackFrames.peek().getRegisterManager().freeRegister(register1);
                     stackFrames.peek().getRegisterManager().freeRegister(register2);
-                    break;
+                    return result;
+                case "/" :
+                    thereIsDiv = true;
+                    register1 = expressionGen(ast, node.getChildren().get(0), symbols);
+                    register2 = expressionGen(ast, node.getChildren().get(1), symbols);
+                    result = stackFrames.peek().getRegisterManager().borrowRegister();
+                    appendToBuffer("\tstmfd\tr13!, {r" + register1 + ",r" + register2 + "}\n\tsub\tr13, r13, #4\n\tbl\tdiv\n\tldr r" + result + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n");
+                    stackFrames.peek().getRegisterManager().freeRegister(register1);
+                    stackFrames.peek().getRegisterManager().freeRegister(register2);
+                    return result;
             }
 
         }
-        return 0;
+        return -1;
     }
 
 }
