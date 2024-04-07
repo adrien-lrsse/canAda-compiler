@@ -16,7 +16,6 @@ public class SemanticAnalyzer {
     private GraphViz ast;
     private TDS tds;
     private Stack<Integer> currentDecl;
-    private Boolean codeGenOn = false;
     private CodeGenerator codeGen;
     private int returnNeeded;
     private int returnNeededTmp;
@@ -75,9 +74,7 @@ public class SemanticAnalyzer {
 
 
                         // code generation
-                        if (codeGenOn) {
-                            codeGen.procedureGen(proc.getName(), String.valueOf(stack.lastElement()));
-                        }
+                        codeGen.procedureGen(proc.getName(), String.valueOf(stack.lastElement()));
 
 
                         // create new region
@@ -101,9 +98,7 @@ public class SemanticAnalyzer {
                         currentDecl.push(tds.addSymbol(stack.lastElement(), func, node.getLine()));
 
                         // code generation
-                        if (codeGenOn) {
-                            codeGen.functionGen(func.getName(), String.valueOf(stack.lastElement()));
-                        }
+                        codeGen.functionGen(func.getName(), String.valueOf(stack.lastElement()));
 
                         // create new region
                         stack.push(tds.newRegion());
@@ -149,9 +144,7 @@ public class SemanticAnalyzer {
                         }
 
                         // code generation gestion des paramètres
-                        if (codeGenOn) {
-                            codeGen.appendToBuffer("\t\t;"+param.getType()+"\t"+param.getName()+"\n");
-                        }
+                        codeGen.appendToBuffer("\t\t;"+param.getType()+"\t"+param.getName()+"\n");
 
                         stack.push(tmp);
                         break;
@@ -176,9 +169,7 @@ public class SemanticAnalyzer {
                         }
 
                         // code generation gestion du type de retour
-                        if (codeGenOn) {
-                            codeGen.appendToBuffer("\t;RETURN_TYPE\n\t\t;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
-                        }
+                        codeGen.appendToBuffer("\t;RETURN_TYPE\n\t\t;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
 
                         stack.push(tmp);
                         break;
@@ -222,9 +213,7 @@ public class SemanticAnalyzer {
                         break;
                     case "INSTRUCTIONS":
                         //  code generation
-                        if (codeGenOn) {
-                            this.codeGen.varGen(tds.getTds().get(stack.lastElement()));
-                        }
+                        this.codeGen.varGen(tds.getTds().get(stack.lastElement()));
 
 
                         // check if all the declared types are defined
@@ -233,9 +222,7 @@ public class SemanticAnalyzer {
                         }
 
                         // code generation
-                        if(codeGenOn){
-                            this.codeGen.appendToBuffer("\t;BEGIN of instructions\n");
-                        }
+                        this.codeGen.appendToBuffer("\t;BEGIN of instructions\n");
                         analyzeInstructions(node.getId(), currentDecl.lastElement(), returnNeeded);
                         stack.pop();
                         int index = currentDecl.pop();
@@ -246,10 +233,8 @@ public class SemanticAnalyzer {
                         }
 
                         // end of block for code generation
-                        if (codeGenOn) {
-                            this.codeGen.appendToBuffer("\t;END of instructions\n");
-                            codeGen.endBlock();
-                        }
+                        this.codeGen.appendToBuffer("\t;END of instructions\n");
+                        codeGen.endBlock();
 
                         // pop offset
                         offset.pop();
@@ -265,9 +250,7 @@ public class SemanticAnalyzer {
             error.append("  └in ").append(ast.getTree().nodes.get(stack.pop()).getLabel()).append("\n");
             throw new SemanticException(error.toString(), -1);
         }
-        if (codeGenOn) {
-            codeGen.writeDownBlocks();
-        }
+        codeGen.writeDownBlocks();
     }
 
 
@@ -521,6 +504,7 @@ public class SemanticAnalyzer {
         } else {
             throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable", callNode.getLine());
         }
+
     }
 
 
@@ -661,7 +645,6 @@ public class SemanticAnalyzer {
     }
 
     public void setCodeGen(CodeGenerator codeGen) {
-        this.codeGenOn = Boolean.TRUE;
         this.codeGen = codeGen;
     }
 
