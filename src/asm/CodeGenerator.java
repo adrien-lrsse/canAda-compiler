@@ -15,7 +15,7 @@ import java.util.Stack;
 
 public class CodeGenerator {
     private final FileWriter fileWriter;
-    private Stack<StackFrame> stackFrames;
+    public Stack<StackFrame> stackFrames; // TO CHANGE
     private Stack<String> asmStack;
     private Boolean codeGenOn = true;
     private Boolean thereIsMult = false;
@@ -111,63 +111,104 @@ public class CodeGenerator {
         }
     }
 
-    public int expressionGen(GraphViz ast, Integer nodeInt, List<Symbol> symbols) {
+    public void expressionGen(GraphViz ast, Integer nodeInt, List<Symbol> symbols, int returnRegister) {
         if(codeGenOn){
-            int register1;
-            int register2;
-            int result;
-
-
             Node node = ast.getTree().nodes.get(nodeInt);
             String type = node.getLabel();
             try {
                 int number = Integer.parseInt(type);
-                int register = stackFrames.peek().getRegisterManager().borrowRegister();
                 if(number > 1020){
-                    appendToBuffer("\tldr\tr" + register + ", =" + number + " ; Generating number for expression\n");
+                    appendToBuffer("\tldr\tr" + returnRegister + ", =" + number + " ; Generating number for expression\n");
                 } else {
-                    appendToBuffer("\tmov\tr" + register + ", #" + number + " ; Generating number for expression\n");
+                    appendToBuffer("\tmov\tr" + returnRegister + ", #" + number + " ; Generating number for expression\n");
                 }
-                return register;
-            } catch (Exception e) {
+                return;
+            } catch (NumberFormatException e) {
                 // Not a number so we continue
             }
+
+            int register1;
+            boolean isR1Borrowed = false;
 
             switch (type) {
                 case "*" :
                     thereIsMult = true;
-                    register1 = expressionGen(ast, node.getChildren().get(1), symbols);
-                    register2 = expressionGen(ast, node.getChildren().get(0), symbols);
-                    result = register1;
-                    appendToBuffer("\n\tstmfd\tr13!, {r" + register1 + ",r" + register2 + "} ; Block for multiplication : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " * " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\tsub\tr13, r13, #4\n\tbl\tmul\n\tldr r" + result + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
-                    stackFrames.peek().getRegisterManager().freeRegister(register2);
-                    return result;
+                    expressionGen(ast, node.getChildren().get(1), symbols, returnRegister);
+                    try { // If no register available, we use memory stack
+                        register1 = stackFrames.peek().getRegisterManager().borrowRegister();
+                    } catch (RuntimeException e) {
+                        if (returnRegister != 0) {
+                            register1 = 0;
+                        }
+                        else {
+                            register1 = 1;
+                        }
+                        appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
+                        isR1Borrowed = true;
+                    }
+                    expressionGen(ast, node.getChildren().get(0), symbols, register1);
+                    appendToBuffer("\n\tstmfd\tr13!, {r" + returnRegister + ",r" + register1 + "} ; Block for multiplication : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " * " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\tsub\tr13, r13, #4\n\tbl\tmul\n\tldr r" + returnRegister + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
+                    break;
                 case "/" :
                     thereIsDiv = true;
-                    register1 = expressionGen(ast, node.getChildren().get(1), symbols);
-                    register2 = expressionGen(ast, node.getChildren().get(0), symbols);
-                    result = register1;
-                    appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; Block for division : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " / " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\tstmfd\tr13!, {r" + register2 + "}\n\tsub\tr13, r13, #4\n\tbl\tdiv\n\tldr r" + result + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
-                    stackFrames.peek().getRegisterManager().freeRegister(register2);
-                    return result;
+                    expressionGen(ast, node.getChildren().get(1), symbols, returnRegister);
+                    try { // If no register available, we use memory stack
+                        register1 = stackFrames.peek().getRegisterManager().borrowRegister();
+                    } catch (RuntimeException e) {
+                        if (returnRegister != 0) {
+                            register1 = 0;
+                        }
+                        else {
+                            register1 = 1;
+                        }
+                        appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
+                        isR1Borrowed = true;
+                    }
+                    expressionGen(ast, node.getChildren().get(0), symbols, register1);
+                    appendToBuffer("\tstmfd\tr13!, {r" + returnRegister + "} ; Block for division : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " / " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\tstmfd\tr13!, {r" + register1 + "}\n\tsub\tr13, r13, #4\n\tbl\tdiv\n\tldr r" + returnRegister + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
+                    break;
                 case "+" :
-                    register1 = expressionGen(ast, node.getChildren().get(0), symbols);
-                    register2 = expressionGen(ast, node.getChildren().get(1), symbols);
-                    result = register1;
-                    appendToBuffer("\tadd\tr" + result + ", r" + register1 + ", r" + register2 + " ; Block for addition : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " + " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\n");
-                    stackFrames.peek().getRegisterManager().freeRegister(register2);
-                    return result;
+                    expressionGen(ast, node.getChildren().get(0), symbols, returnRegister);
+                    try { // If no register available, we use memory stack
+                        register1 = stackFrames.peek().getRegisterManager().borrowRegister();
+                    } catch (RuntimeException e) {
+                        if (returnRegister != 0) {
+                            register1 = 0;
+                        }
+                        else {
+                            register1 = 1;
+                        }
+                        appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
+                        isR1Borrowed = true;
+                    }
+                    expressionGen(ast, node.getChildren().get(1), symbols, register1);
+                    appendToBuffer("\tadd\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for addition : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " + " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\n");
+                    break;
                 case "-" :
-                    register1 = expressionGen(ast, node.getChildren().get(1), symbols);
-                    register2 = expressionGen(ast, node.getChildren().get(0), symbols);
-                    result = register1;
-                    appendToBuffer("\tsub\tr" + result + ", r" + register1 + ", r" + register2 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
-                    stackFrames.peek().getRegisterManager().freeRegister(register2);
-                    return result;
+                    expressionGen(ast, node.getChildren().get(1), symbols, returnRegister);
+                    try { // If no register available, we use memory stack
+                        register1 = stackFrames.peek().getRegisterManager().borrowRegister();
+                    } catch (RuntimeException e) {
+                        if (returnRegister != 0) {
+                            register1 = 0;
+                        }
+                        else {
+                            register1 = 1;
+                        }
+                        appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
+                        isR1Borrowed = true;
+                    }
+                    expressionGen(ast, node.getChildren().get(0), symbols, register1);
+                    appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    break;
+                default:
+                    throw new RuntimeException("Unhandeled expression : " + type);
             }
-            throw new RuntimeException("Unhandeled expression : " + type);
+            if (isR1Borrowed){
+                appendToBuffer("\tldmfd\tr13!, {r" + register1 + "} ; Freeing memory stack\n");
+            } else {
+                stackFrames.peek().getRegisterManager().freeRegister(register1);
+            }
         }
-        return -1;
     }
-
 }
