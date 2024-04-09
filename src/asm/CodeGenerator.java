@@ -222,7 +222,9 @@ public class CodeGenerator {
                     appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
                     break;
                 default:
-                    throw new RuntimeException("Unhandeled expression : " + type);
+                    appendToBuffer("\t; Unhandeled expression (for the moment) : " + type + "\n");
+//                    throw new RuntimeException("Unhandeled expression : " + type);
+                    return;
             }
             if (isR1Borrowed){
                 appendToBuffer("\tldmfd\tr13!, {r" + register1 + "} ; Freeing memory stack\n");
