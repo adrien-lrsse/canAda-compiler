@@ -336,7 +336,7 @@ public class SemanticAnalyzer {
         } else if (!(rightType.equals(leftType))) {
             throw new SemanticException(leftType + " cannot be assigned to type " + rightType, node.getLine());
         }
-        this.codeGen.assignationGen(ast, node, tds.getTds().get(stack.lastElement()));
+//        this.codeGen.assignationGen(ast, node, tds.getTds().get(stack.lastElement()));
     }
 
     private void analyzeIf(Integer node) throws SemanticException{
