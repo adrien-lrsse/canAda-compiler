@@ -143,8 +143,8 @@ public class SemanticAnalyzer {
                         } else {
                             param.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
                             param.setMode(
-                                    Objects.equals(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel(), null) ? 0 :
-                                            Objects.equals(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel(), "in") ? 1 : 2
+                                    Objects.equals(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel(), null) ? 0 :
+                                            Objects.equals(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel(), "IN") ? 1 : 2
                             );
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel());
                         }
