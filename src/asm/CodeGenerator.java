@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 
 
@@ -68,7 +69,7 @@ public class CodeGenerator {
                 }
             }
             if (lastOffset != -1) {
-                this.appendToBuffer("\tsub\tr11, r11, #" + lastOffset + "\n\tmov\tr13, r11\n");
+                this.appendToBuffer("\tsub\tr13, r13, #" + lastOffset + "\n");
             }
         }
     }
@@ -230,6 +231,21 @@ public class CodeGenerator {
                 appendToBuffer("\tldmfd\tr13!, {r" + register1 + "} ; Freeing memory stack\n");
             } else {
                 stackFrames.peek().getRegisterManager().freeRegister(register1);
+            }
+        }
+    }
+
+    public void callGen(Symbol symbol, int region, List<Integer> argsR, List<String> argsT) {
+        if (codeGenOn) {
+            String name = symbol.getName() + region;
+            if (Objects.equals(name, "put0")) {
+               appendToBuffer("\t; CALL put (not yet implemented)\n");
+            } else {
+                for (int i = 0; i < argsR.size(); i++) {
+                    appendToBuffer("\tsub\tr13, r13, #"+ TDS.offsets.get(argsT.get(i)) +" ; " + name + " param " + (i + 1) + " init\n");
+                    appendToBuffer("\tstr\tr" + argsR.get(i) + ", [r13]\n");
+                }
+                appendToBuffer("\tbl\t" + name + " ; CALL\n");
             }
         }
     }

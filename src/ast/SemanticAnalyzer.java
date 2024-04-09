@@ -331,7 +331,7 @@ public class SemanticAnalyzer {
         }
         String rightType = typeOfOperands(node.getChildren().get(1));
         String leftType = typeOfOperands(node.getChildren().get(0));
-        if (typeOfOperands(node.getChildren().get(1)).equals("undefined")){
+        if (rightType.equals("undefined")){
             throw new SemanticException(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel()+" operation between different types", node.getLine()) ;
         } else if (!(rightType.equals(leftType))) {
             throw new SemanticException(leftType + " cannot be assigned to type " + rightType, node.getLine());
@@ -475,6 +475,8 @@ public class SemanticAnalyzer {
         Node callNode = ast.getTree().nodes.get(nodeInt);
         Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
         Symbol symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
+        List<Integer> argsR = new ArrayList<>();
+        List<String> argsT = new ArrayList<>();
 
         if (symbol == null){
             throw new SemanticException("Function or procedure '" + labelNode.getLabel() + "' is not defined", callNode.getLine()) ;
@@ -484,8 +486,10 @@ public class SemanticAnalyzer {
             if (labelNode.getChildren().size() != ((Func) symbol).getTypes().size()) {
                 throw new SemanticException("Expected " + ((Func) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for function '" + labelNode.getLabel() + "'", callNode.getLine());
             }
+            String type;
             for (int i = 0; i < labelNode.getChildren().size(); i++) {
-                if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Func) symbol).getTypes().get(i))) {
+                type = typeOfOperands(labelNode.getChildren().get(i));
+                if (!type.equals(((Func) symbol).getTypes().get(i))) {
                     throw new SemanticException("Expected type " + ((Func) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                 }
                 if (((Func) symbol).getModes().get(i) == 2) {
@@ -493,21 +497,29 @@ public class SemanticAnalyzer {
                         throw new SemanticException("Expected a 'variable' or 'x.f' with x type record for parameter 'in out' " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + getNatureOfLabel(labelNode.getChildren().get(i), stack.lastElement()), callNode.getLine());
                     }
                 }
+                argsR.add(0); // TODO: pass the register that contains the value
+                argsT.add(type);
             }
 
         } else if (symbol instanceof Proc) {
             if (labelNode.getChildren().size() != ((Proc) symbol).getTypes().size()) {
                 throw new SemanticException("Expected " + ((Proc) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'", callNode.getLine());
             }
+            String type;
             for (int i = 0; i < labelNode.getChildren().size(); i++) {
-                if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
+                type = typeOfOperands(labelNode.getChildren().get(i));
+                if (!type.equals(((Proc) symbol).getTypes().get(i))) {
                     throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                 }
+                argsR.add(0); // TODO: pass the register that contains the value
+                argsT.add(type);
             }
         } else {
             throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable", callNode.getLine());
         }
 
+        // code generation
+        codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()), argsR, argsT);
     }
 
 
@@ -644,6 +656,21 @@ public class SemanticAnalyzer {
             return getSymbolFromLabel(label, father);
         } else {
             return null;
+        }
+    }
+
+    public int getRegionFromLabel(String label, int region){
+        int father = 0;
+        for (Symbol symbol : tds.getTds().get(region)){
+            father = symbol.getFather();
+            if (symbol.getName().equals(label)) {
+                return region;
+            }
+        }
+        if (region != 0){
+            return getRegionFromLabel(label, father);
+        } else {
+            return -1;
         }
     }
 
