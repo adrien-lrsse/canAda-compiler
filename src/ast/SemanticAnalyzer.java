@@ -307,7 +307,7 @@ public class SemanticAnalyzer {
                     analyseEnd(children, currentDecl);
                     break;
                 case "RETURN_EXPRESSION":
-                    analseReturnExpression(children, currentDecl);
+                    analyseReturnExpression(children, currentDecl);
                     break;
             }
         }
@@ -433,7 +433,7 @@ public class SemanticAnalyzer {
         analyzeInstructions(node, currentDecl.lastElement(), returnNeededTmp);
     }
 
-    private void analseReturnExpression(Integer node, int currentDecl) throws SemanticException {
+    private void analyseReturnExpression(Integer node, int currentDecl) throws SemanticException {
         returnNeededTmp = returnNeededTmp - 1;
 
         int child = ast.getTree().nodes.get(node).getChildren().get(0);
@@ -473,18 +473,19 @@ public class SemanticAnalyzer {
 
     private void analyseEnd(Integer node, int currentDecl) throws SemanticException{
 
-        int tmp = stack.pop();
-        if (tds.getTds().get(stack.lastElement()).get(this.currentDecl.lastElement()) instanceof Func) {
-            if (returnNeededTmp == returnNeeded) {
-                throw new SemanticException("Return needed", ast.getTree().nodes.get(node).getLine());
-            }
-        }
-        stack.push(tmp);
-
         String endLabel = "";
         if (!ast.getTree().nodes.get(node).getChildren().isEmpty()){
             endLabel = ast.getTree().nodes.get(ast.getTree().nodes.get(node).getChildren().get(0)).getLabel();
         }
+
+        int tmp = stack.pop();
+        if (tds.getTds().get(stack.lastElement()).get(this.currentDecl.lastElement()) instanceof Func) {
+            if (returnNeededTmp == returnNeeded) {
+                throw new SemanticException("Missing return statement ", ast.getTree().nodes.get(node).getLine());
+            }
+        }
+        stack.push(tmp);
+
         if (!(endLabel.isEmpty())){
             tmp = stack.pop();
             String wanted = tds.getTds().get(stack.lastElement()).get(currentDecl).getName();
