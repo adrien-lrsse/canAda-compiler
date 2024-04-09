@@ -111,13 +111,33 @@ public class CodeGenerator {
         }
     }
 
+    public void assignationGen(GraphViz ast, Node node, List<Symbol> symbols) {
+        int exprRegister = 0;
+        boolean isRegisterBorrowed = false;
+        try {
+            exprRegister = stackFrames.peek().getRegisterManager().borrowRegister();
+        } catch (RuntimeException e) {
+            exprRegister = 0;
+            isRegisterBorrowed = true;
+            appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
+        }
+        expressionGen(ast, node.getChildren().get(1), symbols, exprRegister);
+        // Get the var to assign
+        // Set the value
+        if(isRegisterBorrowed) {
+            appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
+        } else {
+            stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
+        }
+    }
+
     public void expressionGen(GraphViz ast, Integer nodeInt, List<Symbol> symbols, int returnRegister) {
         if(codeGenOn){
             Node node = ast.getTree().nodes.get(nodeInt);
             String type = node.getLabel();
             try {
                 int number = Integer.parseInt(type);
-                if(number > 1020){
+                if(number > 256){
                     appendToBuffer("\tldr\tr" + returnRegister + ", =" + number + " ; Generating number for expression\n");
                 } else {
                     appendToBuffer("\tmov\tr" + returnRegister + ", #" + number + " ; Generating number for expression\n");
