@@ -9,6 +9,8 @@ import tds.Var;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -94,6 +96,16 @@ public class CodeGenerator {
 
     public void writeDownBlocks() {
         if (codeGenOn) {
+            // copy the content of the print.s file at the beginning of the output file
+            try {
+                List<String> lines = Files.readAllLines(Paths.get("src/asm/visual/print.s"));
+                for (String line : lines) {
+                    this.write(line + "\n");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
             while (!asmStack.isEmpty()) {
                 this.write(asmStack.pop());
             }
