@@ -30,17 +30,16 @@ public class RegisterManager {
         for (int i = 0; i <= highestUsedRegister; i++) {
             stmfd.append("r").append(i).append(", ");
         }
-        stmfd.append("lr}\n\tstmfd\tr13!, {r12} ; chainage statique\n\tstmfd\tr13!, {r11} ; chainage dynamique");
+        stmfd.append("r11, r12, lr}");
         return stmfd.toString();
     }
 
     public String generateLdmfd() {
         StringBuilder ldmfd = new StringBuilder();
-        ldmfd.append("r13!, {r11} ; chainage dynamique\n\tldmfd\tr13!, {r12} ; chainage statique\n\tldmfd\tr13!, {");
         for (int i = 0; i <= highestUsedRegister; i++) {
             ldmfd.append("r").append(i).append(", ");
         }
-        ldmfd.append("pc}");
+        ldmfd.append("r11, r12, pc}");
         return ldmfd.toString();
     }
 }
