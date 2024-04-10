@@ -57,6 +57,10 @@ public class CanAda {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
             System.exit(1);
+        } catch (SemanticException e) {
+            System.err.println("\nA \033[31msemantic error\033[0m occurred:");
+            System.err.println(e.getMessage());
+            System.exit(1);
         } catch (Exception | Error e) {
             System.err.println("\nAn \033[31merror occurred\033[0m:");
             System.err.println(e.getMessage());
