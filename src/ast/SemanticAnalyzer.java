@@ -251,6 +251,15 @@ public class SemanticAnalyzer {
 
 
                         analyzeInstructions(node.getId(), currentDecl.lastElement(), returnNeeded);
+
+                        tmp = stack.pop();
+                        if (tds.getTds().get(stack.lastElement()).get(this.currentDecl.lastElement()) instanceof Func) {
+                            if (returnNeededTmp == returnNeeded) {
+                                throw new SemanticException("Missing return statement ", ast.getTree().nodes.get(node.getId()).getLine());
+                            }
+                        }
+                        stack.push(tmp);
+
                         stack.pop();
                         int index = currentDecl.pop();
 
@@ -478,13 +487,7 @@ public class SemanticAnalyzer {
             endLabel = ast.getTree().nodes.get(ast.getTree().nodes.get(node).getChildren().get(0)).getLabel();
         }
 
-        int tmp = stack.pop();
-        if (tds.getTds().get(stack.lastElement()).get(this.currentDecl.lastElement()) instanceof Func) {
-            if (returnNeededTmp == returnNeeded) {
-                throw new SemanticException("Missing return statement ", ast.getTree().nodes.get(node).getLine());
-            }
-        }
-        stack.push(tmp);
+        int tmp;
 
         if (!(endLabel.isEmpty())){
             tmp = stack.pop();
