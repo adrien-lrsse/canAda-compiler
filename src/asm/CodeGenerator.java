@@ -264,9 +264,9 @@ public class CodeGenerator {
             if (Objects.equals(name, "put0")) {
                appendToBuffer("\t; CALL put (not yet implemented)\n");
             } else {
-                for (int i = 0; i < argsR.size(); i++) {
+                for (int i = 0; i < argsT.size(); i++) {
                     appendToBuffer("\tsub\tr13, r13, #"+ TDS.offsets.get(argsT.get(i)) +" ; " + name + " param " + (i + 1) + " init\n");
-                    appendToBuffer("\tstr\tr" + argsR.get(i) + ", [r13]\n");
+                    appendToBuffer("\tstr\tr" + argsT.get(i) + ", [r13]\n");
                 }
                 if (symbol instanceof Func) {
                     appendToBuffer("\tsub\tr13, r13, #" + TDS.offsets.get(((Func )symbol).getReturnType()) + " ; " + name + " return val init\n");

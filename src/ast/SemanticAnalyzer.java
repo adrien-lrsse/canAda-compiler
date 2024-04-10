@@ -515,7 +515,7 @@ public class SemanticAnalyzer {
         } else {
             throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable", callNode.getLine());
         }
-
+        System.out.println("Calling : " + labelNode.getLabel() + " with " + argsT.size() + " arguments");
         // code generation
         codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()), argsT);
     }
