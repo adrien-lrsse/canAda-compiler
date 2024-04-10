@@ -1,4 +1,4 @@
-image: amazoncorretto:latest
+image: amazoncorretto:21
 
 stages:
   - build
