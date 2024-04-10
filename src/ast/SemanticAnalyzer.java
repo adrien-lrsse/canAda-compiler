@@ -134,9 +134,11 @@ public class SemanticAnalyzer {
                             param.setMode(0);
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
                             // check if type is defined
+                            tmp = stack.pop();
                             if (!(param.getType().equals("boolean") || param.getType().equals("integer") || param.getType().equals("character") || (getSymbolFromLabel(param.getType(), stack.lastElement()) instanceof Record))) {
                                 throw new SemanticException("Type '" + param.getType() + "' is not defined", node.getLine());
                             }
+                            stack.push(tmp);
 
 
 
