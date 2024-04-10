@@ -27,6 +27,8 @@ public class SemanticAnalyzer {
         this.currentDecl = new Stack<>();
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
+        this.codeGen =  new CodeGenerator("tmp");
+        codeGen.setCodeGenOn(false);
     }
 
     public void analyze() throws SemanticException {
@@ -334,7 +336,8 @@ public class SemanticAnalyzer {
         } else if (!(rightType.equals(leftType))) {
             throw new SemanticException(leftType + " cannot be assigned to type " + rightType, node.getLine());
         }
-//        this.codeGen.assignationGen(ast, node, tds.getTds().get(stack.lastElement()));
+        System.out.println("ASSIGNATION"); // TODO
+        this.codeGen.assignationGen(ast, node, tds.getTds().get(stack.lastElement()));
     }
 
     private void analyzeIf(Integer node) throws SemanticException{
@@ -469,11 +472,10 @@ public class SemanticAnalyzer {
     }
 
     public void analyzeCall(int nodeInt) throws SemanticException {
-
+        this.codeGen.appendToBuffer("\n\t; Start of calling stack\n");
         Node callNode = ast.getTree().nodes.get(nodeInt);
         Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
         Symbol symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
-        List<Integer> argsR = new ArrayList<>();
         List<String> argsT = new ArrayList<>();
 
         if (symbol == null){
@@ -495,7 +497,7 @@ public class SemanticAnalyzer {
                         throw new SemanticException("Expected a 'variable' or 'x.f' with x type record for parameter 'in out' " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + getNatureOfLabel(labelNode.getChildren().get(i), stack.lastElement()), callNode.getLine());
                     }
                 }
-                argsR.add(0); // TODO: pass the register that contains the value
+                this.codeGen.stackArg(ast, labelNode.getChildren().get(i), tds.getTds().get(stack.lastElement()));
                 argsT.add(type);
             }
 
@@ -509,15 +511,15 @@ public class SemanticAnalyzer {
                 if (!type.equals(((Proc) symbol).getTypes().get(i))) {
                     throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                 }
-                argsR.add(0); // TODO: pass the register that contains the value
+                this.codeGen.stackArg(ast, labelNode.getChildren().get(i), tds.getTds().get(stack.lastElement()));
                 argsT.add(type);
             }
         } else {
             throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable", callNode.getLine());
         }
-
+        System.out.println("Calling : " + labelNode.getLabel() + " with " + argsT.size() + " arguments");
         // code generation
-        codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()), argsR, argsT);
+        codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()), argsT);
     }
 
 

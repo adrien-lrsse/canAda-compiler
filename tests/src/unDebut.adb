@@ -5,14 +5,14 @@ procedure UnDebut is
     function AireRectangle(Larg : Integer; Long : Integer) return Integer is
         Aire : Integer;
     begin
-        Aire := 2 * 3;
+        Aire := Larg * Long;
         return Aire;
     end AireRectangle;
 
     function PerimetreRectangle(Larg : Integer; Long : Integer) return Integer is
         P : Integer;
     begin
-        P := 1 * 2 + 3 * 2;
+        P := Larg * 2 + Long * 2;
         return P;
     end PerimetreRectangle;
 
@@ -25,7 +25,7 @@ begin
     Choix := 2;
 
     if Choix = 1 then
-        Valeur := PerimetreRectangle(2, 3) * AireRectangle(2, 3);
+        Valeur := PerimetreRectangle(2, 3);
         Put(Valeur);
     else
         Valeur := AireRectangle(2, 3);
