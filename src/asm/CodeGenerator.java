@@ -22,6 +22,7 @@ public class CodeGenerator {
     private Boolean codeGenOn = true;
     private Boolean thereIsMult = false;
     private Boolean thereIsDiv = false;
+    private List<String> callableElements = new ArrayList<>();
 
     public CodeGenerator(String fileName) {
         try {
@@ -45,19 +46,28 @@ public class CodeGenerator {
         }
     }
     
-    public void procedureGen(String name, String last, TDS tds) {
+    public void procedureGen(String name, String last, String fatherName) {
         if (codeGenOn) {
             stackFrames.push(new StackFrame(name + last));
-            System.out.println(tds.getTds());
-            //TODO handle static chain
+            callableElements.add(name);
+            String label = name + callableElements.lastIndexOf(name) + "global";
+            if(fatherName == null){
+                appendToBuffer("\tadr\tr10, " + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r10}\n\t;PARAMETERS\n");
+                return;
+            }
+            String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
+            appendToBuffer("\tadr\tr10, " + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tadr\tr10, "+ labelParent +"\n\tldr\tr12, [r10]\n\tstmfd\tr13!, {r12}\n\tadr\tr10, " + label + "\nstr\tr13, [r10]");
             appendToBuffer("\t;PARAMETERS\n");
         }
     }
 
-    public void functionGen(String name, String last, TDS tds) {
+    public void functionGen(String name, String last, String fatherName) {
         if (codeGenOn) {
             stackFrames.push(new StackFrame(name + last));
-            //TODO handle static chain
+            callableElements.add(name);
+            String label = name + callableElements.lastIndexOf(name) + "global";
+            String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
+            appendToBuffer("\tadr\tr10, " + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tadr\tr10, "+ labelParent +"\n\tldr\tr12, [r10]\n\tstmfd\tr13!, {r12}\n\tadr\tr10, " + label + "\nstr\tr13, [r10]");
             appendToBuffer("\t;PARAMETERS\n");
         }
     }
@@ -117,9 +127,9 @@ public class CodeGenerator {
     }
 
     public void assignationGen(GraphViz ast, Node node, TDS tds) {
-        System.out.println(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-        System.out.println(tds.getTds());
-        System.out.println("--------------------");
+//        System.out.println(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
+//        System.out.println(tds.getTds());
+//        System.out.println("--------------------");
         // TODO assign the value
         int exprRegister = 0;
         boolean isRegisterBorrowed = false;

@@ -53,6 +53,8 @@ public class SemanticAnalyzer {
             int tmp;
             Stack<Integer> offset = new Stack<>();
             List<String> undefinedTypes = new ArrayList<>();
+            int fatherInt;
+            String fatherName;
             for (Node node : ast.getDepthFirstTraversal()) {
                 switch (node.getLabel()) {
                     case "ROOT":
@@ -76,7 +78,13 @@ public class SemanticAnalyzer {
 
 
                         // code generation
-                        codeGen.procedureGen(proc.getName(), String.valueOf(stack.lastElement()), tds);
+                        fatherInt = tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()).getFather();
+                        if(fatherInt == 0){
+                            codeGen.procedureGen(proc.getName(), String.valueOf(stack.lastElement()), null); // pass the father name
+                        } else {
+                            fatherName = tds.getTds().get(fatherInt).get(0).getName();
+                            codeGen.procedureGen(proc.getName(), String.valueOf(stack.lastElement()), fatherName); // pass the father name
+                        }
 
 
                         // create new region
@@ -100,7 +108,9 @@ public class SemanticAnalyzer {
                         currentDecl.push(tds.addSymbol(stack.lastElement(), func, node.getLine()));
 
                         // code generation
-                        codeGen.functionGen(func.getName(), String.valueOf(stack.lastElement()), tds);
+                        fatherInt = tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()).getFather();
+                        fatherName = tds.getTds().get(fatherInt).get(0).getName();
+                        codeGen.functionGen(func.getName(), String.valueOf(stack.lastElement()), fatherName);
 
                         // create new region
                         stack.push(tds.newRegion());
