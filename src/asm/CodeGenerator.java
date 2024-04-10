@@ -2,10 +2,8 @@ package asm;
 
 import ast.GraphViz;
 import ast.Node;
-import tds.Func;
-import tds.Symbol;
-import tds.TDS;
-import tds.Var;
+import tds.*;
+import tds.Record;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -64,7 +62,7 @@ public class CodeGenerator {
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
             if(fatherName == null){
-                appendToBuffer("\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r10}\n\t;PARAMETERS\n");
+                appendToBuffer("\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\t;PARAMETERS\n");
                 startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
                 return;
             }
@@ -306,8 +304,8 @@ public class CodeGenerator {
                     appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
                     break;
                 default: // Variable à aller chercher
-//                    getVar(type, returnRegister);
-                    appendToBuffer("\t; Unhandeled expression (for the moment) : " + type + "\n");
+                    getVar(type, returnRegister);
+//                    appendToBuffer("\t; Unhandeled expression (for the moment) : " + type + "\n");
 //                    throw new RuntimeException("Unhandeled expression : " + type);
                     return;
             }
@@ -331,12 +329,35 @@ public class CodeGenerator {
         }
     }
 
-    public void getVarFrom(String name, int returnRegister) {
+    public void getVar(String name, int returnRegister) {
         if (codeGenOn) {
-            System.out.println("Getting var : " + name);
-            System.out.println(returnRegister);
-            System.out.println(tds.getTds());
-            System.out.println("--------------------");
+            // get the region in the TDS
+//            System.out.println("Nesting level : "+tds.getTds().get(region).get(0).getNestingLevel());
+//            System.out.println("Search for : " + name);
+            for (Symbol i : tds.getTds().get(region)) {
+                if (i.getName().equals(name)) {
+                    if(i instanceof Var){
+                        int offset = ((Var) i).getOffset();
+                        appendToBuffer("\tldr\tr" + returnRegister + ", [r11, #-" + offset + "-4] ; Getting the value of " + name + "\n"); // -4 because
+                    } else if (i instanceof Param){
+                        appendToBuffer(";Coming soon Param\n");
+                        return; // TODO
+//                        int offset = ((Param) i).getOffset();
+//                        System.out.println("Here");
+//                        System.out.println(offset);
+//                        appendToBuffer("\tldr\tr" + returnRegister + ", [r11, #" + offset);
+//                        appendToBuffer("] ; Getting the value of " + name + "\n");
+                    } else if (i instanceof Record) {
+                        appendToBuffer(";Coming soon Record\n");
+                        return; // TODO
+//                        int offset = ((Record) i).getOffset();
+//                        System.out.println("Found : "+i.getName()+" at offset : "+offset+" as a Record");
+                    } else {
+                        throw new RuntimeException("Unhandeled type of Symbol : "+i+" named "+i.getName() + " of type "+i.getClass());
+                    }
+                }
+            }
+//            System.out.println("--------------------");
         }
     }
 

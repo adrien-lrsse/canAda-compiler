@@ -497,7 +497,6 @@ public class SemanticAnalyzer {
                 throw new SemanticException("Expected " + ((Func) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for function '" + labelNode.getLabel() + "'", callNode.getLine());
             }
             String type;
-            this.codeGen.stackReturn(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
             for (int i = 0; i < labelNode.getChildren().size(); i++) {
                 type = typeOfOperands(labelNode.getChildren().get(i));
                 if (!type.equals(((Func) symbol).getTypes().get(i))) {
@@ -512,6 +511,7 @@ public class SemanticAnalyzer {
                 this.codeGen.setRegion(stack.lastElement());
                 this.codeGen.stackArg(ast, labelNode.getChildren().get(i));
             }
+            this.codeGen.stackReturn(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
 
         } else if (symbol instanceof Proc) {
             if (labelNode.getChildren().size() != ((Proc) symbol).getTypes().size()) {

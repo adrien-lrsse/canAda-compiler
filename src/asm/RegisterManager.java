@@ -9,6 +9,10 @@ public class RegisterManager {
         highestUsedRegister = -1;
     }
 
+    public int getHighestUsedRegister() {
+        return highestUsedRegister;
+    }
+
     public int borrowRegister() {
         for (int i = 0; i < registers.length; i++) {
             if (!registers[i]) {
@@ -42,5 +46,9 @@ public class RegisterManager {
         }
         ldmfd.append("r12, pc}");
         return ldmfd.toString();
+    }
+
+    public void generateHighestUsedRegister() {
+
     }
 }
