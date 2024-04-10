@@ -132,6 +132,28 @@ public class CodeGenerator {
         }
     }
 
+    public void stackArg(GraphViz ast, Integer nodeInt, List<Symbol> symbols) {
+        if (codeGenOn) {
+            int register;
+            boolean isRegisterBorrowed = false;
+            try {
+                register = stackFrames.peek().getRegisterManager().borrowRegister();
+            } catch (RuntimeException e) {
+                register = 0;
+                isRegisterBorrowed = true;
+                appendToBuffer("\tsub\tr13, r13, #4 ; keeping some space to stack the arg\n\tstmfd\tr13!, {r" + register + "} ; No more register available, making space with memory stack\n");
+            }
+            expressionGen(ast, nodeInt, symbols, register);
+            if (isRegisterBorrowed) {
+                appendToBuffer("\tstr\tr" + register + ", [r13, #4] ; Stacking the arg\n");
+                appendToBuffer("\tldmfd\tr13!, {r" + register + "} ; Freeing memory stack\n");
+            } else {
+                appendToBuffer("\tstmfd\tr13!, {r" + register + "} ; Stacking the arg\n");
+                stackFrames.peek().getRegisterManager().freeRegister(register);
+            }
+        }
+    }
+
     public void expressionGen(GraphViz ast, Integer nodeInt, List<Symbol> symbols, int returnRegister) {
         if(codeGenOn){
             Node node = ast.getTree().nodes.get(nodeInt);
@@ -222,7 +244,7 @@ public class CodeGenerator {
                     expressionGen(ast, node.getChildren().get(0), symbols, register1);
                     appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
                     break;
-                default:
+                default: // Variable à aller chercher
                     appendToBuffer("\t; Unhandeled expression (for the moment) : " + type + "\n");
 //                    throw new RuntimeException("Unhandeled expression : " + type);
                     return;
@@ -235,18 +257,15 @@ public class CodeGenerator {
         }
     }
 
-    public void callGen(Symbol symbol, int region, List<Integer> argsR, List<String> argsT) {
+    public void callGen(Symbol symbol, int region, List<String> argsT) {
         if (codeGenOn) {
             String name = symbol.getName() + region;
             if (Objects.equals(name, "put0")) {
                appendToBuffer("\t; CALL put (not yet implemented)\n");
             } else {
-                for (int i = 0; i < argsR.size(); i++) {
-                    appendToBuffer("\tsub\tr13, r13, #"+ TDS.offsets.get(argsT.get(i)) +" ; " + name + " param " + (i + 1) + " init\n");
-                    appendToBuffer("\tstr\tr" + argsR.get(i) + ", [r13]\n");
-                }
                 appendToBuffer("\tbl\t" + name + " ; CALL\n");
             }
+            appendToBuffer("\t; End of call\n\n");
         }
     }
 }
