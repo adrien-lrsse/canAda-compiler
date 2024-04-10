@@ -338,7 +338,7 @@ public class CodeGenerator {
                 if (i.getName().equals(name)) {
                     if(i instanceof Var){
                         int offset = ((Var) i).getOffset();
-                        appendToBuffer("\tldr\tr" + returnRegister + ", [r11, #-" + offset + "-4] ; Getting the value of " + name + "\n"); // -4 because
+                        appendToBuffer("\tldr\tr" + returnRegister + ", [r11, #-" + offset + "-4] ; Getting the value of " + name + "\n"); // -4 because r11 pointing on base and not on 1st element
                     } else if (i instanceof Param){
                         appendToBuffer(";Coming soon Param\n");
                         return; // TODO
