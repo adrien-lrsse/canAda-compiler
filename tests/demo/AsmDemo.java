@@ -1,6 +1,7 @@
 package demo;
 
 import asm.CodeGenerator;
+import asm.visual.Launcher;
 import ast.SemanticAnalyzer;
 import lexer.Lexer;
 import parser.Parser;
@@ -16,5 +17,6 @@ public class AsmDemo {
         CodeGenerator codeGenerator = new CodeGenerator(parser.getAst().getFilename());
         semanticAnalyzer.setCodeGen(codeGenerator);
         semanticAnalyzer.analyze();
+//        Launcher.run(parser.getAst().getFilename()+ "-output.s");
     }
 }
