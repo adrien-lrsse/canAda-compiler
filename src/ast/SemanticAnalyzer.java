@@ -530,9 +530,18 @@ public class SemanticAnalyzer {
             if (labelNode.getChildren().size() != ((Proc) symbol).getTypes().size()) {
                 throw new SemanticException("Expected " + ((Proc) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'", callNode.getLine());
             }
-            for (int i = 0; i < labelNode.getChildren().size(); i++) {
-                if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
-                    throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
+            if (labelNode.getLabel().equals("put")) {
+                if (labelNode.getChildren().size() != 1){
+                    throw new SemanticException("Expected 1 parameter, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'", callNode.getLine());
+                }
+                if (!typeOfOperands(labelNode.getChildren().get(0)).equals("integer") && !typeOfOperands(labelNode.getChildren().get(0)).equals("character")){
+                    throw new SemanticException("Expected type 'integer' or 'character' for parameter 1 of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(0)), callNode.getLine());
+                }
+            } else {
+                for (int i = 0; i < labelNode.getChildren().size(); i++) {
+                    if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
+                        throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
+                    }
                 }
             }
         } else {
