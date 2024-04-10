@@ -2,11 +2,14 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 procedure test is
 
-    a : integer := 0;
-
     type struct;
-
+    a : integer := 0;
     b : integer := 0;
+
+    function func (p : struct) return integer is
+        begin
+            return p.champsA + 1;
+        end;
 
     type struct is
         record
@@ -15,11 +18,6 @@ procedure test is
         end record;
 
     s : struct;
-
-    function func (p : struct) return integer is
-        begin
-            return p.champsA + 1;
-        end;
 
     begin
         s.champsA := 1;

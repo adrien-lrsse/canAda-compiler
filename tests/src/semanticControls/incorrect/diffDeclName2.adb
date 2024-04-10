@@ -3,10 +3,8 @@ with Ada.Text_IO; use Ada.Text_IO;
 procedure test is
 
     a : integer := 0;
-
     type struct;
-
-    b : integer := 0;
+    a : integer := 0;
 
     type struct is
         record
