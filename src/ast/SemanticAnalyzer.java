@@ -27,8 +27,6 @@ public class SemanticAnalyzer {
         this.currentDecl = new Stack<>();
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
-        this.codeGen =  new CodeGenerator("tmp");
-        codeGen.setCodeGenOn(false);
     }
 
     public void analyze() throws SemanticException {
@@ -582,15 +580,17 @@ public class SemanticAnalyzer {
         else {
             Node nodeLeft = ast.getTree().nodes.get(node.getChildren().get(0));
             Node nodeRight = ast.getTree().nodes.get(node.getChildren().get(1));
+            String typeLeft = typeOfOperands(nodeLeft.getId());
+            String typeRight = typeOfOperands(nodeRight.getId());
             if (node.getLabel().equals(("AND")) || node.getLabel().equals("OR") || node.getLabel().equals("=") || node.getLabel().equals("<") || node.getLabel().equals(">") || node.getLabel().equals("<=") || node.getLabel().equals(">=") ||  node.getLabel().equals("/=")){
-                if (typeOfOperands(nodeLeft.getId()).equals(typeOfOperands(nodeRight.getId())) && !typeOfOperands(nodeLeft.getId()).equals("undefined") && !typeOfOperands(nodeRight.getId()).equals("undefined")){
+                if (typeLeft.equals(typeRight) && !typeLeft.equals("undefined") && !typeRight.equals("undefined")){
 
                     return "boolean";
                 }
                 return "undefined";
             }
 
-            return Objects.equals(typeOfOperands(nodeLeft.getId()), typeOfOperands(nodeRight.getId())) ? typeOfOperands(nodeLeft.getId()) : "undefined";
+            return Objects.equals(typeLeft, typeRight) ? typeLeft : "undefined";
         }
     }
 

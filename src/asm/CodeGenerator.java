@@ -2,6 +2,7 @@ package asm;
 
 import ast.GraphViz;
 import ast.Node;
+import tds.Func;
 import tds.Symbol;
 import tds.TDS;
 import tds.Var;
@@ -242,6 +243,9 @@ public class CodeGenerator {
                 for (int i = 0; i < argsR.size(); i++) {
                     appendToBuffer("\tsub\tr13, r13, #"+ TDS.offsets.get(argsT.get(i)) +" ; " + name + " param " + (i + 1) + " init\n");
                     appendToBuffer("\tstr\tr" + argsR.get(i) + ", [r13]\n");
+                }
+                if (symbol instanceof Func) {
+                    appendToBuffer("\tsub\tr13, r13, #" + TDS.offsets.get(((Func )symbol).getReturnType()) + " ; " + name + " return val init\n");
                 }
                 appendToBuffer("\tbl\t" + name + " ; CALL\n");
             }
