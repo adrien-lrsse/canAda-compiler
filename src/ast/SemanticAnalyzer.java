@@ -346,6 +346,9 @@ public class SemanticAnalyzer {
         } else if (!(rightType.equals(leftType))) {
             throw new SemanticException(leftType + " cannot be assigned to type " + rightType, node.getLine());
         }
+        System.out.println(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
+        System.out.println(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
+        System.out.println("ici: "+tds.getTds());
         this.codeGen.assignationGen(ast, node, tds);
     }
 
@@ -485,7 +488,6 @@ public class SemanticAnalyzer {
         Node callNode = ast.getTree().nodes.get(nodeInt);
         Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
         Symbol symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
-        List<String> argsT = new ArrayList<>();
 
         if (symbol == null){
             throw new SemanticException("Function or procedure '" + labelNode.getLabel() + "' is not defined", callNode.getLine()) ;
@@ -496,6 +498,7 @@ public class SemanticAnalyzer {
                 throw new SemanticException("Expected " + ((Func) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for function '" + labelNode.getLabel() + "'", callNode.getLine());
             }
             String type;
+            this.codeGen.stackReturn(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
             for (int i = 0; i < labelNode.getChildren().size(); i++) {
                 type = typeOfOperands(labelNode.getChildren().get(i));
                 if (!type.equals(((Func) symbol).getTypes().get(i))) {
@@ -507,7 +510,6 @@ public class SemanticAnalyzer {
                     }
                 }
                 this.codeGen.stackArg(ast, labelNode.getChildren().get(i), tds);
-                argsT.add(type);
             }
 
         } else if (symbol instanceof Proc) {
@@ -521,13 +523,12 @@ public class SemanticAnalyzer {
                     throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                 }
                 this.codeGen.stackArg(ast, labelNode.getChildren().get(i), tds);
-                argsT.add(type);
             }
         } else {
             throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable", callNode.getLine());
         }
         // code generation
-        codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()), argsT);
+        codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
     }
 
 

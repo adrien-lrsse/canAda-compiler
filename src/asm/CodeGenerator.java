@@ -54,12 +54,15 @@ public class CodeGenerator {
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
             if(fatherName == null){
-                appendToBuffer("\tadr\tr10, " + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r10}\n\t;PARAMETERS\n");
+                appendToBuffer("\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r10}\n\t;PARAMETERS\n");
+                startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
                 return;
             }
             String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
-            appendToBuffer("\tadr\tr10, " + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tadr\tr10, "+ labelParent +"\n\tldr\tr12, [r10]\n\tstmfd\tr13!, {r12}\n\tadr\tr10, " + label + "\nstr\tr13, [r10]");
+            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr12, [r10]\n\tstmfd\tr13!, {r12}\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
             appendToBuffer("\t;PARAMETERS\n");
+            startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
+            endBufferAppend("\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
         }
     }
 
@@ -69,8 +72,10 @@ public class CodeGenerator {
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
             String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
-            appendToBuffer("\tadr\tr10, " + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tadr\tr10, "+ labelParent +"\n\tldr\tr12, [r10]\n\tstmfd\tr13!, {r12}\n\tadr\tr10, " + label + "\nstr\tr13, [r10]");
+            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr12, [r10]\n\tstmfd\tr13!, {r12}\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
             appendToBuffer("\t;PARAMETERS\n");
+            startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
+            endBufferAppend("\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
         }
     }
 
@@ -94,6 +99,22 @@ public class CodeGenerator {
         if (codeGenOn) {
             if (!stackFrames.isEmpty()) {
                 stackFrames.peek().getBuffer().append(s);
+            }
+        }
+    }
+
+    public void endBufferAppend(String s){
+        if(codeGenOn) {
+            if (!stackFrames.isEmpty()) {
+                stackFrames.peek().getEndBuffer().append(s);
+            }
+        }
+    }
+
+    public void startBufferAppend(String s){
+        if(codeGenOn) {
+            if (!stackFrames.isEmpty()) {
+                stackFrames.firstElement().getStartBuffer().append(s);
             }
         }
     }
@@ -287,22 +308,30 @@ public class CodeGenerator {
         }
     }
 
-    public void callGen(Symbol symbol, int region, List<String> argsT) {
+    public void callGen(Symbol symbol, int region) {
         if (codeGenOn) {
             String name = symbol.getName() + region;
             if (Objects.equals(name, "put0")) {
                appendToBuffer("\t; CALL put (not yet implemented)\n");
             } else {
-                for (int i = 0; i < argsT.size(); i++) {
-                    appendToBuffer("\tsub\tr13, r13, #"+ TDS.offsets.get(argsT.get(i)) +" ; " + name + " param " + (i + 1) + " init\n");
-                    appendToBuffer("\tstr\tr" + argsT.get(i) + ", [r13]\n");
-                }
-                if (symbol instanceof Func) {
-                    appendToBuffer("\tsub\tr13, r13, #" + TDS.offsets.get(((Func )symbol).getReturnType()) + " ; " + name + " return val init\n");
-                }
                 appendToBuffer("\tbl\t" + name + " ; CALL\n");
             }
             appendToBuffer("\t; End of call\n\n");
+        }
+    }
+
+    public void getVar(String name, int returnRegister, TDS tds) {
+        if (codeGenOn) {
+
+        }
+    }
+
+    public void stackReturn(Symbol symbol, int region) {
+        if (codeGenOn) {
+            String name = symbol.getName() + region;
+            if (symbol instanceof Func) {
+                appendToBuffer("\tsub\tr13, r13, #" + TDS.offsets.get(((Func )symbol).getReturnType()) + " ; " + name + " return val init\n");
+            }
         }
     }
 }

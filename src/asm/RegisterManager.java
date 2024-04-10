@@ -30,16 +30,17 @@ public class RegisterManager {
         for (int i = 0; i <= highestUsedRegister; i++) {
             stmfd.append("r").append(i).append(", ");
         }
-        stmfd.append("r11, r12, lr}");
+        stmfd.append("r12, lr}");
         return stmfd.toString();
     }
 
     public String generateLdmfd() {
         StringBuilder ldmfd = new StringBuilder();
+        ldmfd.append("r13!, {");
         for (int i = 0; i <= highestUsedRegister; i++) {
             ldmfd.append("r").append(i).append(", ");
         }
-        ldmfd.append("r11, r12, pc}");
+        ldmfd.append("r12, pc}");
         return ldmfd.toString();
     }
 }
