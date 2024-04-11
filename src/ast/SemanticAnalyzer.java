@@ -182,12 +182,12 @@ public class SemanticAnalyzer {
                         stack.push(tmp);
                         var.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
                         var.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
-                        // update offset
-                        offset.push(offset.pop() + TDS.offsets.get(var.getType()));
-                        var.setOffset(offset.lastElement());
                         if (!(var.getType().equals("boolean") || var.getType().equals("integer") || var.getType().equals("character") || (getSymbolFromLabel(var.getType(), stack.lastElement()) instanceof Record))) {
                             throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
                         }
+                        // update offset
+                        offset.push(offset.pop() + TDS.offsets.get(var.getType()));
+                        var.setOffset(offset.lastElement());
                         tds.addSymbol(stack.lastElement(), var, node.getLine());
                         break;
                     case "RETURN_TYPE":
