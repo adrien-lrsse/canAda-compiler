@@ -320,7 +320,7 @@ public class CodeGenerator {
         }
     }
 
-    public void callGen(Symbol symbol) {
+    public void callGen(Symbol symbol, int region) {
         if (codeGenOn) {
             String name = symbol.getName() + region;
             if (Objects.equals(name, "put0")) {

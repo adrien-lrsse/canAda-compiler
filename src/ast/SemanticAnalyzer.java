@@ -532,7 +532,7 @@ public class SemanticAnalyzer {
         }
         // code generation
         this.codeGen.setRegion(stack.lastElement());
-        codeGen.callGen(symbol);
+        codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
     }
 
 
