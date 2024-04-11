@@ -228,7 +228,11 @@ public class SemanticAnalyzer {
                             Node child;
                             for (int i = 0; i < ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().size(); i++) {
                                 child = ast.getTree().nodes.get(ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().get(i));
-                                record.addField(ast.getTree().nodes.get(child.getChildren().get(0)).getLabel(), ast.getTree().nodes.get(child.getChildren().get(1)).getLabel(), child.getLine());
+                                String type = ast.getTree().nodes.get(child.getChildren().get(1)).getLabel();
+                                if (!(type.equals("boolean") || type.equals("integer") || type.equals("character") || (getSymbolFromLabel(type, stack.lastElement()) instanceof Record))) {
+                                    throw new SemanticException("Type '" + type + "' is not defined", node.getLine());
+                                }
+                                record.addField(ast.getTree().nodes.get(child.getChildren().get(0)).getLabel(), type, child.getLine());
                                 if (!(ast.getTree().nodes.get(child.getChildren().get(1)).getLabel().equals("boolean") || ast.getTree().nodes.get(child.getChildren().get(1)).getLabel().equals("integer") || ast.getTree().nodes.get(child.getChildren().get(1)).getLabel().equals("character") || (getSymbolFromLabel(ast.getTree().nodes.get(child.getChildren().get(1)).getLabel(), stack.lastElement()) instanceof Record))) {
                                     throw new SemanticException("Type '" + ast.getTree().nodes.get(child.getChildren().get(1)).getLabel() + "' is not defined", node.getLine());
                                 }

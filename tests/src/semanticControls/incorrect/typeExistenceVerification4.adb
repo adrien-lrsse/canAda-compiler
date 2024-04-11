@@ -14,10 +14,10 @@ procedure test is
 
     d : struct;
 
-    function func (x : integer) return integer is
-    begin
-        return 1;
-    end func;
+    function func (x : integer) return test is
+        begin
+            return x + 1;
+        end func;
 
     begin
         a := 1;

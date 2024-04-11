@@ -14,7 +14,7 @@ procedure test is
 
     d : struct;
 
-    function func (x : integer) return integer is
+    function func (x : test) return integer is
     begin
         return 1;
     end func;
