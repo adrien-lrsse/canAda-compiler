@@ -65,7 +65,7 @@ public class CodeGenerator {
                 return;
             }
             String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
-            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr12, [r10]\n\tstmfd\tr13!, {r12}\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
+            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tmov\tr12, r13\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
             appendToBuffer("\t;PARAMETERS\n");
             startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
             endBufferAppend("\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
@@ -78,7 +78,7 @@ public class CodeGenerator {
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
             String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
-            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr12, [r10]\n\tstmfd\tr13!, {r12}\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
+            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tmov\tr12, r13\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
             appendToBuffer("\t;PARAMETERS\n");
             startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
             endBufferAppend("\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
@@ -307,7 +307,9 @@ public class CodeGenerator {
                     appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
                     break;
                 default: // Variable à aller chercher
-                    getVar(type, returnRegister);
+                    if (type != "CALL") {
+                        getVar(type, returnRegister);
+                    }
 //                    appendToBuffer("\t; Unhandeled expression (for the moment) : " + type + "\n");
 //                    throw new RuntimeException("Unhandeled expression : " + type);
                     return;
@@ -334,33 +336,77 @@ public class CodeGenerator {
 
     public void getVar(String name, int returnRegister) {
         if (codeGenOn) {
-            // get the region in the TDS
-//            System.out.println("Nesting level : "+tds.getTds().get(region).get(0).getNestingLevel());
-//            System.out.println("Search for : " + name);
-            for (Symbol i : tds.getTds().get(region)) {
-                if (i.getName().equals(name)) {
-                    if(i instanceof Var){
-                        int offset = ((Var) i).getOffset();
-                        appendToBuffer("\tldr\tr" + returnRegister + ", [r11, #-" + offset + "-4] ; Getting the value of " + name + "\n"); // -4 because r11 pointing on base and not on 1st element
-                    } else if (i instanceof Param){
-                        appendToBuffer(";Coming soon Param\n");
-                        return; // TODO
-//                        int offset = ((Param) i).getOffset();
-//                        System.out.println("Here");
-//                        System.out.println(offset);
-//                        appendToBuffer("\tldr\tr" + returnRegister + ", [r11, #" + offset);
-//                        appendToBuffer("] ; Getting the value of " + name + "\n");
-                    } else if (i instanceof Record) {
-                        appendToBuffer(";Coming soon Record\n");
-                        return; // TODO
-//                        int offset = ((Record) i).getOffset();
-//                        System.out.println("Found : "+i.getName()+" at offset : "+offset+" as a Record");
-                    } else {
-                        throw new RuntimeException("Unhandeled type of Symbol : "+i+" named "+i.getName() + " of type "+i.getClass());
-                    }
-                }
+            int destinationRegion = getRegionFromLabel(name, region);
+            if (destinationRegion == -1) {
+                throw new RuntimeException("Variable not found : " + name);
             }
-//            System.out.println("--------------------");
+            int start = tds.getTds().get(region).get(0).getNestingLevel();
+            int end = tds.getTds().get(destinationRegion).get(0).getNestingLevel();
+            int linkingsToGoUp;
+            linkingsToGoUp = start - end;
+            Symbol symbol = getSymbolFromLabel(name, destinationRegion);
+            int offset;
+            if (symbol instanceof Var) {
+                Var var = (Var) symbol;
+                offset =  var.getOffset();
+                appendToBuffer("\tmov\tr10, r12\n");
+                for (int i = 0; i < linkingsToGoUp; i++) {
+                    appendToBuffer("\tldr\tr10, [r10] ; Going up in the static linkings\n");
+                }
+                appendToBuffer("\tldr\tr" + returnRegister + ", [r10, #-4-" + offset + "] ; Getting var : " + name + "\n");
+            } else if (symbol instanceof Param) {
+                Param param = (Param) symbol;
+                offset = param.getOffset();
+                appendToBuffer("\tmov\tr10, r12\n");
+                for (int i = 0; i < linkingsToGoUp; i++) {
+                    appendToBuffer("\tldr\tr10, [r10]\n");
+                }
+                appendToBuffer("\tldr\tr" + returnRegister + ", [r10, #16+" + offset + "+4*");
+                stackFrames.peek().needRegisterValue();
+                appendToBuffer("] ; Getting param : " + name + "\n");
+            }
+//            else if (symbol instanceof Record) {
+//                Record record = (Record) symbol;
+//                offset = record.getOffset();
+//                appendToBuffer("\tmov\tr10, r12\n");
+//                for (int i = 0; i < linkingsToGoUp; i++) {
+//                    appendToBuffer("\tldr\tr10, [r10]\n");
+//                }
+//                appendToBuffer("\tldr\tr" + returnRegister + ", [r10, #-4-" + offset + "] ; Getting Record : " + name + "\n");
+//            }
+            else {
+                throw new RuntimeException("Unhandeled getVar : " + symbol + " " + name + " " + symbol.getClass());
+            }
+        }
+    }
+
+    private int getRegionFromLabel(String label, int reg) {
+        int father = 0;
+        for (Symbol symbol : tds.getTds().get(reg)){
+            father = symbol.getFather();
+            if (symbol.getName().equals(label)) {
+                return reg;
+            }
+        }
+        if (reg != 0){
+            return getRegionFromLabel(label, father);
+        } else {
+            return -1;
+        }
+    }
+
+    private Symbol getSymbolFromLabel(String label, int reg) {
+        int father = 0;
+        for (Symbol symbol : tds.getTds().get(reg)){
+            father = symbol.getFather();
+            if (symbol.getName().equals(label)) {
+                return symbol;
+            }
+        }
+        if (reg != 0){
+            return getSymbolFromLabel(label, father);
+        } else {
+            return null;
         }
     }
 
