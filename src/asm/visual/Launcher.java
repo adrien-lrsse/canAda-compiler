@@ -11,7 +11,7 @@ public class Launcher {
     /* we make sure that the output buffer is always the first symbol in memory */
     private static final int outputBufferAddress = instMemSize;
     /* VisUAL offsets line numbers by one for some reason */
-    private static final List<Integer> breakpoints = List.of(11 - 1, 25 - 1);
+    private static final List<Integer> breakpoints = List.of(21);
     private Launcher() {}
     /* array of all word addresses in the output buffer */
     private static String[] getOutputRange() {

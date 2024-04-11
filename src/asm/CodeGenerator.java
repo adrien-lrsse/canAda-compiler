@@ -146,8 +146,19 @@ public class CodeGenerator {
                 throw new RuntimeException(e);
             }
 
+            // write the content of the asmStack
             while (!asmStack.isEmpty()) {
                 this.write(asmStack.pop());
+            }
+
+            // copy the content of the its.s file at the end of the output file
+            try {
+                List<String> lines = Files.readAllLines(Paths.get("src/asm/visual/its.s"));
+                for (String line : lines) {
+                    this.write(line + "\n");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
 
             this.write("mul\tstmfd\tr13!, {r0-r2, r11, lr} ; This is PreWritten Code for multiplication\n\tmov\tr11, r13\n\tldr\tr1, [r11, #4*6]\n\tldr\tr2, [r11, #4*7]\n\tmov\tr0, #0\nmul_loop\tlsrs\tr2,r2,#1\n\taddcs\tr0,r0,r1\n\tlsl\tr1,r1,#1\n\ttst\tr2,r2\n\tbne\tmul_loop\n\tstr\tr0, [r11, #4*5]\n\tmov\tr13, r11\n\tldmfd\tr13!,{r0-r2, r11, pc}\n\n");
