@@ -324,7 +324,8 @@ public class CodeGenerator {
         if (codeGenOn) {
             String name = symbol.getName() + region;
             if (Objects.equals(name, "put0")) {
-               appendToBuffer("\t; CALL put (not yet implemented)\n");
+                //TODO: check if put(int) or put(char) is required
+               appendToBuffer("\tbl\tprintln_int ; CALL put\n");
             } else {
                 appendToBuffer("\tbl\t" + name + " ; CALL\n");
             }
