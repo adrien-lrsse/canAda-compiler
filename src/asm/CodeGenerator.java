@@ -324,8 +324,14 @@ public class CodeGenerator {
         if (codeGenOn) {
             String name = symbol.getName() + region;
             if (Objects.equals(name, "put0")) {
-                //TODO: check if put(int) or put(char) is required
-               appendToBuffer("\tbl\tprintln_int ; CALL put\n");
+                switch (((Proc) symbol).getTypes().get(0)) {
+                    case "integer", "boolean":
+                        appendToBuffer("\tbl\tprintln_int ; CALL put(int n)\n");
+                        break;
+                    case "character":
+                        appendToBuffer("\tbl\tprintln_char ; CALL put(char c)\n");
+                        break;
+                }
             } else {
                 appendToBuffer("\tbl\t" + name + " ; CALL\n");
             }

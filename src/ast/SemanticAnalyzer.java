@@ -164,6 +164,9 @@ public class SemanticAnalyzer {
                         var.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
                         var.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
                         // update offset
+                        if (TDS.offsets.get(var.getType()) == null) {
+                            throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
+                        }
                         offset.push(offset.pop() + TDS.offsets.get(var.getType()));
                         var.setOffset(offset.lastElement());
                         if (!(var.getType().equals("boolean") || var.getType().equals("integer") || var.getType().equals("character") || (getSymbolFromLabel(var.getType(), stack.lastElement()) instanceof Record))) {
@@ -486,7 +489,22 @@ public class SemanticAnalyzer {
         this.codeGen.appendToBuffer("\n\t; Start of calling stack\n");
         Node callNode = ast.getTree().nodes.get(nodeInt);
         Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
-        Symbol symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
+        Symbol symbol;
+
+        // Exception "put" that supports overloading
+        if (labelNode.getLabel().equals("put")) {
+            if (labelNode.getChildren().size() != 1) {
+                throw new SemanticException("Expected 1 parameter, got " + labelNode.getChildren().size() + " for procedure 'put'", callNode.getLine());
+            }
+            symbol = switch (typeOfOperands(labelNode.getChildren().get(0))) {
+                case "integer" -> tds.getTds().get(0).get(0);
+                case "character" -> tds.getTds().get(0).get(1);
+                default ->
+                        throw new SemanticException("Expected type 'integer' or 'character' for parameter 1 of procedure 'put', got " + typeOfOperands(labelNode.getChildren().get(0)), callNode.getLine());
+            };
+        } else {
+            symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
+        }
 
         if (symbol == null){
             throw new SemanticException("Function or procedure '" + labelNode.getLabel() + "' is not defined", callNode.getLine()) ;
