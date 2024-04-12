@@ -20,6 +20,8 @@ public class Record extends Symbol {
     public void addField(String name, String type, int line) throws SemanticException {
         if (this.fields.containsKey(name)) {
             throw new SemanticException("Field '" + name + "' already defined in record + '" + getName() + "'", line);
+        } else if (TDS.offsets.get(type) == null) {
+            throw new SemanticException("Type '" + type + "' not defined", line);
         }
         this.fields.put(name, type);
         this.offset += TDS.offsets.get(type);

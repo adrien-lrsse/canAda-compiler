@@ -140,9 +140,6 @@ public class SemanticAnalyzer {
                             );
                             param.setType(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel());
                         }
-                        // update offset
-                        offset.push(offset.pop() + TDS.offsets.get(param.getType()));
-                        param.setOffset(offset.lastElement());
                         tds.addSymbol(stack.lastElement(), param, node.getLine());
 
                         // update current declaration
@@ -176,14 +173,17 @@ public class SemanticAnalyzer {
                         break;
                     case "RETURN_TYPE":
                         tmp = stack.pop();
-                        if (tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()) instanceof Func) {
-                            ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).setReturnType(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
+                        Symbol symbol = tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement());
+                        if (symbol instanceof Func) {
+                            ((Func) symbol).setReturnType(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
                         }
 
                         // code generation gestion du type de retour
                         codeGen.appendToBuffer("\t;RETURN_TYPE\n\t\t;"+((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).getReturnType()+"\n");
 
                         stack.push(tmp);
+
+                        computeOffsets(symbol, stack.lastElement());
                         break;
                     case "TYPE":
                         String name = ast.getTree().nodes.get(node.getChildren().get(0)).getLabel();
@@ -686,6 +686,19 @@ public class SemanticAnalyzer {
             return getRegionFromLabel(label, father);
         } else {
             return -1;
+        }
+    }
+
+    public void computeOffsets(Symbol callable, int region) {
+        int offset = (callable instanceof Func) ? TDS.offsets.get(((Func) callable).getReturnType()) : 0;
+        List<Symbol> symbols = tds.getTds().get(region);
+        Symbol symbol;
+        for (int i = symbols.size() - 1; i >= 0; i--) {
+            symbol = symbols.get(i);
+            if (symbol instanceof Param) {
+                offset += TDS.offsets.get(((Param) symbol).getType());
+                ((Param) symbol).setOffset(offset);
+            }
         }
     }
 
