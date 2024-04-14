@@ -173,6 +173,16 @@ public class SemanticAnalyzer {
                             throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
                         }
                         tds.addSymbol(stack.lastElement(), var, node.getLine());
+
+                        // assignation in declaration case
+                        try {
+                            Node value = ast.getTree().nodes.get(node.getChildren().get(2));
+                            if (!typeOfOperands(value.getId()).equals(var.getType())) {
+                                throw new SemanticException("Expected type " + var.getType() + " for variable '" + var.getName() + "', got " + typeOfOperands(value.getId()), node.getLine());
+                            }
+                        } catch (IndexOutOfBoundsException e) {
+                            // no assignation
+                        }
                         break;
                     case "RETURN_TYPE":
                         tmp = stack.pop();
