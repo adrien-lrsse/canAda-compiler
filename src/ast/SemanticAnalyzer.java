@@ -193,7 +193,11 @@ public class SemanticAnalyzer {
                     case "RETURN_TYPE":
                         tmp = stack.pop();
                         if (tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()) instanceof Func) {
-                            ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).setReturnType(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
+                            String return_type = ast.getTree().nodes.get(node.getChildren().get(0)).getLabel();
+                            if (!(return_type.equals("boolean") || return_type.equals("integer") || return_type.equals("character") || (getSymbolFromLabel(return_type, stack.lastElement()) instanceof Record))) {
+                                throw new SemanticException("Type '" + return_type + "' is not defined", node.getLine());
+                            }
+                            ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).setReturnType(return_type);
                         }
 
                         //oskour code generation gestion du type de retour
