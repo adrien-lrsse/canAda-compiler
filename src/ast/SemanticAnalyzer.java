@@ -188,6 +188,7 @@ public class SemanticAnalyzer {
                         break;
                     case "RETURN_TYPE":
                         tmp = stack.pop();
+                        Symbol symbol = tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement());
                         if (tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()) instanceof Func) {
                             String return_type = ast.getTree().nodes.get(node.getChildren().get(0)).getLabel();
                             if (!(return_type.equals("boolean") || return_type.equals("integer") || return_type.equals("character") || (getSymbolFromLabel(return_type, stack.lastElement()) instanceof Record))) {
