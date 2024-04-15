@@ -1718,8 +1718,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("OR", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             int temp = parser.stack.pop();
@@ -1744,8 +1744,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("OR ELSE", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             int temp = parser.stack.pop();
@@ -1863,8 +1863,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("AND", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             int temp = parser.stack.pop();
@@ -1891,8 +1891,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("AND THEN", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             int temp = parser.stack.pop();
@@ -2044,8 +2044,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("=", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.expression_equals();
@@ -2084,8 +2084,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("/=", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.expression_equals();
@@ -2175,8 +2175,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode(">", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.expression_comparaison();
@@ -2215,8 +2215,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode(">=", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.expression_comparaison();
@@ -2251,8 +2251,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("<", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.expression_comparaison();
@@ -2291,8 +2291,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("<=", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.expression_comparaison();
@@ -2519,8 +2519,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("*", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.expression_mult_div();
@@ -2555,8 +2555,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("/", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.expression_mult_div();
@@ -2591,8 +2591,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("rem", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.expression_mult_div();
@@ -4431,8 +4431,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("OR", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             int temp = parser.stack.pop();
@@ -4458,8 +4458,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("OR ELSE", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             int temp = parser.stack.pop();
@@ -4570,8 +4570,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("AND", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             int temp = parser.stack.pop();
@@ -4597,8 +4597,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("AND THEN", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             int temp = parser.stack.pop();
@@ -4728,8 +4728,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("=", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_equals();
@@ -4765,8 +4765,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("/=", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_equals();
@@ -4849,8 +4849,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode(">", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_comparaison();
@@ -4886,8 +4886,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode(">=", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_comparaison();
@@ -4923,8 +4923,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("<", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_comparaison();
@@ -4960,8 +4960,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("<=", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_comparaison();
@@ -5046,8 +5046,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("+", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_plus_moins();
@@ -5083,8 +5083,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("-", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_plus_moins();
@@ -5172,8 +5172,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("*", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_mul_div();
@@ -5209,8 +5209,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("/", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_mul_div();
@@ -5246,8 +5246,8 @@ public class AnalyzeTable {
             int right = parser.ast.buffer.pop();
             int left = parser.ast.buffer.pop();
             int newNode = parser.ast.addNode("REM", false);
-            parser.ast.addEdge(newNode,right);
             parser.ast.addEdge(newNode,left);
+            parser.ast.addEdge(newNode,right);
             parser.ast.buffer.push(newNode);
             // end semantic function
             this.wi_expression_mul_div();
