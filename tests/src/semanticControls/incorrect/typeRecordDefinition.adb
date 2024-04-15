@@ -1,0 +1,26 @@
+with Ada.Text_IO; use Ada.Text_IO;
+
+procedure test is
+
+    type struct;
+    a : integer := 0;
+    b : integer := 0;
+
+    function func (p : struct) return integer is
+        begin
+            return p.champsA + 1;
+        end;
+
+    type struct is
+        record
+            champsA : integer;
+            champsB : integer;
+        end record;
+
+    s : struct;
+
+    begin
+        s.champsA := 1;
+        s.champsB := 2;
+        a := func(s);
+    end test;
