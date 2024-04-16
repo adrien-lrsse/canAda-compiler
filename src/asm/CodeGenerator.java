@@ -47,10 +47,6 @@ public class CodeGenerator {
         this.region = region;
     }
 
-    public void setCodeGenOn(Boolean codeGenOn) {
-        this.codeGenOn = codeGenOn;
-    }
-
     public void write(String s) {
         try {
             fileWriter.write(s);
