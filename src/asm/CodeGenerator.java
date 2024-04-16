@@ -24,14 +24,19 @@ public class CodeGenerator {
     private int region;
     private List<String> callableElements = new ArrayList<>();
 
-    public CodeGenerator(String fileName) {
-        try {
-            this.fileWriter = new FileWriter(fileName+"-output.s");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public CodeGenerator(String fileName, boolean codeGenOn) {
+        this.codeGenOn = codeGenOn;
+        if (codeGenOn) {
+            try {
+                this.fileWriter = new FileWriter(fileName + "-output.s");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            this.stackFrames = new Stack<>();
+            this.asmStack = new Stack<>();
+        } else {
+            this.fileWriter = null;
         }
-        this.stackFrames = new Stack<>();
-        this.asmStack = new Stack<>();
     }
 
     public void setTDS(TDS tds){

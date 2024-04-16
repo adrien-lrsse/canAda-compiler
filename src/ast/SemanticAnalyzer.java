@@ -27,8 +27,7 @@ public class SemanticAnalyzer {
         this.currentDecl = new Stack<>();
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
-        this.codeGen =  new CodeGenerator("tmp");
-        codeGen.setCodeGenOn(false);
+        this.codeGen =  new CodeGenerator("tmp", false);
     }
 
     public void analyze() throws SemanticException {
