@@ -52,6 +52,7 @@ public class SemanticAnalyzer {
             int tmp;
             Stack<Integer> offset = new Stack<>();
             List<String> undefinedTypes = new ArrayList<>();
+            HashMap<Symbol, Integer> initVars = new HashMap<>();
             int fatherInt;
             String fatherName;
             for (Node node : ast.getDepthFirstTraversal()) {
@@ -182,7 +183,8 @@ public class SemanticAnalyzer {
                                 throw new SemanticException("Expected type " + var.getType() + " for variable '" + var.getName() + "', got " + typeOfOperands(value.getId()), node.getLine());
                             }
                         } catch (IndexOutOfBoundsException e) {
-                            // no assignation
+                            // no assignation, init to 0
+                            initVars.put(var, 0);
                         }
                         break;
                     case "RETURN_TYPE":
@@ -247,8 +249,8 @@ public class SemanticAnalyzer {
                         break;
                     case "INSTRUCTIONS":
                         //  code generation
-                        this.codeGen.varGen(tds.getTds().get(stack.lastElement()));
-
+                        this.codeGen.varGen(tds.getTds().get(stack.lastElement()), initVars);
+                        initVars.clear();
 
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {

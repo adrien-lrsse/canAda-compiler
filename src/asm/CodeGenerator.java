@@ -9,10 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 
 public class CodeGenerator {
@@ -86,7 +83,7 @@ public class CodeGenerator {
         }
     }
 
-    public void varGen(List<Symbol> symbolsOfRegion) {
+    public void varGen(List<Symbol> symbolsOfRegion, HashMap<Symbol, Integer> initVars) {
         if (codeGenOn) {
             this.appendToBuffer("\t;VARIABLES\n");
             int lastOffset = -1;
@@ -98,6 +95,18 @@ public class CodeGenerator {
             }
             if (lastOffset != -1) {
                 this.appendToBuffer("\tsub\tr13, r13, #" + lastOffset + "\n");
+            }
+
+            int register;
+            for(Map.Entry<Symbol, Integer> entry : initVars.entrySet()) {
+                Symbol symbol = entry.getKey();
+                int value = entry.getValue();
+                if (symbol instanceof Var) {
+                    int offset = ((Var) symbol).getOffset();
+                    register = stackFrames.peek().getRegisterManager().borrowRegister();
+                    this.appendToBuffer("\tldr\tr" + register + ", ="+ value +"\n\tstr\tr" + register + ", [r13, #"+ offset +"]\n");
+                    stackFrames.peek().getRegisterManager().freeRegister(register);
+                }
             }
         }
     }
