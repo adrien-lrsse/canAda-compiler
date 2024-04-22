@@ -83,7 +83,7 @@ public class CodeGenerator {
         }
     }
 
-    public void varGen(List<Symbol> symbolsOfRegion, HashMap<Symbol, Integer> initVars) {
+    public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion, HashMap<Symbol, Integer> initVars) {
         if (codeGenOn) {
             this.appendToBuffer("\t;VARIABLES\n");
             int lastOffset = -1;
@@ -104,7 +104,12 @@ public class CodeGenerator {
                 if (symbol instanceof Var) {
                     int offset = ((Var) symbol).getOffset();
                     register = stackFrames.peek().getRegisterManager().borrowRegister();
-                    this.appendToBuffer("\tldr\tr" + register + ", ="+ value +"\n\tstr\tr" + register + ", [r13, #"+ offset +"]\n");
+                    if (value == -1) {
+                        this.appendToBuffer("\tstr\tr" + register + ", #0\n\tstr\tr" + register + ", [r13, #"+( offset - 4) +"]\n");
+                    } else {
+                        expressionGen(ast, value, register);
+                        this.appendToBuffer("\tstr\tr" + register + ", [r13, #"+( offset - 4) +"]\n");
+                    }
                     stackFrames.peek().getRegisterManager().freeRegister(register);
                 }
             }
