@@ -59,7 +59,7 @@ public class CodeGenerator {
             String label = name + callableElements.lastIndexOf(name) + "global";
             if(fatherName == null){
                 appendToBuffer("\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\t;PARAMETERS\n");
-                startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
+                startBufferAppend("\t" + label + "\tDCD\t0xFF000004\n");
                 return;
             }
             String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
