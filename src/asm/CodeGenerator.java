@@ -188,9 +188,6 @@ public class CodeGenerator {
     }
 
     public void assignationGen(GraphViz ast, Node node) {
-        System.out.println(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-        System.out.println(tds.getTds());
-        System.out.println("--------------------");
         int exprRegister = 0;
         boolean isRegisterBorrowed = false;
         try {
