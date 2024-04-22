@@ -202,7 +202,31 @@ public class CodeGenerator {
         }
         expressionGen(ast, node.getChildren().get(1), exprRegister);
         // Get the var to assign
+        Node node1 = ast.getTree().nodes.get(node.getChildren().get(0));
+        String type = node1.getLabel();
+        int addressReg;
+        boolean isRegisterAddressBorrowed = false;
+        try {
+            addressReg = stackFrames.peek().getRegisterManager().borrowRegister();
+        } catch (RuntimeException e) {
+            if (exprRegister != 0) {
+                addressReg = 0;
+            }
+            else {
+                addressReg = 1;
+            }
+            isRegisterAddressBorrowed = true;
+            appendToBuffer("\tstmfd\tr13!, {r" + addressReg + "} ; No more register available, making space with memory stack\n");
+        }
         // Set the value
+        getVarAddress(type, addressReg);
+        appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + "] ; Assigning value to var : " + type + "\n");
+
+        if (isRegisterAddressBorrowed) {
+            appendToBuffer("\tldmfd\tr13!, {r" + addressReg + "} ; Freeing memory stack\n"); // Free the register
+        } else {
+            stackFrames.peek().getRegisterManager().freeRegister(addressReg);
+        }
         if(isRegisterBorrowed) {
             appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
         } else {
