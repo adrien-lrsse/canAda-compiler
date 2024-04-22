@@ -58,7 +58,7 @@ public class CodeGenerator {
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
             if(fatherName == null){
-                appendToBuffer("\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\t;PARAMETERS\n");
+                appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr12, [r10]\n\tstr\tr13, [r10]\n\t;PARAMETERS\n");
                 startBufferAppend("\t" + label + "\tDCD\t0xFF000004\n");
                 return;
             }
@@ -105,7 +105,7 @@ public class CodeGenerator {
                     int offset = ((Var) symbol).getOffset();
                     register = stackFrames.peek().getRegisterManager().borrowRegister();
                     if (value == -1) {
-                        this.appendToBuffer("\tstr\tr" + register + ", #0\n\tstr\tr" + register + ", [r13, #"+( offset - 4) +"]\n");
+                        this.appendToBuffer("\tmov\tr" + register + ", #0\n\tstr\tr" + register + ", [r13, #"+( offset - 4) +"]\n");
                     } else {
                         expressionGen(ast, value, register);
                         this.appendToBuffer("\tstr\tr" + register + ", [r13, #"+( offset - 4) +"]\n");
@@ -188,10 +188,9 @@ public class CodeGenerator {
     }
 
     public void assignationGen(GraphViz ast, Node node) {
-//        System.out.println(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-//        System.out.println(tds.getTds());
-//        System.out.println("--------------------");
-        // TODO assign the value
+        System.out.println(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
+        System.out.println(tds.getTds());
+        System.out.println("--------------------");
         int exprRegister = 0;
         boolean isRegisterBorrowed = false;
         try {
