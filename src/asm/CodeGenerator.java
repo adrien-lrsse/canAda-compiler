@@ -58,7 +58,7 @@ public class CodeGenerator {
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
             if(fatherName == null){
-                appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr12, [r10]\n\tstr\tr13, [r10]\n\t;PARAMETERS\n");
+                appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr12, [r10]\n\tmov\tr10, r12\n\t;PARAMETERS\n");
                 startBufferAppend("\t" + label + "\tDCD\t0xFF000004\n");
                 return;
             }
