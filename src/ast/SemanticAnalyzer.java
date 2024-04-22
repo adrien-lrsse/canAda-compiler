@@ -108,7 +108,8 @@ public class SemanticAnalyzer {
 
                         // code generation
                         fatherInt = tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()).getFather();
-                        fatherName = tds.getTds().get(fatherInt).get(0).getName();
+                        List<Symbol> fatherRegion = tds.getTds().get(fatherInt);
+                        fatherName = fatherRegion.get(fatherRegion.size()-1).getName();
                         codeGen.functionGen(func.getName(), String.valueOf(stack.lastElement()), fatherName);
 
                         // create new region
