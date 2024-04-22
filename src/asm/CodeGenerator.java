@@ -357,6 +357,13 @@ public class CodeGenerator {
 
     public void getVar(String name, int returnRegister) {
         if (codeGenOn) {
+            getVarAddress(name, returnRegister);
+            appendToBuffer("\tldr\tr" + returnRegister + ", [r" + returnRegister + "] ; Getting value of var : " + name + "\n");
+        }
+    }
+
+    public void getVarAddress(String name, int returnRegister) {
+        if (codeGenOn) {
             int destinationRegion = getRegionFromLabel(name, region);
             if (destinationRegion == -1) {
                 throw new RuntimeException("Variable not found : " + name);
@@ -374,7 +381,7 @@ public class CodeGenerator {
                 for (int i = 0; i < linkingsToGoUp; i++) {
                     appendToBuffer("\tldr\tr10, [r10] ; Going up in the static linkings\n");
                 }
-                appendToBuffer("\tldr\tr" + returnRegister + ", [r10, #-4-" + offset + "] ; Getting var : " + name + "\n");
+                appendToBuffer("\tadd\tr10, r10, #-4-" + offset + " ; Getting address of var : " + name + "\n\tmov\tr" + returnRegister + ", r10\n");
             } else if (symbol instanceof Param) {
                 Param param = (Param) symbol;
                 offset = param.getOffset();
@@ -382,9 +389,9 @@ public class CodeGenerator {
                 for (int i = 0; i < linkingsToGoUp; i++) {
                     appendToBuffer("\tldr\tr10, [r10]\n");
                 }
-                appendToBuffer("\tldr\tr" + returnRegister + ", [r10, #16+" + offset + "+4*");
+                appendToBuffer("\tadd\tr10, r10, #16+" + offset + "+4*");
                 stackFrames.peek().needRegisterValue();
-                appendToBuffer("] ; Getting param : " + name + "\n");
+                appendToBuffer(" ; Getting param : " + name + "\n\tmov\tr" + returnRegister + ", r10\n");
             }
 //            else if (symbol instanceof Record) {
 //                Record record = (Record) symbol;
