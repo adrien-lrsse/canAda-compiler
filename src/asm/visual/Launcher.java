@@ -6,12 +6,12 @@ import java.util.stream.Stream;
 import visual.EmulatorLogFile;
 import visual.HeadlessController;
 public class Launcher {
-    public static final int outputBufferLength = 0x1000;
-    private static final int instMemSize = 0x10000;
+    public static final int outputBufferLength = 0x100;
+    private static final int instMemSize = 0x1000;
     /* we make sure that the output buffer is always the first symbol in memory */
     private static final int outputBufferAddress = instMemSize;
     /* VisUAL offsets line numbers by one for some reason */
-    private static final List<Integer> breakpoints = List.of(21);
+    private static final List<Integer> breakpoints = List.of(20, 142);
     private Launcher() {}
     /* array of all word addresses in the output buffer */
     private static String[] getOutputRange() {
@@ -21,7 +21,7 @@ public class Launcher {
                 .toArray(String[]::new);
     }
     public static void executeAndParseOutput(String assemblyFile) {
-        EmulatorLogFile.configureLogging("", true, false, false, false, false, false,
+        EmulatorLogFile.configureLogging("", true, true, false, false, false, false,
                 true, false, getOutputRange());
         HeadlessController.setLogMode(EmulatorLogFile.LogMode.BREAKPOINT);
         HeadlessController.setBreakpoints(breakpoints);

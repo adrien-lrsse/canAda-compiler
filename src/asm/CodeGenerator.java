@@ -180,8 +180,9 @@ public class CodeGenerator {
             this.write("div\tstmfd\tsp!, {r0-r5, r11, lr} ; This is PreWritten Code for division\n\tmov\tr11, r13\n\tldr\tr1, [r11, #4*9]\n\tldr\tr2, [r11, #4*10]\n\tmov\tr0,#0\n\tmov\tr3,#0\n\tcmp\tr1, #0\n\trsblt\tr1, r1,#0\n\teorlt\tr3, r3, #1\n\tcmp\tr2, #0\n\trsblt\tr2, r2,#0\n\teorlt\tr3, r3, #1\n\tmov\tr4, r2\n\tmov\tr5, #1\ndiv_max\tlsl\tr4, r4, #1\n\tlsl\tr5,r5,#1\n\tcmp\tr4, r1\n\tble\tdiv_max\ndiv_loop\tlsr\tr4, r4, #1\n\tlsr\tr5, r5, #1\n\tcmp\tr4, r1\n\tbgt\tdiv_loop\n\tadd\tr0, r0, r5\n\tsub\tr1, r1, r4\n\tcmp\tr1, r2\n\tbge\tdiv_loop\n\tcmp\tr3, #1\n\tbne\tdiv_exit\n\tcmp\tr1,#0\n\taddne\tr0, r0,#1\n\trsb\tr0, r0, #0\n\trsb\tr1, r1, #0\n\taddne\tr1,r1,r2\ndiv_exit\tstr\tr0, [r11, #4*8]\n\tldmfd\tr13!, {r0-r5, r11, pc}\n\n");
 
             try {
+                assert fileWriter != null;
                 fileWriter.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
@@ -410,9 +411,9 @@ public class CodeGenerator {
                 for (int i = 0; i < linkingsToGoUp; i++) {
                     appendToBuffer("\tldr\tr10, [r10]\n");
                 }
-                appendToBuffer("\tadd\tr10, r10, #16+" + offset + "+4*");
+                appendToBuffer("\tadd\tr10, r10, #4*");
                 stackFrames.peek().needRegisterValue();
-                appendToBuffer(" ; Getting param : " + name + "\n\tmov\tr" + returnRegister + ", r10\n");
+                appendToBuffer("+" + offset + "+16 ; Getting param : " + name + "\n\tmov\tr" + returnRegister + ", r10\n");
             }
 //            else if (symbol instanceof Record) {
 //                Record record = (Record) symbol;

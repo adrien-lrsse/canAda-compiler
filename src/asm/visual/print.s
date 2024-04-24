@@ -1,5 +1,5 @@
 ;       ########### Print a string ##*#########
-str_out      fill    0x1000
+str_out      fill    0x100
 str_buf      fill    0xC
 start        b       main
 
