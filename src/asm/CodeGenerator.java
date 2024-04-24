@@ -272,6 +272,12 @@ public class CodeGenerator {
                 // Not a number so we continue
             }
 
+            // check if it's a character
+            if (type.charAt(0) == '\'') {
+                appendToBuffer("\tmov\tr" + returnRegister + ", #" + (int) type.charAt(1) + " ; Generating character for expression\n");
+                return;
+            }
+
             int register1;
             boolean isR1Borrowed = false;
 
