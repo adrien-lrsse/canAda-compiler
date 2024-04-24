@@ -86,6 +86,7 @@ public class CodeGenerator {
     public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion, HashMap<Symbol, Integer> initVars) {
         if (codeGenOn) {
             this.appendToBuffer("\t;VARIABLES\n");
+            int register, offset;
             int lastOffset = -1;
             for (Symbol symbol : symbolsOfRegion) {
                 if (symbol instanceof Var) {
@@ -97,20 +98,21 @@ public class CodeGenerator {
                 this.appendToBuffer("\tsub\tr13, r13, #" + lastOffset + "\n");
             }
 
-            int register;
+            // init vars
             for(Map.Entry<Symbol, Integer> entry : initVars.entrySet()) {
                 Symbol symbol = entry.getKey();
                 int value = entry.getValue();
                 if (symbol instanceof Var) {
-                    int offset = ((Var) symbol).getOffset();
+                    offset = ((Var) symbol).getOffset();
                     register = stackFrames.peek().getRegisterManager().borrowRegister();
                     if (value == -1) {
-                        this.appendToBuffer("\tmov\tr" + register + ", #0\n\tstr\tr" + register + ", [r13, #"+( offset - 4) +"]\n");
+                        this.appendToBuffer("\tmov\tr" + register + ", #0\n\tstr\tr" + register + ", [r13, #"+(lastOffset - offset) +"]");
                     } else {
                         expressionGen(ast, value, register);
-                        this.appendToBuffer("\tstr\tr" + register + ", [r13, #"+( offset - 4) +"]\n");
+                        this.appendToBuffer("\tstr\tr" + register + ", [r13, #"+(lastOffset - offset) +"]");
                     }
                     stackFrames.peek().getRegisterManager().freeRegister(register);
+                    this.appendToBuffer("\t; Init " + symbol.getName() + "\n");
                 }
             }
         }
