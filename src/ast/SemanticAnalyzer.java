@@ -27,7 +27,7 @@ public class SemanticAnalyzer {
         this.currentDecl = new Stack<>();
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
-        this.codeGen =  new CodeGenerator("tmp", false);
+//        this.codeGen =  new CodeGenerator("tmp", false);
     }
 
     public void analyze() throws SemanticException {
@@ -52,7 +52,6 @@ public class SemanticAnalyzer {
             int tmp;
             Stack<Integer> offset = new Stack<>();
             List<String> undefinedTypes = new ArrayList<>();
-            HashMap<Symbol, Integer> initVars = new HashMap<>(); // -1 if default value (i.e. 0) else expression node
             int fatherInt;
             String fatherName;
             for (Node node : ast.getDepthFirstTraversal()) {
@@ -183,10 +182,10 @@ public class SemanticAnalyzer {
                             if (!typeOfOperands(value.getId()).equals(var.getType())) {
                                 throw new SemanticException("Expected type " + var.getType() + " for variable '" + var.getName() + "', got " + typeOfOperands(value.getId()), node.getLine());
                             }
-                            initVars.put(var, value.getId());
+                            codeGen.addInitVar(var, value.getId());
                         } catch (IndexOutOfBoundsException e) {
                             // no assignation, init to 0
-                            initVars.put(var, -1);
+                            codeGen.addInitVar(var, -1);
                         }
                         break;
                     case "RETURN_TYPE":
@@ -251,8 +250,7 @@ public class SemanticAnalyzer {
                         break;
                     case "INSTRUCTIONS":
                         //  code generation
-                        this.codeGen.varGen(ast, tds.getTds().get(stack.lastElement()), initVars);
-                        initVars.clear();
+                        this.codeGen.varGen(ast, tds.getTds().get(stack.lastElement()));
 
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
@@ -381,7 +379,7 @@ public class SemanticAnalyzer {
         } else if (!(rightType.equals(leftType))) {
             throw new SemanticException(leftType + " cannot be assigned to type " + rightType, node.getLine());
         }
-        this.codeGen.setTDS(tds);
+//        this.codeGen.setTDS(tds);
         this.codeGen.setRegion(stack.lastElement());
         this.codeGen.assignationGen(ast, node);
     }
@@ -523,7 +521,7 @@ public class SemanticAnalyzer {
             if (labelNode.getChildren().size() != 1) {
                 throw new SemanticException("Expected 1 parameter, got " + labelNode.getChildren().size() + " for procedure 'put'", callNode.getLine());
             }
-            this.codeGen.setTDS(tds);
+//            this.codeGen.setTDS(tds);
             this.codeGen.setRegion(stack.lastElement());
             this.codeGen.stackArg(ast, labelNode.getChildren().get(0));
             symbol = switch (typeOfOperands(labelNode.getChildren().get(0))) {
@@ -555,7 +553,7 @@ public class SemanticAnalyzer {
                         throw new SemanticException("Expected a 'variable' or 'x.f' with x type record for parameter 'in out' " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + getNatureOfLabel(labelNode.getChildren().get(i), stack.lastElement()), callNode.getLine());
                     }
                 }
-                this.codeGen.setTDS(tds);
+//                this.codeGen.setTDS(tds);
                 this.codeGen.setRegion(stack.lastElement());
                 this.codeGen.stackArg(ast, labelNode.getChildren().get(i));
             }
@@ -577,7 +575,7 @@ public class SemanticAnalyzer {
                     if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
                         throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                     }
-                    this.codeGen.setTDS(tds);
+//                    this.codeGen.setTDS(tds);
                     this.codeGen.setRegion(stack.lastElement());
                     this.codeGen.stackArg(ast, labelNode.getChildren().get(i));
                 }

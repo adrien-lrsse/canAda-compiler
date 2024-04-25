@@ -20,8 +20,9 @@ public class CodeGenerator {
     private TDS tds;
     private int region;
     private List<String> callableElements = new ArrayList<>();
+    private final Stack<HashMap<Symbol, Integer>> initVars;
 
-    public CodeGenerator(String fileName, boolean codeGenOn) {
+    public CodeGenerator(String fileName, boolean codeGenOn, TDS tds) {
         this.codeGenOn = codeGenOn;
         if (codeGenOn) {
             try {
@@ -34,10 +35,8 @@ public class CodeGenerator {
         } else {
             this.fileWriter = null;
         }
-    }
-
-    public void setTDS(TDS tds){
         this.tds = tds;
+        this.initVars = new Stack<>();
     }
 
     public void setRegion(int region){
@@ -55,6 +54,7 @@ public class CodeGenerator {
     public void procedureGen(String name, String last, String fatherName) {
         if (codeGenOn) {
             stackFrames.push(new StackFrame(name + last));
+            initVars.push(new HashMap<>()); // -1 if default value (i.e. 0) else expression node
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
             if(fatherName == null){
@@ -73,6 +73,7 @@ public class CodeGenerator {
     public void functionGen(String name, String last, String fatherName) {
         if (codeGenOn) {
             stackFrames.push(new StackFrame(name + last));
+            initVars.push(new HashMap<>()); // -1 if default value (i.e. 0) else expression node
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
             String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
@@ -83,7 +84,7 @@ public class CodeGenerator {
         }
     }
 
-    public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion, HashMap<Symbol, Integer> initVars) {
+    public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion) {
         if (codeGenOn) {
             this.appendToBuffer("\t;VARIABLES\n");
             int register, offset;
@@ -99,7 +100,7 @@ public class CodeGenerator {
             }
 
             // init vars
-            for(Map.Entry<Symbol, Integer> entry : initVars.entrySet()) {
+            for(Map.Entry<Symbol, Integer> entry : initVars.pop().entrySet()) {
                 Symbol symbol = entry.getKey();
                 int value = entry.getValue();
                 if (symbol instanceof Var) {
@@ -474,6 +475,12 @@ public class CodeGenerator {
             if (symbol instanceof Func) {
                 appendToBuffer("\tsub\tr13, r13, #" + TDS.offsets.get(((Func )symbol).getReturnType()) + " ; " + name + " return val init\n");
             }
+        }
+    }
+
+    public void addInitVar(Symbol symbol, int value) {
+        if (codeGenOn) {
+            initVars.peek().put(symbol, value);
         }
     }
 }
