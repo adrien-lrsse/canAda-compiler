@@ -14,7 +14,7 @@ public class AsmDemo {
         Parser parser = new Parser(lexer);
         parser.parse(true);
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
-        CodeGenerator codeGenerator = new CodeGenerator(parser.getAst().getFilename(), true);
+        CodeGenerator codeGenerator = new CodeGenerator(parser.getAst().getFilename(), true, semanticAnalyzer.getTds());
         semanticAnalyzer.setCodeGen(codeGenerator);
         semanticAnalyzer.analyze();
 //        Launcher.run(parser.getAst().getFilename()+ "-output.s");
