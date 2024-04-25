@@ -39,6 +39,16 @@ public class CodeGenerator {
         this.initVars = new Stack<>();
     }
 
+    public CodeGenerator() {
+        // Fake constructor for tests
+        this.codeGenOn = false;
+        this.fileWriter = null;
+        this.stackFrames = null;
+        this.asmStack = null;
+        this.tds = null;
+        this.initVars = null;
+    }
+
     public void setRegion(int region){
         this.region = region;
     }
