@@ -15,6 +15,7 @@ import java.util.*;
 public class CodeGenerator {
     private final FileWriter fileWriter;
     public Stack<StackFrame> stackFrames; // TO CHANGE
+    public Stack<StackFrame> varStackFrames; // used to init vars
     private Stack<String> asmStack;
     private Boolean codeGenOn = true;
     private TDS tds;
@@ -31,6 +32,7 @@ public class CodeGenerator {
                 throw new RuntimeException(e);
             }
             this.stackFrames = new Stack<>();
+            this.varStackFrames = new Stack<>();
             this.asmStack = new Stack<>();
         } else {
             this.fileWriter = null;
@@ -96,17 +98,18 @@ public class CodeGenerator {
 
     public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion) {
         if (codeGenOn) {
-            this.appendToBuffer("\t;VARIABLES\n");
+            this.varStackFrames.push(new StackFrame("VarGen"));
+            this.varAppendToBuffer("\t;VARIABLES\n");
             int offset;
-            int lastOffset = -1;
+            varStackFrames.peek().setVarInt(-1);
             for (Symbol symbol : symbolsOfRegion) {
                 if (symbol instanceof Var) {
-                    lastOffset = ((Var) symbol).getOffset();
-                    this.appendToBuffer("\t\t;" + ((Var) symbol).getType() + "\t" + symbol.getName() + "\n");
+                    varStackFrames.peek().setVarInt(((Var) symbol).getOffset());
+                    this.varAppendToBuffer("\t\t;" + ((Var) symbol).getType() + "\t" + symbol.getName() + "\n");
                 }
             }
-            if (lastOffset != -1) {
-                this.appendToBuffer("\tsub\tr13, r13, #" + lastOffset + "\n");
+            if (varStackFrames.peek().getVarInt() != -1) {
+                this.varAppendToBuffer("\tsub\tr13, r13, #" + varStackFrames.peek().getVarInt() + "\n");
             }
 
             // init vars
@@ -116,12 +119,12 @@ public class CodeGenerator {
                 if (symbol instanceof Var) {
                     offset = ((Var) symbol).getOffset();
                     if (value == -1) {
-                        this.appendToBuffer("\tmov\tr10, #0\n\tstr\tr10, [r13, #"+(lastOffset - offset) +"]");
+                        this.varAppendToBuffer("\tmov\tr10, #0\n\tstr\tr10, [r13, #"+(varStackFrames.peek().getVarInt() - offset) +"]");
                     } else {
                         expressionGen(ast, value, 10);
-                        this.appendToBuffer("\tstr\tr10, [r13, #"+(lastOffset - offset) +"]");
+                        this.varAppendToBuffer("\tstr\tr10, [r13, #"+(varStackFrames.peek().getVarInt() - offset) +"]");
                     }
-                    this.appendToBuffer("\t; Init " + symbol.getName() + "\n");
+                    this.varAppendToBuffer("\t; Init " + symbol.getName() + "\n");
                 }
             }
         }
@@ -131,6 +134,14 @@ public class CodeGenerator {
         if (codeGenOn) {
             if (!stackFrames.isEmpty()) {
                 stackFrames.peek().getBuffer().append(s);
+            }
+        }
+    }
+
+    public void varAppendToBuffer(String s) {
+        if (codeGenOn) {
+            if (!varStackFrames.isEmpty()) {
+                varStackFrames.peek().getBuffer().append(s);
             }
         }
     }
@@ -155,6 +166,8 @@ public class CodeGenerator {
         if (codeGenOn) {
             if (!stackFrames.isEmpty()) {
                 StackFrame stackFrame = stackFrames.pop();
+                StackFrame varStackFrame = varStackFrames.pop();
+                asmStack.push(varStackFrame.toString(varStackFrames.isEmpty()));
                 asmStack.push(stackFrame.toString(stackFrames.isEmpty()));
             }
         }
@@ -416,6 +429,9 @@ public class CodeGenerator {
             if (symbol instanceof Var) {
                 Var var = (Var) symbol;
                 offset =  var.getOffset();
+//                System.out.println(name);
+//                System.out.println("offset : " + offset);
+//                System.out.println("----");
                 appendToBuffer("\tmov\tr10, r12\n");
                 for (int i = 0; i < linkingsToGoUp; i++) {
                     appendToBuffer("\tldr\tr10, [r10] ; Going up in the static linkings\n");
