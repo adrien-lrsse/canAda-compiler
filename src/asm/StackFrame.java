@@ -10,7 +10,6 @@ public class StackFrame {
     private StringBuilder endBuffer;
     private StringBuilder startBuffer;
     private ArrayList<StringBuilder> bufferList;
-    private int varInt = 0;
 
     public StackFrame(String name) {
         this.registerManager = new RegisterManager();
@@ -19,13 +18,6 @@ public class StackFrame {
         this.endBuffer = new StringBuilder();
         this.startBuffer = new StringBuilder();
         bufferList = new ArrayList<StringBuilder>();
-    }
-
-    public void setVarInt(int varInt) {
-        this.varInt = varInt;
-    }
-    public int getVarInt() {
-        return varInt;
     }
 
     public RegisterManager getRegisterManager() {
@@ -63,9 +55,7 @@ public class StackFrame {
     }
 
     public String toString(boolean isMain) {
-        if (name == "VarGen") {
-            return startBuffer.toString() + "\tsub\tr13, r13, #" + varInt + "\n" + buffer.toString() + endBuffer.toString();
-        } else if (isMain) {
+        if (isMain) {
             return  startBuffer.toString() + name + "\n" +
                     "\tmov\tr11, r13\n" +
                     buffer.toString() +
