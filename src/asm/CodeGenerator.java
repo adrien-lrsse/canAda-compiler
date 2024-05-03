@@ -115,14 +115,12 @@ public class CodeGenerator {
                 int value = entry.getValue();
                 if (symbol instanceof Var) {
                     offset = ((Var) symbol).getOffset();
-                    register = stackFrames.peek().getRegisterManager().borrowRegister();
                     if (value == -1) {
-                        this.appendToBuffer("\tmov\tr" + register + ", #0\n\tstr\tr" + register + ", [r13, #"+(lastOffset - offset) +"]");
+                        this.appendToBuffer("\tmov\tr10, #0\n\tstr\tr10, [r13, #"+(lastOffset - offset) +"]");
                     } else {
-                        expressionGen(ast, value, register);
-                        this.appendToBuffer("\tstr\tr" + register + ", [r13, #"+(lastOffset - offset) +"]");
+                        expressionGen(ast, value, 10);
+                        this.appendToBuffer("\tstr\tr10, [r13, #"+(lastOffset - offset) +"]");
                     }
-                    stackFrames.peek().getRegisterManager().freeRegister(register);
                     this.appendToBuffer("\t; Init " + symbol.getName() + "\n");
                 }
             }
