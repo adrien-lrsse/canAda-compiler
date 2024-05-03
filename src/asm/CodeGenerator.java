@@ -97,7 +97,7 @@ public class CodeGenerator {
     public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion) {
         if (codeGenOn) {
             this.appendToBuffer("\t;VARIABLES\n");
-            int register, offset;
+            int offset;
             int lastOffset = -1;
             for (Symbol symbol : symbolsOfRegion) {
                 if (symbol instanceof Var) {
