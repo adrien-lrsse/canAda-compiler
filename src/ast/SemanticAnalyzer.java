@@ -257,6 +257,7 @@ public class SemanticAnalyzer {
                         break;
                     case "INSTRUCTIONS":
                         //  code generation
+                        this.codeGen.switchForVar();
                         this.codeGen.varGen(ast, tds.getTds().get(stack.lastElement()));
 
                         // check if all the declared types are defined
