@@ -204,7 +204,7 @@ public class SemanticAnalyzer {
 
                         stack.push(tmp);
 
-                        computeOffsets(symbol, stack.lastElement());
+//                        computeOffsets(symbol, stack.lastElement());
                         break;
                     case "TYPE":
                         String name = ast.getTree().nodes.get(node.getChildren().get(0)).getLabel();
@@ -244,6 +244,12 @@ public class SemanticAnalyzer {
                         undefinedTypes.remove(name);
                         break;
                     case "DECLARATIONS":
+                        // compute offsets
+                        tmp = stack.pop();
+                        symbol = tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement());
+                        stack.push(tmp);
+                        computeOffsets(symbol, stack.lastElement());
+
                         // reset offset
                         offset.pop();
                         offset.push(0);
@@ -379,8 +385,6 @@ public class SemanticAnalyzer {
         } else if (!(rightType.equals(leftType))) {
             throw new SemanticException(leftType + " cannot be assigned to type " + rightType, node.getLine());
         }
-//        this.codeGen.setTDS(tds);
-        this.codeGen.setRegion(stack.lastElement());
         this.codeGen.assignationGen(ast, node);
     }
 
@@ -521,8 +525,6 @@ public class SemanticAnalyzer {
             if (labelNode.getChildren().size() != 1) {
                 throw new SemanticException("Expected 1 parameter, got " + labelNode.getChildren().size() + " for procedure 'put'", callNode.getLine());
             }
-//            this.codeGen.setTDS(tds);
-            this.codeGen.setRegion(stack.lastElement());
             this.codeGen.stackArg(ast, labelNode.getChildren().get(0));
             symbol = switch (typeOfOperands(labelNode.getChildren().get(0))) {
                 case "integer" -> tds.getTds().get(0).get(0);
@@ -553,8 +555,6 @@ public class SemanticAnalyzer {
                         throw new SemanticException("Expected a 'variable' or 'x.f' with x type record for parameter 'in out' " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + getNatureOfLabel(labelNode.getChildren().get(i), stack.lastElement()), callNode.getLine());
                     }
                 }
-//                this.codeGen.setTDS(tds);
-                this.codeGen.setRegion(stack.lastElement());
                 this.codeGen.stackArg(ast, labelNode.getChildren().get(i));
             }
             this.codeGen.stackReturn(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
@@ -575,8 +575,6 @@ public class SemanticAnalyzer {
                     if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
                         throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                     }
-//                    this.codeGen.setTDS(tds);
-                    this.codeGen.setRegion(stack.lastElement());
                     this.codeGen.stackArg(ast, labelNode.getChildren().get(i));
                 }
             }
@@ -584,7 +582,6 @@ public class SemanticAnalyzer {
             throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable", callNode.getLine());
         }
         // code generation
-        this.codeGen.setRegion(stack.lastElement());
         codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
     }
 
@@ -743,6 +740,7 @@ public class SemanticAnalyzer {
 
     public void computeOffsets(Symbol callable, int region) {
         int offset = (callable instanceof Func) ? TDS.offsets.get(((Func) callable).getReturnType()) : 0;
+//        int offset = 0;
         List<Symbol> symbols = tds.getTds().get(region);
         Symbol symbol;
         for (int i = symbols.size() - 1; i >= 0; i--) {
@@ -791,4 +789,7 @@ public class SemanticAnalyzer {
         return tds;
     }
 
+    public Stack<Integer> getStack() {
+        return stack;
+    }
 }

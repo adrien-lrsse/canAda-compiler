@@ -18,11 +18,11 @@ public class CodeGenerator {
     private Stack<String> asmStack;
     private Boolean codeGenOn = true;
     private TDS tds;
-    private int region;
     private List<String> callableElements = new ArrayList<>();
     private final Stack<HashMap<Symbol, Integer>> initVars;
+    private Stack<Integer> stack;
 
-    public CodeGenerator(String fileName, boolean codeGenOn, TDS tds) {
+    public CodeGenerator(String fileName, boolean codeGenOn, TDS tds, Stack<Integer> stack) {
         this.codeGenOn = codeGenOn;
         if (codeGenOn) {
             try {
@@ -37,6 +37,7 @@ public class CodeGenerator {
         }
         this.tds = tds;
         this.initVars = new Stack<>();
+        this.stack = stack;
     }
 
     public CodeGenerator() {
@@ -47,10 +48,6 @@ public class CodeGenerator {
         this.asmStack = null;
         this.tds = null;
         this.initVars = null;
-    }
-
-    public void setRegion(int region){
-        this.region = region;
     }
 
     public void write(String s) {
@@ -403,11 +400,11 @@ public class CodeGenerator {
 
     public void getVarAddress(String name, int returnRegister) {
         if (codeGenOn) {
-            int destinationRegion = getRegionFromLabel(name, region);
+            int destinationRegion = getRegionFromLabel(name, stack.peek());
             if (destinationRegion == -1) {
                 throw new RuntimeException("Variable not found : " + name);
             }
-            int start = tds.getTds().get(region).get(0).getNestingLevel();
+            int start = tds.getTds().get(stack.peek()).get(0).getNestingLevel();
             int end = tds.getTds().get(destinationRegion).get(0).getNestingLevel();
             int linkingsToGoUp;
             linkingsToGoUp = start - end;
