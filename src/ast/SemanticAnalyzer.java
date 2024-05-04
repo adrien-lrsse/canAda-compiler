@@ -257,7 +257,7 @@ public class SemanticAnalyzer {
                         break;
                     case "INSTRUCTIONS":
                         //  code generation
-                        this.codeGen.varGen(ast, tds.getTds().get(stack.lastElement()));
+                        this.codeGen.stackFrames.peek().switchVarBuffer();
 
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
@@ -287,6 +287,9 @@ public class SemanticAnalyzer {
                         // end of block for code generation
                         this.codeGen.appendToBuffer("\t;END of instructions\n");
                         codeGen.endBlock();
+
+                        // generation of vars
+                        this.codeGen.varGen(ast, tds.getTds().get(stack.lastElement()));
 
                         // pop offset
                         offset.pop();

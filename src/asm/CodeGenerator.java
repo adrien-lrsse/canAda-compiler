@@ -94,7 +94,6 @@ public class CodeGenerator {
 
     public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion) {
         if (codeGenOn) {
-            stackFrames.peek().switchVarBuffer();
             isVarGen = true;
             this.appendToBuffer("\t;VARIABLES\n");
             int offset;
