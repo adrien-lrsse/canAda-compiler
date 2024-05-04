@@ -6,6 +6,9 @@ import java.util.List;
 public class StackFrame {
     private RegisterManager registerManager;
     private String name;
+    private StringBuilder beforeVarBuffer;
+    private boolean varBufferSwitch = false;
+    private StringBuilder varBuffer;
     private StringBuilder buffer;
     private StringBuilder endBuffer;
     private StringBuilder startBuffer;
@@ -14,6 +17,8 @@ public class StackFrame {
     public StackFrame(String name) {
         this.registerManager = new RegisterManager();
         this.name = name;
+        this.beforeVarBuffer = new StringBuilder();
+        this.varBuffer = new StringBuilder();
         this.buffer = new StringBuilder();
         this.endBuffer = new StringBuilder();
         this.startBuffer = new StringBuilder();
@@ -40,6 +45,18 @@ public class StackFrame {
         return startBuffer;
     }
 
+    public StringBuilder getVarBuffer() {
+        return varBuffer;
+    }
+
+    public void switchVarBuffer() {
+        if(!varBufferSwitch) {
+            varBufferSwitch = true;
+            beforeVarBuffer = buffer;
+            buffer = new StringBuilder();
+        }
+    }
+
     private String bufferListToString() {
         StringBuilder bufferListString = new StringBuilder();
         for (StringBuilder buffer : bufferList) {
@@ -58,12 +75,17 @@ public class StackFrame {
         if (isMain) {
             return  startBuffer.toString() + name + "\n" +
                     "\tmov\tr11, r13\n" +
+                    beforeVarBuffer.toString() +
+                    varBuffer.toString() +
                     buffer.toString() +
                     "end\n\n";
         } else {
             return  name + "\t;Beginning of " + name + "\n" +
                     "\tstmfd\t" + registerManager.generateStmfd() + "\n" +
-                    bufferListToString() + buffer.toString() + endBuffer.toString() +
+                    beforeVarBuffer.toString() +
+                    varBuffer.toString() +
+                    bufferListToString() +
+                    buffer.toString() + endBuffer.toString() +
                     "\tldmfd\t" + registerManager.generateLdmfd() + "\n\n";
         }
     }

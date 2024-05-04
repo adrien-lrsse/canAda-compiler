@@ -21,6 +21,7 @@ public class CodeGenerator {
     private List<String> callableElements = new ArrayList<>();
     private final Stack<HashMap<Symbol, Integer>> initVars;
     private Stack<Integer> stack;
+    private boolean isVarGen = false;
 
     public CodeGenerator(String fileName, boolean codeGenOn, TDS tds, Stack<Integer> stack) {
         this.codeGenOn = codeGenOn;
@@ -93,6 +94,8 @@ public class CodeGenerator {
 
     public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion) {
         if (codeGenOn) {
+            stackFrames.peek().switchVarBuffer();
+            isVarGen = true;
             this.appendToBuffer("\t;VARIABLES\n");
             int offset;
             int lastOffset = -1;
@@ -121,13 +124,18 @@ public class CodeGenerator {
                     this.appendToBuffer("\t; Init " + symbol.getName() + "\n");
                 }
             }
+            isVarGen = false;
         }
     }
 
     public void appendToBuffer(String s) {
         if (codeGenOn) {
             if (!stackFrames.isEmpty()) {
-                stackFrames.peek().getBuffer().append(s);
+                if(isVarGen) {
+                    stackFrames.peek().getVarBuffer().append(s);
+                } else {
+                    stackFrames.peek().getBuffer().append(s);
+                }
             }
         }
     }
