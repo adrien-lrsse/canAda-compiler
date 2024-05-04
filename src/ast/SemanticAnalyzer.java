@@ -739,9 +739,9 @@ public class SemanticAnalyzer {
         }
     }
 
-    public void computeOffsets(Symbol callable, int region) {
+    public void computeOffsets(Symbol callable, int region) throws SemanticException {
         int offset = (callable instanceof Func) ? TDS.offsets.get(((Func) callable).getReturnType()) : 0;
-//        int offset = 0;
+        int firstOffset = offset;
         List<Symbol> symbols = tds.getTds().get(region);
         Symbol symbol;
         for (int i = symbols.size() - 1; i >= 0; i--) {
@@ -750,6 +750,17 @@ public class SemanticAnalyzer {
                 offset += TDS.offsets.get(((Param) symbol).getType());
                 ((Param) symbol).setOffset(offset);
             }
+        }
+
+        // fake param if no one in order to make the chaining work
+        if (offset == firstOffset) {
+            int tmp = stack.pop();
+            Param param = new Param(stack.size() + 1, stack.peek());
+            stack.push(tmp);
+            param.setName("#fake");
+            param.setType("integer");
+            param.setOffset(0);
+            tds.addSymbol(region, param, -1);
         }
     }
 
