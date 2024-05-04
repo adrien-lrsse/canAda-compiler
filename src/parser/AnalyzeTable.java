@@ -3560,7 +3560,9 @@ public class AnalyzeTable {
             parser.stack.push(Tag.INSTRUCTION_IDENT_EXPRESSION1);
             // semantic functions
             int ident = parser.ast.buffer.pop();
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), ident);
+            int callNode = parser.ast.addNode("CALL", false);
+            parser.ast.addEdge(callNode, ident);
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), callNode);
             // end semantic functions
         }
         else if (current.getTag() == Tag.ASSIGNMENT) {
@@ -3621,18 +3623,8 @@ public class AnalyzeTable {
         if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals("(")) {
             parser.stack.push(current.getTag());
             current = parser.lexer.scan();
-            // semantic function
-            int ident = parser.ast.buffer.pop();
-            int callNode = parser.ast.addNode("CALL", false);
-            parser.ast.addEdge(callNode, ident);
-            parser.ast.buffer.push(callNode);
-            parser.ast.buffer.push(ident);
-            // end semantic function
             this.unary();
             this.generate_expression();
-            // semantic function
-            parser.ast.buffer.pop();
-            // end semantic function
             this.instruction_ident_expression1();
             int temp = parser.stack.pop();
             if (temp == Tag.INSTRUCTION_IDENT_EXPRESSION1) {
