@@ -392,9 +392,11 @@ public class CodeGenerator {
                 switch (((Proc) symbol).getTypes().get(0)) {
                     case "integer", "boolean":
                         appendToBuffer("\tbl\tprintln_int ; CALL put(int n)\n");
+                        appendToBuffer("\tadd\tr13, r13, #4 ; free the param\n");
                         break;
                     case "character":
                         appendToBuffer("\tbl\tprintln_char ; CALL put(char c)\n");
+                        appendToBuffer("\tadd\tr13, r13, #4 ; free the param\n");
                         break;
                 }
             } else {
