@@ -81,7 +81,8 @@ public class SemanticAnalyzer {
                         if(fatherInt == 0){
                             codeGen.procedureGen(proc.getName(), String.valueOf(stack.lastElement()), null); // pass the father name
                         } else {
-                            fatherName = tds.getTds().get(fatherInt).get(0).getName();
+                            List<Symbol> fatherRegion = tds.getTds().get(fatherInt);
+                            fatherName = fatherRegion.get(fatherRegion.size()-1).getName();
                             codeGen.procedureGen(proc.getName(), String.valueOf(stack.lastElement()), fatherName); // pass the father name
                         }
 
