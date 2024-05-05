@@ -297,6 +297,15 @@ public class CodeGenerator {
                 return;
             }
 
+            // check if it's a boolean
+            if (type.equals("true")) {
+                appendToBuffer("\tmov\tr" + returnRegister + ", #1 ; Generating boolean for expression\n");
+                return;
+            } else if (type.equals("false")) {
+                appendToBuffer("\tmov\tr" + returnRegister + ", #0 ; Generating boolean for expression\n");
+                return;
+            }
+
             int register1;
             boolean isR1Borrowed = false;
 
@@ -368,6 +377,104 @@ public class CodeGenerator {
                     }
                     expressionGen(ast, node.getChildren().get(0), register1);
                     appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    break;
+                case "=", "/=", ">", ">=", "<", "<=", "OR", "AND" :
+                    expressionGen(ast, node.getChildren().get(1), returnRegister);
+                    try { // If no register available, we use memory stack
+                        register1 = stackFrames.peek().getRegisterManager().borrowRegister();
+                    } catch (RuntimeException e) {
+                        if (returnRegister != 0) {
+                            register1 = 0;
+                        }
+                        else {
+                            register1 = 1;
+                        }
+                        appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
+                        isR1Borrowed = true;
+                    }
+                    expressionGen(ast, node.getChildren().get(0), register1);
+                    switch (type) {
+                        case "=":
+                            appendToBuffer("\tcmp\tr" + register1 + ", r" + returnRegister + " ; Block for equality : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " = " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n");
+                            appendToBuffer("\tmoveq\tr" + returnRegister + ", #1\n\tmovne\tr" + returnRegister + ", #0\n\n");
+                            break;
+                        case "/=":
+                            appendToBuffer("\tcmp\tr" + register1 + ", r" + returnRegister + " ; Block for equality : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " /= " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n");
+                            appendToBuffer("\tmovne\tr" + returnRegister + ", #1\n\tmoveq\tr" + returnRegister + ", #0\n\n");
+                            break;
+                        case ">":
+                            appendToBuffer("\tcmp\tr" + register1 + ", r" + returnRegister + " ; Block for equality : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " > " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n");
+                            appendToBuffer("\tmovgt\tr" + returnRegister + ", #1\n\tmovle\tr" + returnRegister + ", #0\n\n");
+                            break;
+                        case ">=":
+                            appendToBuffer("\tcmp\tr" + register1 + ", r" + returnRegister + " ; Block for equality : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " >= " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n");
+                            appendToBuffer("\tmovge\tr" + returnRegister + ", #1\n\tmovlt\tr" + returnRegister + ", #0\n\n");
+                            break;
+                        case "<":
+                            appendToBuffer("\tcmp\tr" + register1 + ", r" + returnRegister + " ; Block for equality : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " < " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n");
+                            appendToBuffer("\tmovlt\tr" + returnRegister + ", #1\n\tmovge\tr" + returnRegister + ", #0\n\n");
+                            break;
+                        case "<=":
+                            appendToBuffer("\tcmp\tr" + register1 + ", r" + returnRegister + " ; Block for equality : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " <= " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n");
+                            appendToBuffer("\tmovle\tr" + returnRegister + ", #1\n\tmovgt\tr" + returnRegister + ", #0\n\n");
+                            break;
+                        case "OR":
+                            appendToBuffer("\torr\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + "\n\n");
+                            break;
+                        case "AND":
+                            appendToBuffer("\tand\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + "\n\n");
+                            break;
+                    }
+                    break;
+                case "OR ELSE", "AND THEN" :
+                    expressionGen(ast, node.getChildren().get(0), returnRegister);
+                    try { // If no register available, we use memory stack
+                        register1 = stackFrames.peek().getRegisterManager().borrowRegister();
+                    } catch (RuntimeException e) {
+                        if (returnRegister != 0) {
+                            register1 = 0;
+                        }
+                        else {
+                            register1 = 1;
+                        }
+                        appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
+                        isR1Borrowed = true;
+                    }
+                    switch (type) {
+                        case "OR ELSE":
+                            appendToBuffer("\tcmp\tr" + returnRegister + ", #1 ; Block for OR ELSE : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " OR ELSE " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n");
+                            appendToBuffer("\tmoveq\tr" + returnRegister + ", #1\n");
+                            appendToBuffer("\tbeq\torelse" + nodeInt + "_end\n");
+                            expressionGen(ast, node.getChildren().get(1), register1);
+                            appendToBuffer("\torr\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + "\n\n");
+                            appendToBuffer("\torelse" + nodeInt + "_end\n");
+                            break;
+                        case "AND THEN":
+                            appendToBuffer("\tcmp\tr" + returnRegister + ", #0 ; Block for AND THEN : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " AND THEN " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n");
+                            appendToBuffer("\tmoveq\tr" + returnRegister + ", #0\n");
+                            appendToBuffer("\tbeq\tandthen" + nodeInt + "_end\n");
+                            expressionGen(ast, node.getChildren().get(1), register1);
+                            appendToBuffer("\tand\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + "\n\n");
+                            appendToBuffer("\tandthen" + nodeInt + "_end\n");
+                            break;
+                    }
+                    break;
+                case "NOT":
+                    expressionGen(ast, node.getChildren().get(0), returnRegister);
+                    try { // If no register available, we use memory stack
+                        register1 = stackFrames.peek().getRegisterManager().borrowRegister();
+                    } catch (RuntimeException e) {
+                        if (returnRegister != 0) {
+                            register1 = 0;
+                        }
+                        else {
+                            register1 = 1;
+                        }
+                        appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
+                        isR1Borrowed = true;
+                    }
+                    appendToBuffer("\tmov\tr" + register1 + ", #1\n");
+                    appendToBuffer("\tsub\tr" + returnRegister + ", r" + register1 + ", r" + returnRegister + " ; Block for NOT : NOT " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
                     break;
                 default: // Variable à aller chercher
                     if (type != "CALL") {

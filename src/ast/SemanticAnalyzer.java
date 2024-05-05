@@ -392,29 +392,42 @@ public class SemanticAnalyzer {
 
     private void analyzeIf(Integer node) throws SemanticException{
         returnNeededTmp = returnNeededTmp + 1;
-        List<Integer> childrens = ast.getTree().nodes.get(node).getChildren();
-        for (Integer children : childrens) {
-            Node nodeChild = ast.getTree().nodes.get(children);
+        List<Integer> children = ast.getTree().nodes.get(node).getChildren();
+        for (Integer child : children) {
+            Node nodeChild = ast.getTree().nodes.get(child);
             switch (nodeChild.getLabel()) {
                 case "IF":
-                    analyzeIf(children);
+                    analyzeIf(child);
                 case "CONDITION":
-                    analyseCondition(children);
+                    analyseCondition(child);
+
+                    // code generation
+                    int reg = codeGen.stackFrames.peek().getRegisterManager().borrowRegister();
+                    codeGen.expressionGen(ast, nodeChild.getChildren().get(0), reg);
+                    codeGen.appendToBuffer("\tcmp\tr" + reg + ", #0 ; Condition\n");
+                    codeGen.appendToBuffer("\tbeq\tif" + node + " ; Jump to else\n");
                     break;
                 case "THEN":
-                    analyzeThen(children);
+                    analyzeThen(child);
+
+                    // code generation
+                    codeGen.appendToBuffer("\tb\tif" + node + "_end ; Jump to end\n");
+                    codeGen.appendToBuffer("\tif" + node + " ; else\n");
                     break;
                 case "ELSIF":
-                    analyzeElsif(children);
+                    analyzeElsif(child, node);
                     break;
                 case "ELSE":
-                    analyzeElse(children);
+                    analyzeElse(child);
                     break;
             }
         }
         if (returnNeededTmp > returnNeeded) {
             returnNeededTmp = returnNeededTmp - 1;
         }
+
+        // code generation
+        codeGen.appendToBuffer("\tif" + node + "_end ; end of if\n");
     }
 
     private void analyseCondition(Integer nodeInt) throws SemanticException {
@@ -428,7 +441,7 @@ public class SemanticAnalyzer {
         analyzeInstructions(node, currentDecl.lastElement(), returnNeededTmp);
     }
 
-    private void analyzeElsif(Integer node) throws SemanticException{
+    private void analyzeElsif(Integer node, Integer ifId) throws SemanticException{
         returnNeededTmp = returnNeededTmp + 1;
         List<Integer> childrens = ast.getTree().nodes.get(node).getChildren();
         for (Integer children : childrens) {
@@ -438,12 +451,22 @@ public class SemanticAnalyzer {
                     analyzeIf(children);
                 case "CONDITION":
                     analyseCondition(children);
+
+                    // code generation
+                    int reg = codeGen.stackFrames.peek().getRegisterManager().borrowRegister();
+                    codeGen.expressionGen(ast, nodeChild.getChildren().get(0), reg);
+                    codeGen.appendToBuffer("\tcmp\tr" + reg + ", #0 ; Condition\n");
+                    codeGen.appendToBuffer("\tbeq\tif" + node + " ; Jump to else\n");
                     break;
                 case "THEN":
                     analyzeThen(children);
+
+                    // code generation
+                    codeGen.appendToBuffer("\tb\tif" + ifId + "_end ; Jump to end\n");
+                    codeGen.appendToBuffer("\tif" + node + " ; else\n");
                     break;
                 case "ELSIF":
-                    analyzeElsif(children);
+                    analyzeElsif(children, node);
                     break;
                 case "ELSE":
                     analyzeElse(children);
