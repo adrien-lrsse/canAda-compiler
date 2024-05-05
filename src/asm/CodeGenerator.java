@@ -45,7 +45,8 @@ public class CodeGenerator {
         // Fake constructor for tests
         this.codeGenOn = false;
         this.fileWriter = null;
-        this.stackFrames = null;
+        this.stackFrames = new Stack<>();
+        this.stackFrames.push(new StackFrame("fake"));
         this.asmStack = null;
         this.tds = null;
         this.initVars = null;
