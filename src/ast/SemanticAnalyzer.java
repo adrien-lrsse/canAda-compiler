@@ -346,9 +346,20 @@ public class SemanticAnalyzer {
             switch (nodeChild.getLabel()) {
                 case "CONDITION":
                     analyseCondition(children);
+
+                    // code generation
+                    codeGen.appendToBuffer("\twhile" + nodeInt + " ; while\n");
+                    int reg = codeGen.stackFrames.peek().getRegisterManager().borrowRegister();
+                    codeGen.expressionGen(ast, nodeChild.getChildren().get(0), reg);
+                    codeGen.appendToBuffer("\tcmp\tr" + reg + ", #0 ; Condition\n");
+                    codeGen.appendToBuffer("\tbeq\twhile" + nodeInt + "_end ; Jump to end\n");
                     break;
                 case "DO":
                     analyzeInstructions(children, currentDecl.lastElement(), returnNeededTmp);
+
+                    // code generation
+                    codeGen.appendToBuffer("\tb\twhile" + nodeInt + " ; Jump to while\n");
+                    codeGen.appendToBuffer("\twhile" + nodeInt + "_end ; end of while\n");
                     break;
             }
         }
