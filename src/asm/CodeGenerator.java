@@ -265,7 +265,13 @@ public class CodeGenerator {
 
         Record record = getVarAddress(type, addressReg);
         if (record != null) { // several fields need to be accessed
-            copyStructs(record, addressReg, exprRegister, 0);
+            System.out.println(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
+            Symbol symbol = getSymbolFromLabel(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel(), stack.peek());
+            if (symbol instanceof Param) {
+                copyStructs(record, addressReg, exprRegister, 0, true);
+            } else {
+                copyStructs(record, addressReg, exprRegister, 0, false);
+            }
         } else {
             appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + "] ; Assigning value to var : " + type + "\n");
         }
@@ -541,10 +547,14 @@ public class CodeGenerator {
                     appendToBuffer("\tsub\tr" + returnRegister + ", r" + register1 + ", r" + returnRegister + " ; Block for NOT : NOT " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
                     break;
                 case "CALL":
-                    Node labelNode = ast.getTree().nodes.get(node.getChildren().get(0));
-
-                    appendToBuffer("\tldmfd\tr13!, {r" + returnRegister + "} ; getting return value for expression\n");
                     int tmp = paramSize.pop(); // get the size of the parameters
+                    // handle record case
+                    if (tmp != 4) {
+                        appendToBuffer("\tmov\tr" + returnRegister + ", r13 ; getting return value @ for expression (struct)\n");
+                    } else {
+                        appendToBuffer("\tldmfd\tr13!, {r" + returnRegister + "} ; getting return value for expression\n");
+                    }
+
                     appendToBuffer("\tadd\tr13, r13, #" + tmp + " ; freeing the space of the parameters\n");
                     return 0;
                 default: // Variable à aller chercher
@@ -664,9 +674,7 @@ public class CodeGenerator {
 
                 // handle record access
                 if (fields.isEmpty() && TDS.offsets.get(var.getType()) != 4) {
-                    Record record = new Record(-1, -1);
-                    record.setOffset(TDS.offsets.get(var.getType()));
-                    return record;
+                    return (Record) getSymbolFromLabel(var.getType(), destinationRegion);
                 }
             } else if (symbol instanceof Param) {
                 Param param = (Param) symbol;
@@ -690,9 +698,11 @@ public class CodeGenerator {
                     if (TDS.offsets.get(record.getFields().get(field)) != 4) {
                         appendToBuffer("\tmov\tr10, r12\n");
                         for (int i = 0; i < linkingsToGoUp; i++) {
-                            appendToBuffer("\tldr\tr10, [r10] ; Going up in the static linkings\n");
+                            appendToBuffer("\tldr\tr10, [r10]\n");
                         }
-                        appendToBuffer("\tadd\tr10, r10, #-4-" + offset + " ; Getting address of var : " + label + "\n\tmov\tr" + returnRegister + ", r10\n");
+                        appendToBuffer("\tadd\tr10, r10, #4*");
+                        stackFrames.peek().needRegisterValue();
+                        appendToBuffer("+" + offset + "+16 ; Getting param : " + label + "\n\tmov\tr" + returnRegister + ", r10\n");
 
                         return (Record) getSymbolFromLabel(record.getFields().get(field), destinationRegion);
                     }
@@ -708,9 +718,7 @@ public class CodeGenerator {
 
                 // handle record access
                 if (fields.isEmpty() && TDS.offsets.get(param.getType()) != 4) {
-                    Record record = new Record(-1, -1);
-                    record.setOffset(TDS.offsets.get(param.getType()));
-                    return record;
+                    return (Record) getSymbolFromLabel(param.getType(), destinationRegion);
                 }
             }
             else {
@@ -765,17 +773,17 @@ public class CodeGenerator {
         }
     }
 
-    public void copyStructs(Record structToCopy, Integer addrToCopyTo, Integer addrToCopyFrom, Integer offset) {
+    public void copyStructs(Record structToCopy, Integer addrToCopyTo, Integer addrToCopyFrom, Integer offset, boolean isParam) {
         if (codeGenOn) {
             int updateOffset = offset;
             for (String field : structToCopy.getFields().keySet()) {
                 if (TDS.offsets.get(structToCopy.getFields().get(field)) == 4) {
-                    appendToBuffer("\tldr\tr10, [r" + addrToCopyFrom + ", #4*" + updateOffset + "] ; Copying field " + field + " of struct\n");
+                    appendToBuffer("\tldr\tr10, [r" + addrToCopyFrom + ", #" + (isParam ? "-" : "") + "4*" + updateOffset + "] ; Copying field " + field + " of struct\n");
                     appendToBuffer("\tstr\tr10, [r" + addrToCopyTo + ", #4*" + updateOffset + "]\n");
                     updateOffset++;
                 } else {
                     Record record = (Record) getSymbolFromLabel(structToCopy.getFields().get(field), stack.peek());
-                    copyStructs(record, addrToCopyTo, addrToCopyFrom, updateOffset);
+                    copyStructs(record, addrToCopyTo, addrToCopyFrom, updateOffset, isParam);
                     assert record != null;
                     updateOffset += record.getOffset() / 4;
                 }
@@ -795,13 +803,23 @@ public class CodeGenerator {
                 register = 0;
             }
             int child = ast.getTree().nodes.get(nodeInt).getChildren().get(0);
-            expressionGen(ast, child, register);
 
             // set the return value
-            appendToBuffer("\tmov\tr13, r11\n\tstr\tr" + register + ", [r13, #4*");
-            stackFrames.peek().needRegisterValue();
-            appendToBuffer("+24] ; Setting the return value\n");
-
+            // handle record case
+            int offset;
+            if ((offset = expressionGen(ast, child, register)) != 0) {
+                appendToBuffer("\tmov\tr13, r11\n");
+                for (int o = 0; o < offset; o += 4) {
+                    appendToBuffer("\tldr\tr10, [r" + register + ", #" + o + "] ; Getting value of var\n");
+                    appendToBuffer("\tstr\tr10, [r13, #4*");
+                    stackFrames.peek().needRegisterValue();
+                    appendToBuffer("+24+" + o + "] ; Setting the return value\n");
+                }
+            } else {
+                appendToBuffer("\tmov\tr13, r11\n\tstr\tr" + register + ", [r13, #4*");
+                stackFrames.peek().needRegisterValue();
+                appendToBuffer("+24] ; Setting the return value\n");
+            }
 
             appendToBuffer("\tb\tend" + name + callableElements.lastIndexOf(name) + " ; Jumping to the end of the function\n\t; End of return block\n   \n"); // Jump to the end of the function
 
