@@ -441,7 +441,11 @@ public class CodeGenerator {
                         isR1Borrowed = true;
                     }
                     expressionGen(ast, node.getChildren().get(0), register1);
-                    appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    if(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() != "CALL" | ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() != "CALL") { // if there is 2 CALL, the first picked value will be the second returned value, so we switch
+                        appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    } else {
+                        appendToBuffer("\tsub\tr" + returnRegister + ", r" + register1 + ", r" + returnRegister + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    }
                     break;
                 case "=", "/=", ">", ">=", "<", "<=", "OR", "AND" :
                     expressionGen(ast, node.getChildren().get(1), returnRegister);
