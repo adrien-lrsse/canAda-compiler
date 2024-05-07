@@ -24,6 +24,7 @@ public class CodeGenerator {
     private boolean isVarGen;
     private boolean newFunc;
     private Stack<Integer> paramSize;
+
     public CodeGenerator(String fileName, boolean codeGenOn, TDS tds, Stack<Integer> stack) {
         this.codeGenOn = codeGenOn;
         if (codeGenOn) {
@@ -65,7 +66,7 @@ public class CodeGenerator {
     }
 
     public void setNewFunc(boolean newFunc) {
-        if(codeGenOn) {
+        if (codeGenOn) {
             this.newFunc = newFunc;
         }
     }
@@ -76,17 +77,17 @@ public class CodeGenerator {
             initVars.push(new HashMap<>()); // -1 if default value (i.e. 0) else expression node
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
-            if(fatherName == null){
+            if (fatherName == null) {
                 appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr12, [r10]\n\tmov\tr10, r12\n\t;PARAMETERS\n");
                 startBufferAppend("\t" + label + "\tDCD\t0xFF000004\n");
-                endBufferAppend("end"+name + callableElements.lastIndexOf(name));
+                endBufferAppend("end" + name + callableElements.lastIndexOf(name));
                 return;
             }
             String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
-            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tmov\tr12, r13\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
+            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, =" + labelParent + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tmov\tr12, r13\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
             appendToBuffer("\t;PARAMETERS\n");
             startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
-            endBufferAppend("end"+name + callableElements.lastIndexOf(name)+"\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
+            endBufferAppend("end" + name + callableElements.lastIndexOf(name) + "\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, =" + label + "\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
         }
     }
 
@@ -97,10 +98,10 @@ public class CodeGenerator {
             callableElements.add(name);
             String label = name + callableElements.lastIndexOf(name) + "global";
             String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
-            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tmov\tr12, r13\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
+            appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, =" + labelParent + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tmov\tr12, r13\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
             appendToBuffer("\t;PARAMETERS\n");
             startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
-            endBufferAppend("end"+name + callableElements.lastIndexOf(name)+"\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
+            endBufferAppend("end" + name + callableElements.lastIndexOf(name) + "\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, =" + label + "\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
         }
     }
 
@@ -127,16 +128,16 @@ public class CodeGenerator {
             }
 
             // init vars
-            for(Map.Entry<Symbol, Integer> entry : initVars.pop().entrySet()) {
+            for (Map.Entry<Symbol, Integer> entry : initVars.pop().entrySet()) {
                 Symbol symbol = entry.getKey();
                 int value = entry.getValue();
                 if (symbol instanceof Var) {
                     offset = ((Var) symbol).getOffset();
                     if (value == -1) {
-                        this.appendToBuffer("\tmov\tr10, #0\n\tstr\tr10, [r13, #"+(lastOffset - offset) +"]");
+                        this.appendToBuffer("\tmov\tr10, #0\n\tstr\tr10, [r13, #" + (lastOffset - offset) + "]");
                     } else {
                         expressionGen(ast, value, 10);
-                        this.appendToBuffer("\tstr\tr10, [r13, #"+(lastOffset - offset) +"]");
+                        this.appendToBuffer("\tstr\tr10, [r13, #" + (lastOffset - offset) + "]");
                     }
                     this.appendToBuffer("\t; Init " + symbol.getName() + "\n");
                 }
@@ -148,7 +149,7 @@ public class CodeGenerator {
     public void appendToBuffer(String s) {
         if (codeGenOn) {
             if (!stackFrames.isEmpty()) {
-                if(isVarGen) {
+                if (isVarGen) {
                     stackFrames.peek().getVarBuffer().append(s);
                 } else {
                     stackFrames.peek().getBuffer().append(s);
@@ -157,16 +158,16 @@ public class CodeGenerator {
         }
     }
 
-    public void endBufferAppend(String s){
-        if(codeGenOn) {
+    public void endBufferAppend(String s) {
+        if (codeGenOn) {
             if (!stackFrames.isEmpty()) {
                 stackFrames.peek().getEndBuffer().append(s);
             }
         }
     }
 
-    public void startBufferAppend(String s){
-        if(codeGenOn) {
+    public void startBufferAppend(String s) {
+        if (codeGenOn) {
             if (!stackFrames.isEmpty()) {
                 stackFrames.firstElement().getStartBuffer().append(s);
             }
@@ -243,8 +244,7 @@ public class CodeGenerator {
         } catch (RuntimeException e) {
             if (exprRegister != 0) {
                 addressReg = 0;
-            }
-            else {
+            } else {
                 addressReg = 1;
             }
             isRegisterAddressBorrowed = true;
@@ -275,7 +275,7 @@ public class CodeGenerator {
         } else {
             stackFrames.peek().getRegisterManager().freeRegister(addressReg);
         }
-        if(isRegisterBorrowed) {
+        if (isRegisterBorrowed) {
             appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
         } else {
             stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
@@ -307,7 +307,7 @@ public class CodeGenerator {
                         if (newFunc) {
                             paramSize.push(0);
                         }
-                        paramSize.push((paramSize.pop()+4));
+                        paramSize.push((paramSize.pop() + 4));
                     }
                 }
 
@@ -326,7 +326,7 @@ public class CodeGenerator {
                     if (newFunc) {
                         paramSize.push(0);
                     }
-                    paramSize.push((paramSize.pop()+4));
+                    paramSize.push((paramSize.pop() + 4));
                 }
             } else {
                 appendToBuffer("\tstmfd\tr13!, {r" + register + "} ; Stacking the arg\n");
@@ -334,7 +334,7 @@ public class CodeGenerator {
                     if (newFunc) {
                         paramSize.push(0);
                     }
-                    paramSize.push((paramSize.pop()+4));
+                    paramSize.push((paramSize.pop() + 4));
                 }
                 stackFrames.peek().getRegisterManager().freeRegister(register);
             }
@@ -342,12 +342,12 @@ public class CodeGenerator {
     }
 
     public int expressionGen(GraphViz ast, Integer nodeInt, int returnRegister) {
-        if(codeGenOn){
+        if (codeGenOn) {
             Node node = ast.getTree().nodes.get(nodeInt);
             String type = node.getLabel();
             try {
                 int number = Integer.parseInt(type);
-                if(number > 256){
+                if (number > 256) {
                     appendToBuffer("\tldr\tr" + returnRegister + ", =" + number + " ; Generating number for expression\n");
                 } else {
                     appendToBuffer("\tmov\tr" + returnRegister + ", #" + number + " ; Generating number for expression\n");
@@ -376,15 +376,14 @@ public class CodeGenerator {
             boolean isR1Borrowed = false;
 
             switch (type) {
-                case "*" :
+                case "*":
                     expressionGen(ast, node.getChildren().get(1), returnRegister);
                     try { // If no register available, we use memory stack
                         register1 = stackFrames.peek().getRegisterManager().borrowRegister();
                     } catch (RuntimeException e) {
                         if (returnRegister != 0) {
                             register1 = 0;
-                        }
-                        else {
+                        } else {
                             register1 = 1;
                         }
                         appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
@@ -393,15 +392,14 @@ public class CodeGenerator {
                     expressionGen(ast, node.getChildren().get(0), register1);
                     appendToBuffer("\n\tstmfd\tr13!, {r" + returnRegister + ",r" + register1 + "} ; Block for multiplication : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " * " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\tsub\tr13, r13, #4\n\tbl\tmul\n\tldr r" + returnRegister + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
                     break;
-                case "/" :
+                case "/":
                     expressionGen(ast, node.getChildren().get(1), returnRegister);
                     try { // If no register available, we use memory stack
                         register1 = stackFrames.peek().getRegisterManager().borrowRegister();
                     } catch (RuntimeException e) {
                         if (returnRegister != 0) {
                             register1 = 0;
-                        }
-                        else {
+                        } else {
                             register1 = 1;
                         }
                         appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
@@ -410,15 +408,14 @@ public class CodeGenerator {
                     expressionGen(ast, node.getChildren().get(0), register1);
                     appendToBuffer("\tstmfd\tr13!, {r" + returnRegister + "} ; Block for division : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " / " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\tstmfd\tr13!, {r" + register1 + "}\n\tsub\tr13, r13, #4\n\tbl\tdiv\n\tldr r" + returnRegister + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
                     break;
-                case "+" :
+                case "+":
                     expressionGen(ast, node.getChildren().get(0), returnRegister);
                     try { // If no register available, we use memory stack
                         register1 = stackFrames.peek().getRegisterManager().borrowRegister();
                     } catch (RuntimeException e) {
                         if (returnRegister != 0) {
                             register1 = 0;
-                        }
-                        else {
+                        } else {
                             register1 = 1;
                         }
                         appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
@@ -427,37 +424,34 @@ public class CodeGenerator {
                     expressionGen(ast, node.getChildren().get(1), register1);
                     appendToBuffer("\tadd\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for addition : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " + " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\n");
                     break;
-                case "-" :
+                case "-":
                     expressionGen(ast, node.getChildren().get(1), returnRegister);
                     try { // If no register available, we use memory stack
                         register1 = stackFrames.peek().getRegisterManager().borrowRegister();
                     } catch (RuntimeException e) {
                         if (returnRegister != 0) {
                             register1 = 0;
-                        }
-                        else {
+                        } else {
                             register1 = 1;
                         }
                         appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
                         isR1Borrowed = true;
                     }
                     expressionGen(ast, node.getChildren().get(0), register1);
-//                    if(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() != "CALL" | ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() != "CALL") { // if there is 2 CALL, the first picked value will be the second returned value, so we switch
-//                        appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
-//                    } else {
-//                        appendToBuffer("\tsub\tr" + returnRegister + ", r" + register1 + ", r" + returnRegister + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
-//                    }
-                    appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    if (ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() != "CALL" | ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() != "CALL") { // if there is 2 CALL, the first picked value will be the second returned value, so we switch
+                        appendToBuffer("\tsub\tr" + returnRegister + ", r" + returnRegister + ", r" + register1 + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    } else {
+                        appendToBuffer("\tsub\tr" + returnRegister + ", r" + register1 + ", r" + returnRegister + " ; Block for substraction : " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + " - " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    }
                     break;
-                case "=", "/=", ">", ">=", "<", "<=", "OR", "AND" :
+                case "=", "/=", ">", ">=", "<", "<=", "OR", "AND":
                     expressionGen(ast, node.getChildren().get(1), returnRegister);
                     try { // If no register available, we use memory stack
                         register1 = stackFrames.peek().getRegisterManager().borrowRegister();
                     } catch (RuntimeException e) {
                         if (returnRegister != 0) {
                             register1 = 0;
-                        }
-                        else {
+                        } else {
                             register1 = 1;
                         }
                         appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
@@ -497,15 +491,14 @@ public class CodeGenerator {
                             break;
                     }
                     break;
-                case "OR ELSE", "AND THEN" :
+                case "OR ELSE", "AND THEN":
                     expressionGen(ast, node.getChildren().get(0), returnRegister);
                     try { // If no register available, we use memory stack
                         register1 = stackFrames.peek().getRegisterManager().borrowRegister();
                     } catch (RuntimeException e) {
                         if (returnRegister != 0) {
                             register1 = 0;
-                        }
-                        else {
+                        } else {
                             register1 = 1;
                         }
                         appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
@@ -537,8 +530,7 @@ public class CodeGenerator {
                     } catch (RuntimeException e) {
                         if (returnRegister != 0) {
                             register1 = 0;
-                        }
-                        else {
+                        } else {
                             register1 = 1;
                         }
                         appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
@@ -571,7 +563,7 @@ public class CodeGenerator {
 //                    throw new RuntimeException("Unhandeled expression : " + type);
 //                    return 0;
             }
-            if (isR1Borrowed){
+            if (isR1Borrowed) {
                 appendToBuffer("\tldmfd\tr13!, {r" + register1 + "} ; Freeing memory stack\n");
             } else {
                 stackFrames.peek().getRegisterManager().freeRegister(register1);
@@ -579,6 +571,7 @@ public class CodeGenerator {
         }
         return 0;
     }
+
     public void callGen(Symbol symbol, int region) {
         if (codeGenOn) {
             String name = symbol.getName() + region;
@@ -634,7 +627,7 @@ public class CodeGenerator {
             int offset;
             if (symbol instanceof Var) {
                 Var var = (Var) symbol;
-                offset =  var.getOffset();
+                offset = var.getOffset();
                 // handle record access
                 if (!fields.isEmpty()) {
                     Record record = (Record) getSymbolFromLabel(var.getType(), destinationRegion);
@@ -737,13 +730,13 @@ public class CodeGenerator {
 
     private int getRegionFromLabel(String label, int reg) {
         int father = 0;
-        for (Symbol symbol : tds.getTds().get(reg)){
+        for (Symbol symbol : tds.getTds().get(reg)) {
             father = symbol.getFather();
             if (symbol.getName().equals(label)) {
                 return reg;
             }
         }
-        if (reg != 0){
+        if (reg != 0) {
             return getRegionFromLabel(label, father);
         } else {
             return -1;
@@ -752,13 +745,13 @@ public class CodeGenerator {
 
     private Symbol getSymbolFromLabel(String label, int reg) {
         int father = 0;
-        for (Symbol symbol : tds.getTds().get(reg)){
+        for (Symbol symbol : tds.getTds().get(reg)) {
             father = symbol.getFather();
             if (symbol.getName().equals(label)) {
                 return symbol;
             }
         }
-        if (reg != 0){
+        if (reg != 0) {
             return getSymbolFromLabel(label, father);
         } else {
             return null;
@@ -769,7 +762,7 @@ public class CodeGenerator {
         if (codeGenOn) {
             String name = symbol.getName() + region;
             if (symbol instanceof Func) {
-                appendToBuffer("\tsub\tr13, r13, #" + TDS.offsets.get(((Func )symbol).getReturnType()) + " ; " + name + " return val init\n");
+                appendToBuffer("\tsub\tr13, r13, #" + TDS.offsets.get(((Func) symbol).getReturnType()) + " ; " + name + " return val init\n");
             }
         }
     }
@@ -819,7 +812,7 @@ public class CodeGenerator {
             appendToBuffer("+24] ; Setting the return value\n");
 
 
-            appendToBuffer("\tb\tend"+name + callableElements.lastIndexOf(name)+" ; Jumping to the end of the function\n\t; End of return block\n   \n"); // Jump to the end of the function
+            appendToBuffer("\tb\tend" + name + callableElements.lastIndexOf(name) + " ; Jumping to the end of the function\n\t; End of return block\n   \n"); // Jump to the end of the function
 
         }
     }
