@@ -564,13 +564,15 @@ public class SemanticAnalyzer {
             if (labelNode.getChildren().size() != 1) {
                 throw new SemanticException("Expected 1 parameter, got " + labelNode.getChildren().size() + " for procedure 'put'", callNode.getLine());
             }
-            this.codeGen.stackArg(ast, labelNode.getChildren().get(0), false);
             symbol = switch (typeOfOperands(labelNode.getChildren().get(0))) {
                 case "integer" -> tds.getTds().get(0).get(0);
                 case "character" -> tds.getTds().get(0).get(1);
                 default ->
                         throw new SemanticException("Expected type 'integer' or 'character' for parameter 1 of procedure 'put', got " + typeOfOperands(labelNode.getChildren().get(0)), callNode.getLine());
             };
+            this.codeGen.stackArg(ast, labelNode.getChildren().get(0), false);
+            codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
+            return;
         } else {
             symbol = getSymbolFromLabel(labelNode.getLabel(), stack.lastElement());
         }
