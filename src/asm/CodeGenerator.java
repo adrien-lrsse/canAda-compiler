@@ -265,7 +265,6 @@ public class CodeGenerator {
 
         Record record = getVarAddress(type, addressReg);
         if (record != null) { // several fields need to be accessed
-            System.out.println(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
             Symbol symbol = getSymbolFromLabel(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel(), stack.peek());
             if (symbol instanceof Param) {
                 copyStructs(record, addressReg, exprRegister, 0, true);
