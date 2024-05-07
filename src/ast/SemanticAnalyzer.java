@@ -500,11 +500,13 @@ public class SemanticAnalyzer {
 
         String returnType = typeOfOperands(child);
         String wanted;
+        String name;
 
         int tmp = stack.pop();
 
         if (tds.getTds().get(stack.lastElement()).get(currentDecl) instanceof Func) {
             wanted = ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl)).getReturnType();
+            name = ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl)).getName();
         } else {
             throw new SemanticException("Return statement in a procedure", ast.getTree().nodes.get(node).getLine());
         }
@@ -514,6 +516,7 @@ public class SemanticAnalyzer {
         if (!(returnType.equals(wanted))){
             throw new SemanticException("Return type ('"+returnType+"') does not match the declaration ('"+wanted+"')", ast.getTree().nodes.get(node).getLine());
         }
+        this.codeGen.returnValue(ast, node, name);
     }
 
     private void analyzeFor(Integer nodeInt) throws SemanticException{
