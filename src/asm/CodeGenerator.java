@@ -281,7 +281,7 @@ public class CodeGenerator {
         }
     }
 
-    public void stackArg(GraphViz ast, Integer nodeInt) {
+    public void stackArg(GraphViz ast, Integer nodeInt, boolean isFunc) {
         if (codeGenOn) {
             int register;
             boolean isRegisterBorrowed = false;
