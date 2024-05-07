@@ -21,8 +21,9 @@ public class CodeGenerator {
     private List<String> callableElements = new ArrayList<>();
     private final Stack<HashMap<Symbol, Integer>> initVars;
     private Stack<Integer> stack;
-    private boolean isVarGen = false;
-
+    private boolean isVarGen;
+    private boolean newFunc;
+    private Stack<Integer> paramSize;
     public CodeGenerator(String fileName, boolean codeGenOn, TDS tds, Stack<Integer> stack) {
         this.codeGenOn = codeGenOn;
         if (codeGenOn) {
@@ -39,6 +40,9 @@ public class CodeGenerator {
         this.tds = tds;
         this.initVars = new Stack<>();
         this.stack = stack;
+        this.isVarGen = false;
+        this.newFunc = true;
+        this.paramSize = new Stack<>();
     }
 
     public CodeGenerator() {
@@ -59,7 +63,13 @@ public class CodeGenerator {
             throw new RuntimeException(e);
         }
     }
-    
+
+    public void setNewFunc(boolean newFunc) {
+        if(codeGenOn) {
+            this.newFunc = newFunc;
+        }
+    }
+
     public void procedureGen(String name, String last, String fatherName) {
         if (codeGenOn) {
             stackFrames.push(new StackFrame(name + last));
@@ -292,6 +302,12 @@ public class CodeGenerator {
                         appendToBuffer("\tldr\tr10, [r" + register + ", #" + o + "] ; Getting value of var\n");
                         appendToBuffer("\tstmfd\tr13!, {r10} ; Stacking the arg\n");
                     }
+                    if (isFunc) {
+                        if (newFunc) {
+                            paramSize.push(0);
+                        }
+                        paramSize.push((paramSize.pop()+4));
+                    }
                 }
 
                 if (isRegisterBorrowed) {
@@ -305,8 +321,20 @@ public class CodeGenerator {
             if (isRegisterBorrowed) {
                 appendToBuffer("\tstr\tr" + register + ", [r13, #4] ; Stacking the arg\n");
                 appendToBuffer("\tldmfd\tr13!, {r" + register + "} ; Freeing memory stack\n");
+                if (isFunc) {
+                    if (newFunc) {
+                        paramSize.push(0);
+                    }
+                    paramSize.push((paramSize.pop()+4));
+                }
             } else {
                 appendToBuffer("\tstmfd\tr13!, {r" + register + "} ; Stacking the arg\n");
+                if (isFunc) {
+                    if (newFunc) {
+                        paramSize.push(0);
+                    }
+                    paramSize.push((paramSize.pop()+4));
+                }
                 stackFrames.peek().getRegisterManager().freeRegister(register);
             }
         }
@@ -343,7 +371,7 @@ public class CodeGenerator {
                 return 0;
             }
 
-            int register1;
+            int register1; // default value -1
             boolean isR1Borrowed = false;
 
             switch (type) {
@@ -513,24 +541,29 @@ public class CodeGenerator {
                     appendToBuffer("\tmov\tr" + register1 + ", #1\n");
                     appendToBuffer("\tsub\tr" + returnRegister + ", r" + register1 + ", r" + returnRegister + " ; Block for NOT : NOT " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
                     break;
-                default: // Variable à aller chercher
-                    if (type != "CALL") {
-                        // access record case
-                        List<String> fields = new ArrayList<>();
-                        fields.add(type);
-                        Node nodeAccessIdent, nodeField;
-                        while (!node.getChildren().isEmpty()) {
-                            nodeAccessIdent = ast.getTree().nodes.get(node.getChildren().get(0));
-                            nodeField = ast.getTree().nodes.get(nodeAccessIdent.getChildren().get(0));
-                            fields.add(nodeField.getLabel());
-                            node = nodeField;
-                        }
+                case "CALL":
+                    Node labelNode = ast.getTree().nodes.get(node.getChildren().get(0));
 
-                        return getVar(String.join(".", fields), returnRegister);
+                    appendToBuffer("\tldmfd\tr13!, {r" + returnRegister + "} ; getting return value for expression\n");
+                    int tmp = paramSize.pop(); // get the size of the parameters
+                    appendToBuffer("\tadd\tr13, r13, #" + tmp + " ; freeing the space of the parameters\n");
+                    return 0;
+                default: // Variable à aller chercher
+                    // access record case
+                    List<String> fields = new ArrayList<>();
+                    fields.add(type);
+                    Node nodeAccessIdent, nodeField;
+                    while (!node.getChildren().isEmpty()) {
+                        nodeAccessIdent = ast.getTree().nodes.get(node.getChildren().get(0));
+                        nodeField = ast.getTree().nodes.get(nodeAccessIdent.getChildren().get(0));
+                        fields.add(nodeField.getLabel());
+                        node = nodeField;
                     }
+
+                    return getVar(String.join(".", fields), returnRegister);
 //                    appendToBuffer("\t; Unhandeled expression (for the moment) : " + type + "\n");
 //                    throw new RuntimeException("Unhandeled expression : " + type);
-                    return 0;
+//                    return 0;
             }
             if (isR1Borrowed){
                 appendToBuffer("\tldmfd\tr13!, {r" + register1 + "} ; Freeing memory stack\n");
@@ -540,7 +573,6 @@ public class CodeGenerator {
         }
         return 0;
     }
-
     public void callGen(Symbol symbol, int region) {
         if (codeGenOn) {
             String name = symbol.getName() + region;

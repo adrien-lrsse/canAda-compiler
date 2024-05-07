@@ -561,7 +561,7 @@ public class SemanticAnalyzer {
             if (labelNode.getChildren().size() != 1) {
                 throw new SemanticException("Expected 1 parameter, got " + labelNode.getChildren().size() + " for procedure 'put'", callNode.getLine());
             }
-            this.codeGen.stackArg(ast, labelNode.getChildren().get(0));
+            this.codeGen.stackArg(ast, labelNode.getChildren().get(0), false);
             symbol = switch (typeOfOperands(labelNode.getChildren().get(0))) {
                 case "integer" -> tds.getTds().get(0).get(0);
                 case "character" -> tds.getTds().get(0).get(1);
@@ -581,6 +581,7 @@ public class SemanticAnalyzer {
                 throw new SemanticException("Expected " + ((Func) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for function '" + labelNode.getLabel() + "'", callNode.getLine());
             }
             String type;
+            this.codeGen.setNewFunc(true);
             for (int i = 0; i < labelNode.getChildren().size(); i++) {
                 type = typeOfOperands(labelNode.getChildren().get(i));
                 if (!type.equals(((Func) symbol).getTypes().get(i))) {
@@ -591,8 +592,10 @@ public class SemanticAnalyzer {
                         throw new SemanticException("Expected a 'variable' or 'x.f' with x type record for parameter 'in out' " + (i + 1) + " of function '" + labelNode.getLabel() + "', got " + getNatureOfLabel(labelNode.getChildren().get(i), stack.lastElement()), callNode.getLine());
                     }
                 }
-                this.codeGen.stackArg(ast, labelNode.getChildren().get(i));
+                this.codeGen.stackArg(ast, labelNode.getChildren().get(i), true);
+                this.codeGen.setNewFunc(false);
             }
+            this.codeGen.setNewFunc(false);
             this.codeGen.stackReturn(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
 
         } else if (symbol instanceof Proc) {
@@ -611,7 +614,7 @@ public class SemanticAnalyzer {
                     if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
                         throw new SemanticException("Expected type " + ((Proc) symbol).getTypes().get(i) + " for parameter " + (i + 1) + " of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(i)), callNode.getLine());
                     }
-                    this.codeGen.stackArg(ast, labelNode.getChildren().get(i));
+                    this.codeGen.stackArg(ast, labelNode.getChildren().get(i), false);
                 }
             }
         } else {
