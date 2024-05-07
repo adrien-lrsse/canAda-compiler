@@ -221,6 +221,7 @@ public class CodeGenerator {
             appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
         }
         expressionGen(ast, node.getChildren().get(1), exprRegister);
+
         // Get the var to assign
         Node node1 = ast.getTree().nodes.get(node.getChildren().get(0));
         String type = node1.getLabel();
@@ -239,8 +240,24 @@ public class CodeGenerator {
             appendToBuffer("\tstmfd\tr13!, {r" + addressReg + "} ; No more register available, making space with memory stack\n");
         }
         // Set the value
-        getVarAddress(type, addressReg);
-        appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + "] ; Assigning value to var : " + type + "\n");
+        // access record case
+        List<String> fields = new ArrayList<>();
+        fields.add(type);
+        Node nodeAccessIdent, nodeField;
+        while (!node1.getChildren().isEmpty()) {
+            nodeAccessIdent = ast.getTree().nodes.get(node1.getChildren().get(0));
+            nodeField = ast.getTree().nodes.get(nodeAccessIdent.getChildren().get(0));
+            fields.add(nodeField.getLabel());
+            node1 = nodeField;
+        }
+        type = String.join(".", fields);
+
+        Record record = getVarAddress(type, addressReg);
+        if (record != null) { // several fields need to be accessed
+            copyStructs(record, addressReg, exprRegister, 0);
+        } else {
+            appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + "] ; Assigning value to var : " + type + "\n");
+        }
 
         if (isRegisterAddressBorrowed) {
             appendToBuffer("\tldmfd\tr13!, {r" + addressReg + "} ; Freeing memory stack\n"); // Free the register
@@ -265,7 +282,26 @@ public class CodeGenerator {
                 isRegisterBorrowed = true;
                 appendToBuffer("\tsub\tr13, r13, #4 ; keeping some space to stack the arg\n\tstmfd\tr13!, {r" + register + "} ; No more register available, making space with memory stack\n");
             }
-            expressionGen(ast, nodeInt, register);
+            int offset;
+            if ((offset = expressionGen(ast, nodeInt, register)) != 0) {
+                for (int o = 0; o < offset; o += 4) {
+                    if (isRegisterBorrowed) {
+                        appendToBuffer("\tldr\tr10, [r13, #" + o + "] ; Getting value of var\n");
+                        appendToBuffer("\tstmfd\tr13!, {r10} ; Stacking the arg\n");
+                    } else {
+                        appendToBuffer("\tldr\tr10, [r" + register + ", #" + o + "] ; Getting value of var\n");
+                        appendToBuffer("\tstmfd\tr13!, {r10} ; Stacking the arg\n");
+                    }
+                }
+
+                if (isRegisterBorrowed) {
+                    appendToBuffer("\tldmfd\tr13!, {r" + register + "} ; Freeing memory stack\n");
+                } else {
+                    stackFrames.peek().getRegisterManager().freeRegister(register);
+                }
+                return;
+            }
+
             if (isRegisterBorrowed) {
                 appendToBuffer("\tstr\tr" + register + ", [r13, #4] ; Stacking the arg\n");
                 appendToBuffer("\tldmfd\tr13!, {r" + register + "} ; Freeing memory stack\n");
@@ -276,7 +312,7 @@ public class CodeGenerator {
         }
     }
 
-    public void expressionGen(GraphViz ast, Integer nodeInt, int returnRegister) {
+    public int expressionGen(GraphViz ast, Integer nodeInt, int returnRegister) {
         if(codeGenOn){
             Node node = ast.getTree().nodes.get(nodeInt);
             String type = node.getLabel();
@@ -287,7 +323,7 @@ public class CodeGenerator {
                 } else {
                     appendToBuffer("\tmov\tr" + returnRegister + ", #" + number + " ; Generating number for expression\n");
                 }
-                return;
+                return 0;
             } catch (NumberFormatException e) {
                 // Not a number so we continue
             }
@@ -295,16 +331,16 @@ public class CodeGenerator {
             // check if it's a character
             if (type.charAt(0) == '\'') {
                 appendToBuffer("\tmov\tr" + returnRegister + ", #" + (int) type.charAt(1) + " ; Generating character for expression\n");
-                return;
+                return 0;
             }
 
             // check if it's a boolean
             if (type.equals("true")) {
                 appendToBuffer("\tmov\tr" + returnRegister + ", #1 ; Generating boolean for expression\n");
-                return;
+                return 0;
             } else if (type.equals("false")) {
                 appendToBuffer("\tmov\tr" + returnRegister + ", #0 ; Generating boolean for expression\n");
-                return;
+                return 0;
             }
 
             int register1;
@@ -479,11 +515,22 @@ public class CodeGenerator {
                     break;
                 default: // Variable à aller chercher
                     if (type != "CALL") {
-                        getVar(type, returnRegister);
+                        // access record case
+                        List<String> fields = new ArrayList<>();
+                        fields.add(type);
+                        Node nodeAccessIdent, nodeField;
+                        while (!node.getChildren().isEmpty()) {
+                            nodeAccessIdent = ast.getTree().nodes.get(node.getChildren().get(0));
+                            nodeField = ast.getTree().nodes.get(nodeAccessIdent.getChildren().get(0));
+                            fields.add(nodeField.getLabel());
+                            node = nodeField;
+                        }
+
+                        return getVar(String.join(".", fields), returnRegister);
                     }
 //                    appendToBuffer("\t; Unhandeled expression (for the moment) : " + type + "\n");
 //                    throw new RuntimeException("Unhandeled expression : " + type);
-                    return;
+                    return 0;
             }
             if (isR1Borrowed){
                 appendToBuffer("\tldmfd\tr13!, {r" + register1 + "} ; Freeing memory stack\n");
@@ -491,6 +538,7 @@ public class CodeGenerator {
                 stackFrames.peek().getRegisterManager().freeRegister(register1);
             }
         }
+        return 0;
     }
 
     public void callGen(Symbol symbol, int region) {
@@ -514,15 +562,28 @@ public class CodeGenerator {
         }
     }
 
-    public void getVar(String name, int returnRegister) {
+    public int getVar(String name, int returnRegister) {
         if (codeGenOn) {
-            getVarAddress(name, returnRegister);
-            appendToBuffer("\tldr\tr" + returnRegister + ", [r" + returnRegister + "] ; Getting value of var : " + name + "\n");
+            Record record = getVarAddress(name, returnRegister);
+            if (record == null) {
+                appendToBuffer("\tldr\tr" + returnRegister + ", [r" + returnRegister + "] ; Getting value of var : " + name + "\n");
+                return 0;
+            }
+            return record.getOffset();
         }
+        return 0;
     }
 
-    public void getVarAddress(String name, int returnRegister) {
+    public Record getVarAddress(String label, int returnRegister) {
         if (codeGenOn) {
+            String name = label;
+            // handle record access
+            List<String> fields = List.of();
+            if (name.contains(".")) {
+                fields = new ArrayList<>(Arrays.asList(name.split("\\.")));
+                name = fields.get(0);
+            }
+
             int destinationRegion = getRegionFromLabel(name, stack.peek());
             if (destinationRegion == -1) {
                 throw new RuntimeException("Variable not found : " + name);
@@ -536,21 +597,89 @@ public class CodeGenerator {
             if (symbol instanceof Var) {
                 Var var = (Var) symbol;
                 offset =  var.getOffset();
+                // handle record access
+                if (!fields.isEmpty()) {
+                    Record record = (Record) getSymbolFromLabel(var.getType(), destinationRegion);
+                    fields.remove(0);
+                    String field;
+                    for (int i = 0; i < fields.size() - 1; i++) {
+                        assert record != null;
+                        field = fields.get(i);
+                        offset -= record.getOffset(field);
+                        record = (Record) getSymbolFromLabel(record.getFields().get(field), destinationRegion);
+                    }
+                    field = fields.get(fields.size() - 1);
+                    assert record != null;
+                    offset -= record.getOffset(field);
+
+                    // check if several fields need to be accessed
+                    if (TDS.offsets.get(record.getFields().get(field)) != 4) {
+                        appendToBuffer("\tmov\tr10, r12\n");
+                        for (int i = 0; i < linkingsToGoUp; i++) {
+                            appendToBuffer("\tldr\tr10, [r10] ; Going up in the static linkings\n");
+                        }
+                        appendToBuffer("\tadd\tr10, r10, #-4-" + offset + " ; Getting address of var : " + label + "\n\tmov\tr" + returnRegister + ", r10\n");
+
+                        return (Record) getSymbolFromLabel(record.getFields().get(field), destinationRegion);
+                    }
+                }
+
                 appendToBuffer("\tmov\tr10, r12\n");
                 for (int i = 0; i < linkingsToGoUp; i++) {
                     appendToBuffer("\tldr\tr10, [r10] ; Going up in the static linkings\n");
                 }
-                appendToBuffer("\tadd\tr10, r10, #-4-" + offset + " ; Getting address of var : " + name + "\n\tmov\tr" + returnRegister + ", r10\n");
+                appendToBuffer("\tadd\tr10, r10, #-4-" + offset + " ; Getting address of var : " + label + "\n\tmov\tr" + returnRegister + ", r10\n");
+
+                // handle record access
+                if (fields.isEmpty() && TDS.offsets.get(var.getType()) != 4) {
+                    Record record = new Record(-1, -1);
+                    record.setOffset(TDS.offsets.get(var.getType()));
+                    return record;
+                }
             } else if (symbol instanceof Param) {
                 Param param = (Param) symbol;
                 offset = param.getOffset();
+                // handle record access
+                if (!fields.isEmpty()) {
+                    Record record = (Record) getSymbolFromLabel(param.getType(), destinationRegion);
+                    fields.remove(0);
+                    String field;
+                    for (int i = 0; i < fields.size() - 1; i++) {
+                        assert record != null;
+                        field = fields.get(i);
+                        offset -= record.getOffset(field);
+                        record = (Record) getSymbolFromLabel(record.getFields().get(field), destinationRegion);
+                    }
+                    field = fields.get(fields.size() - 1);
+                    assert record != null;
+                    offset -= record.getOffset(field);
+
+                    // check if several fields need to be accessed
+                    if (TDS.offsets.get(record.getFields().get(field)) != 4) {
+                        appendToBuffer("\tmov\tr10, r12\n");
+                        for (int i = 0; i < linkingsToGoUp; i++) {
+                            appendToBuffer("\tldr\tr10, [r10] ; Going up in the static linkings\n");
+                        }
+                        appendToBuffer("\tadd\tr10, r10, #-4-" + offset + " ; Getting address of var : " + label + "\n\tmov\tr" + returnRegister + ", r10\n");
+
+                        return (Record) getSymbolFromLabel(record.getFields().get(field), destinationRegion);
+                    }
+                }
+
                 appendToBuffer("\tmov\tr10, r12\n");
                 for (int i = 0; i < linkingsToGoUp; i++) {
                     appendToBuffer("\tldr\tr10, [r10]\n");
                 }
                 appendToBuffer("\tadd\tr10, r10, #4*");
                 stackFrames.peek().needRegisterValue();
-                appendToBuffer("+" + offset + "+16 ; Getting param : " + name + "\n\tmov\tr" + returnRegister + ", r10\n");
+                appendToBuffer("+" + offset + "+16 ; Getting param : " + label + "\n\tmov\tr" + returnRegister + ", r10\n");
+
+                // handle record access
+                if (fields.isEmpty() && TDS.offsets.get(param.getType()) != 4) {
+                    Record record = new Record(-1, -1);
+                    record.setOffset(TDS.offsets.get(param.getType()));
+                    return record;
+                }
             }
 //            else if (symbol instanceof Record) {
 //                Record record = (Record) symbol;
@@ -565,6 +694,7 @@ public class CodeGenerator {
                 throw new RuntimeException("Unhandeled getVar : " + symbol + " " + name + " " + symbol.getClass());
             }
         }
+        return null;
     }
 
     private int getRegionFromLabel(String label, int reg) {
@@ -609,6 +739,24 @@ public class CodeGenerator {
     public void addInitVar(Symbol symbol, int value) {
         if (codeGenOn) {
             initVars.peek().put(symbol, value);
+        }
+    }
+
+    public void copyStructs(Record structToCopy, Integer addrToCopyTo, Integer addrToCopyFrom, Integer offset) {
+        if (codeGenOn) {
+            int updateOffset = offset;
+            for (String field : structToCopy.getFields().keySet()) {
+                if (TDS.offsets.get(structToCopy.getFields().get(field)) == 4) {
+                    appendToBuffer("\tldr\tr10, [r" + addrToCopyFrom + ", #4*" + updateOffset + "] ; Copying field " + field + " of struct\n");
+                    appendToBuffer("\tstr\tr10, [r" + addrToCopyTo + ", #4*" + updateOffset + "]\n");
+                    updateOffset++;
+                } else {
+                    Record record = (Record) getSymbolFromLabel(structToCopy.getFields().get(field), stack.peek());
+                    copyStructs(record, addrToCopyTo, addrToCopyFrom, updateOffset);
+                    assert record != null;
+                    updateOffset += record.getOffset() / 4;
+                }
+            }
         }
     }
 }

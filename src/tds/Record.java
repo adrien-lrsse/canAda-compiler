@@ -24,8 +24,8 @@ public class Record extends Symbol {
             throw new SemanticException("Type '" + type + "' not defined", line);
         }
         this.fields.put(name, type);
+        this.offsets.put(name, this.offset);
         this.offset += TDS.offsets.get(type);
-        this.offsets.put(name, TDS.offsets.get(type));
     }
 
     public HashMap<String, String> getFields() {

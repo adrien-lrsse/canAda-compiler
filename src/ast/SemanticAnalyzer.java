@@ -223,7 +223,7 @@ public class SemanticAnalyzer {
                         tds.Record record = new Record(stack.size(), stack.lastElement());
                         stack.push(tmp);
                         record.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-                        record.setOffset(offset.lastElement());
+                        record.setOffset(0);
                         if (ast.getTree().nodes.get(node.getChildren().get(1)).getLabel().equals("RECORD")) {
                             Node child;
                             for (int i = 0; i < ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().size(); i++) {
