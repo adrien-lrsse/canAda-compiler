@@ -713,15 +713,6 @@ public class CodeGenerator {
                     return record;
                 }
             }
-//            else if (symbol instanceof Record) {
-//                Record record = (Record) symbol;
-//                offset = record.getOffset();
-//                appendToBuffer("\tmov\tr10, r12\n");
-//                for (int i = 0; i < linkingsToGoUp; i++) {
-//                    appendToBuffer("\tldr\tr10, [r10]\n");
-//                }
-//                appendToBuffer("\tldr\tr" + returnRegister + ", [r10, #-4-" + offset + "] ; Getting Record : " + name + "\n");
-//            }
             else {
                 throw new RuntimeException("Unhandeled getVar : " + symbol + " " + name + " " + symbol.getClass());
             }
