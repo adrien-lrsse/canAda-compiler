@@ -47,8 +47,4 @@ public class RegisterManager {
         ldmfd.append("r12, pc}");
         return ldmfd.toString();
     }
-
-    public void generateHighestUsedRegister() {
-
-    }
 }
