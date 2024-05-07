@@ -306,6 +306,7 @@ public class CodeGenerator {
                     if (isFunc) {
                         if (newFunc) {
                             paramSize.push(0);
+                            newFunc = false;
                         }
                         paramSize.push((paramSize.pop() + 4));
                     }
@@ -797,7 +798,6 @@ public class CodeGenerator {
 
             //borrow register
             int register;
-            boolean isRegisterBorrowed = false;
             try {
                 register = stackFrames.peek().getRegisterManager().borrowRegister();
             } catch (RuntimeException e) {
