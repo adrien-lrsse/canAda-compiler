@@ -687,8 +687,8 @@ public class SemanticAnalyzer {
         else {
             Node nodeLeft = ast.getTree().nodes.get(node.getChildren().get(0));
             Node nodeRight = ast.getTree().nodes.get(node.getChildren().get(1));
-            String typeLeft = typeOfOperands(nodeLeft.getId());
             String typeRight = typeOfOperands(nodeRight.getId());
+            String typeLeft = typeOfOperands(nodeLeft.getId());
             if (node.getLabel().equals(("AND")) || node.getLabel().equals("OR") || node.getLabel().equals("=") || node.getLabel().equals("<") || node.getLabel().equals(">") || node.getLabel().equals("<=") || node.getLabel().equals(">=") ||  node.getLabel().equals("/=")){
                 if (typeOfOperands(nodeLeft.getId()).equals(typeOfOperands(nodeRight.getId())) && !typeOfOperands(nodeLeft.getId()).equals("undefined") && !typeOfOperands(nodeRight.getId()).equals("undefined")){
                     return "boolean";
