@@ -79,13 +79,14 @@ public class CodeGenerator {
             if(fatherName == null){
                 appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr12, [r10]\n\tmov\tr10, r12\n\t;PARAMETERS\n");
                 startBufferAppend("\t" + label + "\tDCD\t0xFF000004\n");
+                endBufferAppend("end"+name + callableElements.lastIndexOf(name));
                 return;
             }
             String labelParent = fatherName + callableElements.lastIndexOf(fatherName) + "global";
             appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tmov\tr12, r13\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
             appendToBuffer("\t;PARAMETERS\n");
             startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
-            endBufferAppend("\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
+            endBufferAppend("end"+name + callableElements.lastIndexOf(name)+"\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
         }
     }
 
@@ -99,7 +100,7 @@ public class CodeGenerator {
             appendToBuffer("\tldr\tr10, =" + label + "\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tldr\tr10, ="+ labelParent +"\n\tldr\tr10, [r10]\n\tstmfd\tr13!, {r10}\n\tmov\tr12, r13\n\tldr\tr10, =" + label + "\n\tstr\tr13, [r10]\n\tstmfd\tr13!, {r11}\n\tmov\tr11, r13\n");
             appendToBuffer("\t;PARAMETERS\n");
             startBufferAppend("\t" + label + "\tDCD\t0xFFFFFFFF\n");
-            endBufferAppend("\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
+            endBufferAppend("end"+name + callableElements.lastIndexOf(name)+"\tmov\tr13, r11\n\tldmfd\tr13!, {r11}\n\tadd\tr13, r13, #4\n\tldr\tr10, ="+label+"\n\tldmfd\tr13!, {r12}\n\tstr\tr12, [r10]\n");
         }
     }
 
@@ -794,6 +795,32 @@ public class CodeGenerator {
                     updateOffset += record.getOffset() / 4;
                 }
             }
+        }
+    }
+
+    public void returnValue(GraphViz ast, Integer nodeInt, String name) {
+        if (codeGenOn) {
+            appendToBuffer("\n\t; Return block\n");
+
+            //borrow register
+            int register;
+            boolean isRegisterBorrowed = false;
+            try {
+                register = stackFrames.peek().getRegisterManager().borrowRegister();
+            } catch (RuntimeException e) {
+                register = 0;
+            }
+            int child = ast.getTree().nodes.get(nodeInt).getChildren().get(0);
+            expressionGen(ast, child, register);
+
+            // set the return value
+            appendToBuffer("\tmov\tr13, r11\n\tstr\tr" + register + ", [r13, #4*");
+            stackFrames.peek().needRegisterValue();
+            appendToBuffer("+24] ; Setting the return value\n");
+
+
+            appendToBuffer("\tb\tend"+name + callableElements.lastIndexOf(name)+" ; Jumping to the end of the function\n\t; End of return block\n   \n"); // Jump to the end of the function
+
         }
     }
 }
