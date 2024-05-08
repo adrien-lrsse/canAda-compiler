@@ -663,6 +663,13 @@ public class SemanticAnalyzer {
             }
         }
         Node nodeSon = ast.getTree().nodes.get(node.getChildren().get(0));
+        if (node.getLabel().equals("CHARACTER'VAL")) {
+            if (typeOfOperands(nodeSon.getId()).equals("integer")) {
+                return "character";
+            } else {
+                throw new SemanticException("Expected integer, got " + typeOfOperands(nodeSon.getId()), node.getLine());
+            }
+        }
         if (node.getChildren().size() == 1 && nodeSon.getLabel().equals("ACCESS_IDENT")) {
             Symbol symbol = getSymbolFromLabel(node.getLabel(), stack.lastElement());
             if (symbol == null) {

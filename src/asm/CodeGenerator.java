@@ -556,6 +556,10 @@ public class CodeGenerator {
 
                     appendToBuffer("\tadd\tr13, r13, #" + tmp + " ; freeing the space of the parameters\n");
                     return 0;
+                case "CHARACTER'VAL":
+                    expressionGen(ast, node.getChildren().get(0), returnRegister);
+                    appendToBuffer("\tmov\tr" + returnRegister + ", r" + returnRegister + " ; Getting value of character for expression\n");
+                    return 0;
                 default: // Variable à aller chercher
                     // access record case
                     List<String> fields = new ArrayList<>();
