@@ -31,4 +31,10 @@ println_char stmfd   r13!, {r0-r2, r11, lr} ; This is PreWritten Code for printl
              ldr     r1, =str_out
              B       println_loop
 
+raise_err    stmfd   r13!, {r0-r2, r11, lr} ; This is PreWritten Code for raising an error
+             mov     r11, r13
+             ldr     r0, [r11, #4*5]
+             ldr     r1, =str_out
+             B       println_loop
+
 main
