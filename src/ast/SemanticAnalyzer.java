@@ -533,7 +533,7 @@ public class SemanticAnalyzer {
         incr.setProtected(true);
         incr.setName(node.getLabel());
         incr.setType("integer");
-        lastOffset += 4;
+        lastOffset += 8;
         incr.setOffset(lastOffset);
         tds.addSymbol(stack.lastElement(), incr, node.getLine());
 
@@ -544,9 +544,9 @@ public class SemanticAnalyzer {
         boolean reverse = false;
         if (lbl.equals("REVERSE")) {
             reverse = true;
-            this.codeGen.forAssignationGen(ast, children.get(3), incr.getName());
+            this.codeGen.forInitGen(ast, children, incr.getName(), 3, 2);
         } else {
-            this.codeGen.forAssignationGen(ast, children.get(1), incr.getName());
+            this.codeGen.forInitGen(ast, children, incr.getName(), 1, 2);
         }
 
         this.codeGen.appendToBuffer("\tfor"+nodeInt+" ; begin of for\n");

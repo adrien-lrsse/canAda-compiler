@@ -391,7 +391,8 @@ public class CodeGenerator {
         }
     }
 
-    public void forAssignationGen(GraphViz ast, int nodeVal, String type) {
+
+    public void forInitGen(GraphViz ast, List<Integer> children, String type, int begin, int end) {
         int exprRegister = 0;
         boolean isRegisterBorrowed = false;
         try {
@@ -401,7 +402,8 @@ public class CodeGenerator {
             isRegisterBorrowed = true;
             appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
         }
-        expressionGen(ast, nodeVal, exprRegister);
+        expressionGen(ast, children.get(end), exprRegister);
+
 
         // Get the var to assign
         int addressReg;
@@ -420,7 +422,10 @@ public class CodeGenerator {
         // Set the value
         getVarAddress(type, addressReg);
 
-        appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + "] ; Assigning value to var : " + type + "\n");
+        appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + ", #4] ; Assigning end value of for loop\n");
+
+        expressionGen(ast, children.get(begin), exprRegister);
+        appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + "] ; Assigning begin value of for loop to var : " + type + "\n");
 
         if (isRegisterAddressBorrowed) {
             appendToBuffer("\tldmfd\tr13!, {r" + addressReg + "} ; Freeing memory stack\n"); // Free the register
