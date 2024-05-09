@@ -253,8 +253,6 @@ public class SemanticAnalyzer {
                         stack.push(tmp);
                         computeOffsets(symbol, stack.lastElement());
 
-                        //todo compute lastOffset in case of records
-
                         // reset offset
                         offset.pop();
                         offset.push(0);
