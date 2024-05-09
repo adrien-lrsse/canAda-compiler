@@ -310,7 +310,7 @@ public class CodeGenerator {
                     if (isFunc) {
                         if (newFunc) {
                             paramSize.push(0);
-                            newFunc = false; // todo possibly needed to be removed
+                            newFunc = false; // possibly needed to be removed
                         }
                         paramSize.push((paramSize.pop() + 4));
                     }
