@@ -292,7 +292,6 @@ public class SemanticAnalyzer {
                         // end of block for code generation
                         this.codeGen.appendToBuffer("\t;END of instructions\n");
                         codeGen.endBlock();
-//todo delay vargen
                         // pop offset
                         offset.pop();
                         break;
@@ -540,42 +539,23 @@ public class SemanticAnalyzer {
 
         codeGen.addInitVar(incr, -1);
 
-        int value1;
-        int value2;
-        int index = 1;
-        String lbl = ast.getTree().nodes.get(children.get(index)).getLabel();
+
+        String lbl = ast.getTree().nodes.get(children.get(1)).getLabel();
         boolean reverse = false;
         if (lbl.equals("REVERSE")) {
             reverse = true;
-            index++;
-        }
-        try {
-            value1 = Integer.parseInt(ast.getTree().nodes.get(children.get(index++)).getLabel());
-        } catch (Exception e) {
-            throw new SemanticException("Wrong value type for loop index, integer cannot be parsed", ast.getTree().nodes.get(nodeInt).getLine());
-        }
-
-        try {
-            value2 = Integer.parseInt(ast.getTree().nodes.get(children.get(index)).getLabel());
-        } catch (Exception e) {
-            throw new SemanticException("Wrong value type for loop index, integer cannot be parsed", ast.getTree().nodes.get(nodeInt).getLine());
-        }
-
-        if(reverse) {
-            this.codeGen.forAssignation(incr.getName(), value2); // set the value of the loop index to the first value
+            this.codeGen.forAssignationGen(ast, children.get(3), incr.getName());
         } else {
-            this.codeGen.forAssignation(incr.getName(), value1); // set the value of the loop index to the first value
+            this.codeGen.forAssignationGen(ast, children.get(1), incr.getName());
         }
 
         this.codeGen.appendToBuffer("\tfor"+nodeInt+" ; begin of for\n");
 
         analyzeInstructions(children.get(children.size() - 1), currentDecl.lastElement(), returnNeededTmp);
 
-        if(reverse) {
-            this.codeGen.forCheckEnd(incr.getName(), value1); // check if end
-        } else {
-            this.codeGen.forCheckEnd(incr.getName(), value2); // check if end
-        }
+
+        this.codeGen.forCheckEnd(ast, incr.getName(), children.get(2)); // check if end
+
 
         this.codeGen.appendToBuffer("\tbeq\tendfor"+nodeInt+" ; jump to the end of the loop\n");
         this.codeGen.forIncrement(incr.getName(), reverse); // increment or decrement

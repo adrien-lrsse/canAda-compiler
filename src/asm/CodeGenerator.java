@@ -346,57 +346,7 @@ public class CodeGenerator {
         }
     }
 
-    public void forAssignation(String label, int number){
-        if(codeGenOn) {
-            int exprRegister = 0;
-            boolean isRegisterBorrowed = false;
-            try {
-                exprRegister = stackFrames.peek().getRegisterManager().borrowRegister();
-            } catch (RuntimeException e) {
-                exprRegister = 0;
-                isRegisterBorrowed = true;
-                appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
-            }
-
-            // Generating the value
-            if (number > 256) {
-                appendToBuffer("\tldr\tr" + exprRegister + ", =" + number + " ; Generating number for expression\n");
-            } else {
-                appendToBuffer("\tmov\tr" + exprRegister + ", #" + number + " ; Generating number for expression\n");
-            }
-
-            // Get the var to assign
-            int addressReg;
-            boolean isRegisterAddressBorrowed = false;
-            try {
-                addressReg = stackFrames.peek().getRegisterManager().borrowRegister();
-            } catch (RuntimeException e) {
-                if (exprRegister != 0) {
-                    addressReg = 0;
-                } else {
-                    addressReg = 1;
-                }
-                isRegisterAddressBorrowed = true;
-                appendToBuffer("\tstmfd\tr13!, {r" + addressReg + "} ; No more register available, making space with memory stack\n");
-            }
-
-            getVarAddress(label, addressReg);
-            appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + "] ; Assigning value to var : " + label + "\n");
-
-            if (isRegisterAddressBorrowed) {
-                appendToBuffer("\tldmfd\tr13!, {r" + addressReg + "} ; Freeing memory stack\n"); // Free the register
-            } else {
-                stackFrames.peek().getRegisterManager().freeRegister(addressReg);
-            }
-            if (isRegisterBorrowed) {
-                appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
-            } else {
-                stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
-            }
-        }
-    }
-
-    public void forCheckEnd(String var, int value) {
+    public void forCheckEnd(GraphViz ast, String var, int nodeVal) {
         if(codeGenOn) {
             int exprRegister = 0;
             boolean isRegisterBorrowed = false;
@@ -409,13 +359,57 @@ public class CodeGenerator {
             }
 
             getVar(var, exprRegister);
-            appendToBuffer("\tcmp\tr" + exprRegister + ", #"+value+" ; Condition\n");
+            expressionGen(ast, nodeVal, 10);
+            appendToBuffer("\tcmp\tr" + exprRegister + ", r10 ; Condition\n");
 
             if (isRegisterBorrowed) {
                 appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
             } else {
                 stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
             }
+        }
+    }
+
+    public void forAssignationGen(GraphViz ast, int nodeVal, String type) {
+        int exprRegister = 0;
+        boolean isRegisterBorrowed = false;
+        try {
+            exprRegister = stackFrames.peek().getRegisterManager().borrowRegister();
+        } catch (RuntimeException e) {
+            exprRegister = 0;
+            isRegisterBorrowed = true;
+            appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
+        }
+        expressionGen(ast, nodeVal, exprRegister);
+
+        // Get the var to assign
+        int addressReg;
+        boolean isRegisterAddressBorrowed = false;
+        try {
+            addressReg = stackFrames.peek().getRegisterManager().borrowRegister();
+        } catch (RuntimeException e) {
+            if (exprRegister != 0) {
+                addressReg = 0;
+            } else {
+                addressReg = 1;
+            }
+            isRegisterAddressBorrowed = true;
+            appendToBuffer("\tstmfd\tr13!, {r" + addressReg + "} ; No more register available, making space with memory stack\n");
+        }
+        // Set the value
+        getVarAddress(type, addressReg);
+
+        appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + "] ; Assigning value to var : " + type + "\n");
+
+        if (isRegisterAddressBorrowed) {
+            appendToBuffer("\tldmfd\tr13!, {r" + addressReg + "} ; Freeing memory stack\n"); // Free the register
+        } else {
+            stackFrames.peek().getRegisterManager().freeRegister(addressReg);
+        }
+        if (isRegisterBorrowed) {
+            appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
+        } else {
+            stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
         }
     }
 
