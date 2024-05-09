@@ -310,7 +310,7 @@ public class CodeGenerator {
                     if (isFunc) {
                         if (newFunc) {
                             paramSize.push(0);
-                            newFunc = false;
+                            newFunc = false; // todo possibly needed to be removed
                         }
                         paramSize.push((paramSize.pop() + 4));
                     }
@@ -687,6 +687,9 @@ public class CodeGenerator {
                     }
 
                     appendToBuffer("\tadd\tr13, r13, #" + tmp + " ; freeing the space of the parameters\n");
+                    if(paramSize.size() == 0) {
+                        paramSize.push(0);
+                    }
                     return 0;
                 case "CHARACTER'VAL":
                     expressionGen(ast, node.getChildren().get(0), returnRegister);
