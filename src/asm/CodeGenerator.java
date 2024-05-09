@@ -111,15 +111,14 @@ public class CodeGenerator {
         }
     }
 
-    public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion) {
+    public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion, int lastOffset) {
         if (codeGenOn) {
             isVarGen = true;
             this.appendToBuffer("\t;VARIABLES\n");
             int offset;
-            int lastOffset = -1;
+
             for (Symbol symbol : symbolsOfRegion) {
                 if (symbol instanceof Var) {
-                    lastOffset = ((Var) symbol).getOffset();
                     this.appendToBuffer("\t\t;" + ((Var) symbol).getType() + "\t" + symbol.getName() + "\n");
                 }
             }
@@ -347,6 +346,108 @@ public class CodeGenerator {
         }
     }
 
+    public void forAssignation(String label, int number){
+        if(codeGenOn) {
+            int exprRegister = 0;
+            boolean isRegisterBorrowed = false;
+            try {
+                exprRegister = stackFrames.peek().getRegisterManager().borrowRegister();
+            } catch (RuntimeException e) {
+                exprRegister = 0;
+                isRegisterBorrowed = true;
+                appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
+            }
+
+            // Generating the value
+            if (number > 256) {
+                appendToBuffer("\tldr\tr" + exprRegister + ", =" + number + " ; Generating number for expression\n");
+            } else {
+                appendToBuffer("\tmov\tr" + exprRegister + ", #" + number + " ; Generating number for expression\n");
+            }
+
+            // Get the var to assign
+            int addressReg;
+            boolean isRegisterAddressBorrowed = false;
+            try {
+                addressReg = stackFrames.peek().getRegisterManager().borrowRegister();
+            } catch (RuntimeException e) {
+                if (exprRegister != 0) {
+                    addressReg = 0;
+                } else {
+                    addressReg = 1;
+                }
+                isRegisterAddressBorrowed = true;
+                appendToBuffer("\tstmfd\tr13!, {r" + addressReg + "} ; No more register available, making space with memory stack\n");
+            }
+
+            getVarAddress(label, addressReg);
+            appendToBuffer("\tstr\tr" + exprRegister + ", [r" + addressReg + "] ; Assigning value to var : " + label + "\n");
+
+            if (isRegisterAddressBorrowed) {
+                appendToBuffer("\tldmfd\tr13!, {r" + addressReg + "} ; Freeing memory stack\n"); // Free the register
+            } else {
+                stackFrames.peek().getRegisterManager().freeRegister(addressReg);
+            }
+            if (isRegisterBorrowed) {
+                appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
+            } else {
+                stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
+            }
+        }
+    }
+
+    public void forCheckEnd(String var, int value) {
+        if(codeGenOn) {
+            int exprRegister = 0;
+            boolean isRegisterBorrowed = false;
+            try {
+                exprRegister = stackFrames.peek().getRegisterManager().borrowRegister();
+            } catch (RuntimeException e) {
+                exprRegister = 0;
+                isRegisterBorrowed = true;
+                appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
+            }
+
+            getVar(var, exprRegister);
+            appendToBuffer("\tcmp\tr" + exprRegister + ", #"+value+" ; Condition\n");
+
+            if (isRegisterBorrowed) {
+                appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
+            } else {
+                stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
+            }
+        }
+    }
+
+    public void forIncrement(String var, boolean reverse) {
+        if(codeGenOn){
+            int exprRegister = 0;
+            boolean isRegisterBorrowed = false;
+            try {
+                exprRegister = stackFrames.peek().getRegisterManager().borrowRegister();
+            } catch (RuntimeException e) {
+                exprRegister = 0;
+                isRegisterBorrowed = true;
+                appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
+            }
+
+            getVarAddress(var, exprRegister);
+
+            if(reverse) {
+                appendToBuffer("\tldr\tr10, [r"+exprRegister+"] ; getting var value\n\tsub\tr10, r10, #1\n\tstr\tr10, [r"+exprRegister+"] ; var = var - 1\n");
+            } else {
+                appendToBuffer("\tldr\tr10, [r"+exprRegister+"] ; getting var value\n\tadd\tr10, r10, #1\n\tstr\tr10, [r"+exprRegister+"] ; var = var + 1\n");
+            }
+
+
+            if (isRegisterBorrowed) {
+                appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
+            } else {
+                stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
+            }
+        }
+    }
+
     public int expressionGen(GraphViz ast, Integer nodeInt, int returnRegister) {
         if (codeGenOn) {
             Node node = ast.getTree().nodes.get(nodeInt);
@@ -566,6 +667,11 @@ public class CodeGenerator {
                     fields.add(type);
                     Node nodeAccessIdent, nodeField;
                     while (!node.getChildren().isEmpty()) {
+                        for (int i = 0; i < node.getChildren().size(); i++) {
+                            System.out.println("there");
+                            nodeField = ast.getTree().nodes.get(node.getChildren().get(i));
+                            System.out.println(nodeField.getLabel());
+                        }
                         nodeAccessIdent = ast.getTree().nodes.get(node.getChildren().get(0));
                         nodeField = ast.getTree().nodes.get(nodeAccessIdent.getChildren().get(0));
                         fields.add(nodeField.getLabel());

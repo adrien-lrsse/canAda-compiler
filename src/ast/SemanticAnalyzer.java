@@ -19,6 +19,7 @@ public class SemanticAnalyzer {
     private CodeGenerator codeGen;
     private int returnNeeded;
     private int returnNeededTmp;
+    private int lastOffset;
 
     public SemanticAnalyzer(GraphViz ast) {
         this.stack = new Stack<>();
@@ -28,6 +29,7 @@ public class SemanticAnalyzer {
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
         this.codeGen = new CodeGenerator();
+        this.lastOffset = 0;
     }
 
     public void analyze() throws SemanticException {
@@ -257,7 +259,9 @@ public class SemanticAnalyzer {
                     case "INSTRUCTIONS":
                         //  code generation
                         this.codeGen.switchForVar();
-                        this.codeGen.varGen(ast, tds.getTds().get(stack.lastElement()));
+                        List<Symbol> delayedVarGen = tds.getTds().get(stack.lastElement());
+
+//                        this.codeGen.varGen(ast, tds.getTds().get(stack.lastElement()));
 
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
@@ -284,10 +288,11 @@ public class SemanticAnalyzer {
                             returnNeeded = returnNeeded - 1;
                         }
 
+                        this.codeGen.varGen(ast, delayedVarGen, this.lastOffset);
                         // end of block for code generation
                         this.codeGen.appendToBuffer("\t;END of instructions\n");
                         codeGen.endBlock();
-
+//todo delay vargen
                         // pop offset
                         offset.pop();
                         break;
@@ -529,9 +534,53 @@ public class SemanticAnalyzer {
         incr.setProtected(true);
         incr.setName(node.getLabel());
         incr.setType("integer");
-        incr.setOffset(TDS.offsets.get("integer"));
+        lastOffset += 4;
+        incr.setOffset(lastOffset);
         tds.addSymbol(stack.lastElement(), incr, node.getLine());
+
+        codeGen.addInitVar(incr, -1);
+
+        int value1;
+        int value2;
+        int index = 1;
+        String lbl = ast.getTree().nodes.get(children.get(index)).getLabel();
+        boolean reverse = false;
+        if (lbl.equals("REVERSE")) {
+            reverse = true;
+            index++;
+        }
+        try {
+            value1 = Integer.parseInt(ast.getTree().nodes.get(children.get(index++)).getLabel());
+        } catch (Exception e) {
+            throw new SemanticException("Wrong value type for loop index, integer cannot be parsed", ast.getTree().nodes.get(nodeInt).getLine());
+        }
+
+        try {
+            value2 = Integer.parseInt(ast.getTree().nodes.get(children.get(index)).getLabel());
+        } catch (Exception e) {
+            throw new SemanticException("Wrong value type for loop index, integer cannot be parsed", ast.getTree().nodes.get(nodeInt).getLine());
+        }
+
+        if(reverse) {
+            this.codeGen.forAssignation(incr.getName(), value2); // set the value of the loop index to the first value
+        } else {
+            this.codeGen.forAssignation(incr.getName(), value1); // set the value of the loop index to the first value
+        }
+
+        this.codeGen.appendToBuffer("\tfor"+nodeInt+" ; begin of for\n");
+
         analyzeInstructions(children.get(children.size() - 1), currentDecl.lastElement(), returnNeededTmp);
+
+        if(reverse) {
+            this.codeGen.forCheckEnd(incr.getName(), value1); // check if end
+        } else {
+            this.codeGen.forCheckEnd(incr.getName(), value2); // check if end
+        }
+
+        this.codeGen.appendToBuffer("\tbeq\tendfor"+nodeInt+" ; jump to the end of the loop\n");
+        this.codeGen.forIncrement(incr.getName(), reverse); // increment or decrement
+        this.codeGen.appendToBuffer("\tb\tfor"+nodeInt+" ; jump to the beginning of the loop\n\tendfor"+nodeInt+" ; end of for\n");
+
         tds.getTds().get(stack.lastElement()).remove(incr);
     }
 
@@ -799,6 +848,7 @@ public class SemanticAnalyzer {
             if (symbol instanceof Param) {
                 offset += TDS.offsets.get(((Param) symbol).getType());
                 ((Param) symbol).setOffset(offset);
+                this.lastOffset = offset;
             }
         }
 
@@ -811,6 +861,7 @@ public class SemanticAnalyzer {
             param.setType("integer");
             param.setOffset(0);
             tds.addSymbol(region, param, -1);
+            this.lastOffset = 0;
         }
     }
 
