@@ -261,8 +261,6 @@ public class SemanticAnalyzer {
                         this.codeGen.switchForVar();
                         List<Symbol> delayedVarGen = tds.getTds().get(stack.lastElement());
 
-//                        this.codeGen.varGen(ast, tds.getTds().get(stack.lastElement()));
-
                         // check if all the declared types are defined
                         if (!undefinedTypes.isEmpty()) {
                             throw new SemanticException("Undefined types: " + undefinedTypes, node.getLine());
