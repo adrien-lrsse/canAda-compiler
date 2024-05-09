@@ -699,9 +699,7 @@ public class CodeGenerator {
                     Node nodeAccessIdent, nodeField;
                     while (!node.getChildren().isEmpty()) {
                         for (int i = 0; i < node.getChildren().size(); i++) {
-                            System.out.println("there");
                             nodeField = ast.getTree().nodes.get(node.getChildren().get(i));
-                            System.out.println(nodeField.getLabel());
                         }
                         nodeAccessIdent = ast.getTree().nodes.get(node.getChildren().get(0));
                         nodeField = ast.getTree().nodes.get(nodeAccessIdent.getChildren().get(0));
