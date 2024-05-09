@@ -554,7 +554,7 @@ public class SemanticAnalyzer {
         analyzeInstructions(children.get(children.size() - 1), currentDecl.lastElement(), returnNeededTmp);
 
 
-        this.codeGen.forCheckEnd(ast, incr.getName(), children.get(2)); // check if end
+        this.codeGen.forCheckEnd(ast, incr.getName(), children.get(2), reverse); // check if end
 
 
         this.codeGen.appendToBuffer("\tbeq\tendfor"+nodeInt+" ; jump to the end of the loop\n");
