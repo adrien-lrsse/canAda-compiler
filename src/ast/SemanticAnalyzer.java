@@ -176,6 +176,7 @@ public class SemanticAnalyzer {
                         }
                         offset.push(offset.pop() + TDS.offsets.get(var.getType()));
                         var.setOffset(offset.lastElement());
+                        lastOffset += offset.lastElement();
                         tds.addSymbol(stack.lastElement(), var, node.getLine());
 
                         // assignation in declaration case
@@ -251,6 +252,8 @@ public class SemanticAnalyzer {
                         symbol = tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement());
                         stack.push(tmp);
                         computeOffsets(symbol, stack.lastElement());
+
+                        //todo compute lastOffset in case of records
 
                         // reset offset
                         offset.pop();
