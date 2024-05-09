@@ -357,19 +357,36 @@ public class CodeGenerator {
                 isRegisterBorrowed = true;
                 appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
             }
-            int exprRegister2 = 0;
-            boolean isRegisterBorrowed2 = false;
+
+            getVarAddress(var, exprRegister);
+            appendToBuffer("\tldr r10, [r" + exprRegister + "] ; Getting value of for var\n");
+            appendToBuffer("\tldr r"+exprRegister+", [r" + exprRegister + ", #4] ; Getting end value of for\n");
+            appendToBuffer("\tcmp\tr10, r" + exprRegister + " ; Condition\n");
+
+            if (isRegisterBorrowed) {
+                appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n"); // Free the register
+            } else {
+                stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
+            }
+        }
+    }
+
+    public void forCheckError(GraphViz ast, String var, int nodeVal, boolean reversed) {
+        if(codeGenOn) {
+            int exprRegister = 0;
+            boolean isRegisterBorrowed = false;
             try {
                 exprRegister = stackFrames.peek().getRegisterManager().borrowRegister();
             } catch (RuntimeException e) {
                 exprRegister = 0;
-                isRegisterBorrowed2 = true;
-                appendToBuffer("\tstmfd\tr13!, {r" + exprRegister2 + "} ; No more register available, making space with memory stack\n");
+                isRegisterBorrowed = true;
+                appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
             }
 
-            getVar(var, exprRegister);
-            expressionGen(ast, nodeVal, exprRegister2);
-            appendToBuffer("\tcmp\tr" + exprRegister + ", r"+exprRegister2+" ; Condition\n");
+            getVarAddress(var, exprRegister);
+            appendToBuffer("\tldr r10, [r" + exprRegister + "] ; Getting value of for var\n");
+            appendToBuffer("\tldr r"+exprRegister+", [r" + exprRegister + ", #4] ; Getting end value of for\n");
+            appendToBuffer("\tcmp\tr10, r" + exprRegister + " ; Condition\n");
 
 //            handling infinite loop
             if (reversed) {
@@ -383,14 +400,8 @@ public class CodeGenerator {
             } else {
                 stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
             }
-            if (isRegisterBorrowed2) {
-                appendToBuffer("\tldmfd\tr13!, {r" + exprRegister2 + "} ; Freeing memory stack\n"); // Free the register
-            } else {
-                stackFrames.peek().getRegisterManager().freeRegister(exprRegister2);
-            }
         }
     }
-
 
     public void forInitGen(GraphViz ast, List<Integer> children, String type, int begin, int end) {
         int exprRegister = 0;

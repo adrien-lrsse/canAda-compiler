@@ -549,6 +549,8 @@ public class SemanticAnalyzer {
             this.codeGen.forInitGen(ast, children, incr.getName(), 1, 2);
         }
 
+        this.codeGen.forCheckError(ast, incr.getName(), children.get(2), reverse);
+
         this.codeGen.appendToBuffer("\tfor"+nodeInt+" ; begin of for\n");
 
         analyzeInstructions(children.get(children.size() - 1), currentDecl.lastElement(), returnNeededTmp);
