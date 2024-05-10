@@ -585,10 +585,10 @@ public class SemanticAnalyzer {
     }
 
     public void analyzeCall(int nodeInt) throws SemanticException {
-        this.codeGen.addNewFunc(false);
         this.codeGen.appendToBuffer("\n\t; Start of calling stack\n");
         Node callNode = ast.getTree().nodes.get(nodeInt);
         Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
+        this.codeGen.addNewFunc(false);
         Symbol symbol;
 
         // Exception "put" that supports overloading

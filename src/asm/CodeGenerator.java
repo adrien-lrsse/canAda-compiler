@@ -69,16 +69,16 @@ public class CodeGenerator {
         }
     }
 
-    public void addNewFunc(boolean newFunc) {
+    public void addNewFunc(boolean func) {
         if (codeGenOn) {
-            this.newFunc.push(newFunc);
+            this.newFunc.push(func);
         }
     }
 
-    public void setNewFunc(boolean newFunc) {
+    public void setNewFunc(boolean func) {
         if (codeGenOn) {
             this.newFunc.pop();
-            this.newFunc.push(newFunc);
+            this.newFunc.push(func);
         }
     }
 
@@ -324,13 +324,13 @@ public class CodeGenerator {
                         appendToBuffer("\tldr\tr10, [r" + register + ", #" + o + "] ; Getting value of var\n");
                         appendToBuffer("\tstmfd\tr13!, {r10} ; Stacking the arg\n");
                     }
-                    if (isFunc) {
-                        if (newFunc.peek()) {
-                            paramSize.push(0);
-//                            newFunc = false; // possibly needed to be removed
-                        }
-                        paramSize.push((paramSize.pop() + 4));
+                }
+
+                if (isFunc) {
+                    if (newFunc.peek()) {
+                        paramSize.push(0);
                     }
+                    paramSize.push((paramSize.pop() + offset));
                 }
 
                 if (isRegisterBorrowed) {
