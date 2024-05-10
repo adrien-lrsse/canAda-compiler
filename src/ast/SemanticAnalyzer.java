@@ -585,6 +585,7 @@ public class SemanticAnalyzer {
     }
 
     public void analyzeCall(int nodeInt) throws SemanticException {
+        this.codeGen.addNewFunc(false);
         this.codeGen.appendToBuffer("\n\t; Start of calling stack\n");
         Node callNode = ast.getTree().nodes.get(nodeInt);
         Node labelNode = ast.getTree().nodes.get(callNode.getChildren().get(0));
@@ -637,7 +638,6 @@ public class SemanticAnalyzer {
             } else {
                 this.codeGen.getReturnSize().push(TDS.offsets.get(((Func) symbol).getReturnType()));
             }
-            this.codeGen.setNewFunc(false);
             this.codeGen.stackReturn(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
         } else if (symbol instanceof Proc) {
             if (labelNode.getChildren().size() != ((Proc) symbol).getTypes().size()) {
@@ -656,6 +656,7 @@ public class SemanticAnalyzer {
         }
         // code generation
         codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
+        this.codeGen.removeNewFunc();
     }
 
 

@@ -22,7 +22,7 @@ public class CodeGenerator {
     private final Stack<HashMap<Symbol, Integer>> initVars;
     private Stack<Integer> stack;
     private boolean isVarGen;
-    private boolean newFunc;
+    private Stack<Boolean> newFunc;
     private Stack<Integer> paramSize;
     private Stack<Integer> returnSize;
 
@@ -43,7 +43,7 @@ public class CodeGenerator {
         this.initVars = new Stack<>();
         this.stack = stack;
         this.isVarGen = false;
-        this.newFunc = true;
+        this.newFunc = new Stack<>();
         this.paramSize = new Stack<>();
         this.returnSize = new Stack<>();
     }
@@ -69,9 +69,22 @@ public class CodeGenerator {
         }
     }
 
+    public void addNewFunc(boolean newFunc) {
+        if (codeGenOn) {
+            this.newFunc.push(newFunc);
+        }
+    }
+
     public void setNewFunc(boolean newFunc) {
         if (codeGenOn) {
-            this.newFunc = newFunc;
+            this.newFunc.pop();
+            this.newFunc.push(newFunc);
+        }
+    }
+
+    public void removeNewFunc() {
+        if (codeGenOn) {
+            this.newFunc.pop();
         }
     }
 
@@ -312,9 +325,9 @@ public class CodeGenerator {
                         appendToBuffer("\tstmfd\tr13!, {r10} ; Stacking the arg\n");
                     }
                     if (isFunc) {
-                        if (newFunc) {
+                        if (newFunc.peek()) {
                             paramSize.push(0);
-                            newFunc = false; // possibly needed to be removed
+//                            newFunc = false; // possibly needed to be removed
                         }
                         paramSize.push((paramSize.pop() + 4));
                     }
@@ -332,7 +345,7 @@ public class CodeGenerator {
                 appendToBuffer("\tstr\tr" + register + ", [r13, #4] ; Stacking the arg\n");
                 appendToBuffer("\tldmfd\tr13!, {r" + register + "} ; Freeing memory stack\n");
                 if (isFunc) {
-                    if (newFunc) {
+                    if (newFunc.peek()) {
                         paramSize.push(0);
                     }
                     paramSize.push((paramSize.pop() + 4));
@@ -340,7 +353,7 @@ public class CodeGenerator {
             } else {
                 appendToBuffer("\tstmfd\tr13!, {r" + register + "} ; Stacking the arg\n");
                 if (isFunc) {
-                    if (newFunc) {
+                    if (newFunc.peek()) {
                         paramSize.push(0);
                     }
                     paramSize.push((paramSize.pop() + 4));
