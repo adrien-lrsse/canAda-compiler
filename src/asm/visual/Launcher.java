@@ -31,9 +31,9 @@ public class Launcher {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             List<String> output = OutputParser.parseOutput(logFile);
-            System.out.println("---- PROGRAM OUTPUT ----");
+            System.out.println("╌╌╌╌╌╌ \033[1mPROGRAM OUTPUT\033[0m ╌╌╌╌╌╌");
             output.forEach(System.out::print);
-            System.out.println("---- END PROGRAM OUTPUT ----");
+            System.out.println("╌╌╌╌ \033[1mEND PROGRAM OUTPUT\033[0m ╌╌╌╌");
         }));
 
         HeadlessController.runFile(assemblyFile, logFile);
