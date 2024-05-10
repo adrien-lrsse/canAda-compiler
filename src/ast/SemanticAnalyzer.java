@@ -601,6 +601,7 @@ public class SemanticAnalyzer {
                 default ->
                         throw new SemanticException("Expected type 'integer' or 'character' for parameter 1 of procedure 'put', got " + typeOfOperands(labelNode.getChildren().get(0)), callNode.getLine());
             };
+            this.codeGen.getReturnSize().push(0);
             this.codeGen.stackArg(ast, labelNode.getChildren().get(0), false);
             codeGen.callGen(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
             return;
@@ -631,20 +632,16 @@ public class SemanticAnalyzer {
                 this.codeGen.stackArg(ast, labelNode.getChildren().get(i), true);
                 this.codeGen.setNewFunc(false);
             }
+            if (((Func) symbol).getReturnType().isEmpty()) {
+                this.codeGen.getReturnSize().push(0);
+            } else {
+                this.codeGen.getReturnSize().push(TDS.offsets.get(((Func) symbol).getReturnType()));
+            }
             this.codeGen.setNewFunc(false);
             this.codeGen.stackReturn(symbol, getRegionFromLabel(symbol.getName(), stack.peek()));
-
         } else if (symbol instanceof Proc) {
             if (labelNode.getChildren().size() != ((Proc) symbol).getTypes().size()) {
                 throw new SemanticException("Expected " + ((Proc) symbol).getTypes().size() + " parameters, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'", callNode.getLine());
-            }
-            if (labelNode.getLabel().equals("put")) {
-                if (labelNode.getChildren().size() != 1) {
-                    throw new SemanticException("Expected 1 parameter, got " + labelNode.getChildren().size() + " for procedure '" + labelNode.getLabel() + "'", callNode.getLine());
-                }
-                if (!typeOfOperands(labelNode.getChildren().get(0)).equals("integer") && !typeOfOperands(labelNode.getChildren().get(0)).equals("character")) {
-                    throw new SemanticException("Expected type 'integer' or 'character' for parameter 1 of procedure '" + labelNode.getLabel() + "', got " + typeOfOperands(labelNode.getChildren().get(0)), callNode.getLine());
-                }
             } else {
                 for (int i = 0; i < labelNode.getChildren().size(); i++) {
                     if (!typeOfOperands(labelNode.getChildren().get(i)).equals(((Proc) symbol).getTypes().get(i))) {
@@ -653,6 +650,7 @@ public class SemanticAnalyzer {
                     this.codeGen.stackArg(ast, labelNode.getChildren().get(i), false);
                 }
             }
+            this.codeGen.getReturnSize().push(0);
         } else {
             throw new SemanticException("Symbol '" + labelNode.getLabel() + "' is not callable", callNode.getLine());
         }

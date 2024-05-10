@@ -24,6 +24,7 @@ public class CodeGenerator {
     private boolean isVarGen;
     private boolean newFunc;
     private Stack<Integer> paramSize;
+    private Stack<Integer> returnSize;
 
     public CodeGenerator(String fileName, boolean codeGenOn, TDS tds, Stack<Integer> stack) {
         this.codeGenOn = codeGenOn;
@@ -44,6 +45,7 @@ public class CodeGenerator {
         this.isVarGen = false;
         this.newFunc = true;
         this.paramSize = new Stack<>();
+        this.returnSize = new Stack<>();
     }
 
     public CodeGenerator() {
@@ -55,6 +57,8 @@ public class CodeGenerator {
         this.asmStack = null;
         this.tds = null;
         this.initVars = null;
+        this.paramSize = null;
+        this.returnSize = null;
     }
 
     public void write(String s) {
@@ -679,18 +683,20 @@ public class CodeGenerator {
                     break;
                 case "CALL":
                     int tmp = paramSize.pop(); // get the size of the parameters
+                    int tmp1 = returnSize.pop(); // get the size of the return
                     // handle record case
-                    if (tmp != 4) {
+                    if (tmp1 > 4) {
                         appendToBuffer("\tmov\tr" + returnRegister + ", r13 ; getting return value @ for expression (struct)\n");
+                        appendToBuffer("\tadd\tr13, r13, #" + (tmp + tmp1) + " ; freeing the space of the parameters\n");
                     } else {
                         appendToBuffer("\tldmfd\tr13!, {r" + returnRegister + "} ; getting return value for expression\n");
+                        appendToBuffer("\tadd\tr13, r13, #" + tmp + " ; freeing the space of the parameters\n");
                     }
 
-                    appendToBuffer("\tadd\tr13, r13, #" + tmp + " ; freeing the space of the parameters\n");
                     if(paramSize.size() == 0) {
                         paramSize.push(0);
                     }
-                    return 0;
+                    return tmp1 == 4 ? 0 : tmp1;
                 case "CHARACTER'VAL":
                     expressionGen(ast, node.getChildren().get(0), returnRegister);
                     appendToBuffer("\tmov\tr" + returnRegister + ", r" + returnRegister + " ; Getting value of character for expression\n");
@@ -701,9 +707,9 @@ public class CodeGenerator {
                     fields.add(type);
                     Node nodeAccessIdent, nodeField;
                     while (!node.getChildren().isEmpty()) {
-                        for (int i = 0; i < node.getChildren().size(); i++) {
-                            nodeField = ast.getTree().nodes.get(node.getChildren().get(i));
-                        }
+//                        for (int i = 0; i < node.getChildren().size(); i++) {
+//                            nodeField = ast.getTree().nodes.get(node.getChildren().get(i));
+//                        }
                         nodeAccessIdent = ast.getTree().nodes.get(node.getChildren().get(0));
                         nodeField = ast.getTree().nodes.get(nodeAccessIdent.getChildren().get(0));
                         fields.add(nodeField.getLabel());
@@ -965,5 +971,9 @@ public class CodeGenerator {
             appendToBuffer("\tb\tend" + name + callableElements.lastIndexOf(name) + " ; Jumping to the end of the function\n\t; End of return block\n   \n"); // Jump to the end of the function
 
         }
+    }
+
+    public Stack<Integer> getReturnSize() {
+        return returnSize;
     }
 }
