@@ -795,11 +795,11 @@ public class CodeGenerator {
             if (destinationRegion == -1) {
                 throw new RuntimeException("Variable not found : " + name);
             }
+            Symbol symbol = getSymbolFromLabel(name, destinationRegion);
             int start = tds.getTds().get(stack.peek()).get(0).getNestingLevel();
-            int end = tds.getTds().get(destinationRegion).get(0).getNestingLevel();
+            int end = symbol.getNestingLevel();
             int linkingsToGoUp;
             linkingsToGoUp = start - end;
-            Symbol symbol = getSymbolFromLabel(name, destinationRegion);
             int offset;
             if (symbol instanceof Var) {
                 Var var = (Var) symbol;
