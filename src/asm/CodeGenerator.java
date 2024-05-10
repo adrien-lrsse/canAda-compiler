@@ -57,8 +57,8 @@ public class CodeGenerator {
         this.asmStack = null;
         this.tds = null;
         this.initVars = null;
-        this.paramSize = null;
-        this.returnSize = null;
+        this.paramSize = new Stack<>();
+        this.returnSize = new Stack<>();
     }
 
     public void write(String s) {
