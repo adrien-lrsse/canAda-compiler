@@ -49,10 +49,10 @@ public class CanAda {
                 p.parse(ast);
                 System.out.println("Parsing completed \033[32msuccessfully\033[0m");
                 if (ast) {
-                    System.out.println("  ├AST (.dot) generated at \033[4m" + l.getFileName() + "-ast.dot\033[0m");
-                    System.out.println("  └AST (.svg) generated at \033[4m" + l.getFileName() + "-ast.svg\033[0m\n");
+                    System.out.println("  ├ AST (.dot) generated at \033[4m" + l.getFileName() + "-ast.dot\033[0m");
+                    System.out.println("  └ AST (.svg) generated at \033[4m" + l.getFileName() + "-ast.svg\033[0m\n");
                 } else {
-                    System.out.println("  └AST (.dot) generated at \033[4m" + l.getFileName() + "-ast.dot\033[0m\n");
+                    System.out.println("  └ AST (.dot) generated at \033[4m" + l.getFileName() + "-ast.dot\033[0m\n");
                 }
                 if (semantic) {
                     SemanticAnalyzer sa = new SemanticAnalyzer(p.getAst());
@@ -66,7 +66,7 @@ public class CanAda {
                     sa.analyze();
                     System.out.println("Semantic analysis completed \033[32msuccessfully\033[0m\n");
                     System.out.println("ASM code generated \033[32msuccessfully\033[0m");
-                    System.out.println("  └ARM code (.s) generated at \033[4m" + l.getFileName() + "-output.s\033[0m\n");
+                    System.out.println("  └ ARM code (.s) generated at \033[4m" + l.getFileName() + "-output.s\033[0m\n");
                     Launcher.run(p.getAst().getFilename()+ "-output.s");
                 }
             }

@@ -32,7 +32,14 @@ public class Launcher {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             List<String> output = OutputParser.parseOutput(logFile);
             System.out.println("╌╌╌╌╌╌ \033[1mPROGRAM OUTPUT\033[0m ╌╌╌╌╌╌");
-            output.forEach(System.out::print);
+            for (String line : output) {
+                if (line.startsWith("Error:")) {
+                    System.out.println("\nA \033[31mRuntime error\033[0m occurred:");
+                    System.out.print("  └ " + line);
+                } else {
+                    System.out.print(line);
+                }
+            }
             System.out.println("╌╌╌╌ \033[1mEND PROGRAM OUTPUT\033[0m ╌╌╌╌");
         }));
 
