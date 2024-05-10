@@ -714,6 +714,11 @@ public class CodeGenerator {
                     expressionGen(ast, node.getChildren().get(0), returnRegister);
                     appendToBuffer("\tmov\tr" + returnRegister + ", r" + returnRegister + " ; Getting value of character for expression\n");
                     return 0;
+                case "UNARY":
+                    expressionGen(ast, node.getChildren().get(0), returnRegister);
+                    appendToBuffer("\tmov\tr10, #0\n");
+                    appendToBuffer("\tsub\tr" + returnRegister + ", r10, r" + returnRegister + " ; Block for unary : -" + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + "\n\n");
+                    return 0;
                 default: // Variable à aller chercher
                     // access record case
                     List<String> fields = new ArrayList<>();

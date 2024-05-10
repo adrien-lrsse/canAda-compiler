@@ -699,6 +699,9 @@ public class SemanticAnalyzer {
                 throw new SemanticException("Expected integer, got " + typeOfOperands(nodeSon.getId()), node.getLine());
             }
         }
+        if (node.getLabel().equals("UNARY")) {
+            return typeOfOperands(nodeSon.getId());
+        }
         if (node.getChildren().size() == 1 && nodeSon.getLabel().equals("ACCESS_IDENT")) {
             Symbol symbol = getSymbolFromLabel(node.getLabel(), stack.lastElement());
             if (symbol == null) {
