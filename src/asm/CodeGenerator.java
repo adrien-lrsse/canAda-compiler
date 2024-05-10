@@ -227,7 +227,9 @@ public class CodeGenerator {
             }
 
             this.write("mul\tstmfd\tr13!, {r0-r2, r11, lr} ; This is PreWritten Code for multiplication\n\tmov\tr11, r13\n\tldr\tr1, [r11, #4*6]\n\tldr\tr2, [r11, #4*7]\n\tmov\tr0, #0\nmul_loop\tlsrs\tr2,r2,#1\n\taddcs\tr0,r0,r1\n\tlsl\tr1,r1,#1\n\ttst\tr2,r2\n\tbne\tmul_loop\n\tstr\tr0, [r11, #4*5]\n\tmov\tr13, r11\n\tldmfd\tr13!,{r0-r2, r11, pc}\n\n");
-            this.write("div\tstmfd\tsp!, {r0-r5, r11, lr} ; This is PreWritten Code for division\n\tmov\tr11, r13\n\tldr\tr1, [r11, #4*9]\n\tldr\tr2, [r11, #4*10]\n\tcmp\tr2, #0\n\tbeq div_err\n\tmov\tr0,#0\n\tmov\tr3,#0\n\tcmp\tr1, #0\n\trsblt\tr1, r1,#0\n\teorlt\tr3, r3, #1\n\tcmp\tr2, #0\n\trsblt\tr2, r2,#0\n\teorlt\tr3, r3, #1\n\tmov\tr4, r2\n\tmov\tr5, #1\ndiv_max\tlsl\tr4, r4, #1\n\tlsl\tr5,r5,#1\n\tcmp\tr4, r1\n\tble\tdiv_max\ndiv_loop\tlsr\tr4, r4, #1\n\tlsr\tr5, r5, #1\n\tcmp\tr4, r1\n\tbgt\tdiv_loop\n\tadd\tr0, r0, r5\n\tsub\tr1, r1, r4\n\tcmp\tr1, r2\n\tbge\tdiv_loop\n\tcmp\tr3, #1\n\tbne\tdiv_exit\n\tcmp\tr1,#0\n\taddne\tr0, r0,#1\n\trsb\tr0, r0, #0\n\trsb\tr1, r1, #0\n\taddne\tr1,r1,r2\ndiv_exit\tstr\tr0, [r11, #4*8]\n\tldmfd\tr13!, {r0-r5, r11, pc}\nreversed_for_err\nstr_reversed_for_err\tdcd\t0x6F727245, 0x49203A72, 0x6E69666E, 0x20657469, 0x65766572, 0x64657372, 0x726F6620, 0x6F6F6C20, 0x70\n\tldr\tr0, =str_reversed_for_err\n\tstmfd\tr13!, {r0}\n\tbl\traise_err\n\tend\ndiv_err\nstr_div_by_zero\tdcd\t0x6F727245, 0x64203A72, 0x73697669, 0x206E6F69, 0x7A207962, 0x6F7265\n\tldr\tr0, =str_div_by_zero\n\tstmfd\tr13!, {r0}\n\tbl\traise_err\n\tend\nfor_err\nstr_for_err\tdcd\t0x6F727245, 0x49203A72, 0x6E69666E, 0x20657469, 0x20726F66, 0x706F6F6C\n\tldr\tr0, =str_for_err\n\tstmfd\tr13!, {r0}\n\tbl\traise_err\n\tend\n");
+            this.write("rem\tstmfd\tsp!, {r0-r5, r11, lr} ; This is PreWritten Code for remainder\n\tmov\tr11, r13\n\tldr\tr1, [r11, #4*9]\n\tldr\tr2, [r11, #4*10]\n\tcmp\tr2, #0\n\tbeq div_err\n\tmov\tr0,#0\n\tmov\tr3,#0\n\tcmp\tr1, #0\n\trsblt\tr1, r1,#0\n\teorlt\tr3, r3, #1\n\tcmp\tr2, #0\n\trsblt\tr2, r2,#0\n\teorlt\tr3, r3, #1\n\tmov\tr4, r2\n\tmov\tr5, #1\nrem_max\tlsl\tr4, r4, #1\n\tlsl\tr5,r5,#1\n\tcmp\tr4, r1\n\tble\trem_max\nrem_loop\tlsr\tr4, r4, #1\n\tlsr\tr5, r5, #1\n\tcmp\tr4, r1\n\tbgt\trem_loop\n\tadd\tr0, r0, r5\n\tsub\tr1, r1, r4\n\tcmp\tr1, r2\n\tbge\trem_loop\n\tcmp\tr3, #1\n\tbne\trem_exit\n\tcmp\tr1,#0\n\taddne\tr0, r0,#1\n\trsb\tr0, r0, #0\n\trsb\tr1, r1, #0\n\taddne\tr1,r1,r2\nrem_exit\tstr\tr1, [r11, #4*8]\n\tldmfd\tr13!, {r0-r5, r11, pc}\n\n");
+            this.write("div\tstmfd\tsp!, {r0-r5, r11, lr} ; This is PreWritten Code for division\n\tmov\tr11, r13\n\tldr\tr1, [r11, #4*9]\n\tldr\tr2, [r11, #4*10]\n\tcmp\tr2, #0\n\tbeq div_err\n\tmov\tr0,#0\n\tmov\tr3,#0\n\tcmp\tr1, #0\n\trsblt\tr1, r1,#0\n\teorlt\tr3, r3, #1\n\tcmp\tr2, #0\n\trsblt\tr2, r2,#0\n\teorlt\tr3, r3, #1\n\tmov\tr4, r2\n\tmov\tr5, #1\ndiv_max\tlsl\tr4, r4, #1\n\tlsl\tr5,r5,#1\n\tcmp\tr4, r1\n\tble\tdiv_max\ndiv_loop\tlsr\tr4, r4, #1\n\tlsr\tr5, r5, #1\n\tcmp\tr4, r1\n\tbgt\tdiv_loop\n\tadd\tr0, r0, r5\n\tsub\tr1, r1, r4\n\tcmp\tr1, r2\n\tbge\tdiv_loop\n\tcmp\tr3, #1\n\tbne\tdiv_exit\n\tcmp\tr1,#0\n\taddne\tr0, r0,#1\n\trsb\tr0, r0, #0\n\trsb\tr1, r1, #0\n\taddne\tr1,r1,r2\ndiv_exit\tstr\tr0, [r11, #4*8]\n\tldmfd\tr13!, {r0-r5, r11, pc}\n\n");
+            this.write("reversed_for_err\nstr_reversed_for_err\tdcd\t0x6F727245, 0x49203A72, 0x6E69666E, 0x20657469, 0x65766572, 0x64657372, 0x726F6620, 0x6F6F6C20, 0x70\n\tldr\tr0, =str_reversed_for_err\n\tstmfd\tr13!, {r0}\n\tbl\traise_err\n\tend\ndiv_err\nstr_div_by_zero\tdcd\t0x6F727245, 0x64203A72, 0x73697669, 0x206E6F69, 0x7A207962, 0x6F7265\n\tldr\tr0, =str_div_by_zero\n\tstmfd\tr13!, {r0}\n\tbl\traise_err\n\tend\nfor_err\nstr_for_err\tdcd\t0x6F727245, 0x49203A72, 0x6E69666E, 0x20657469, 0x20726F66, 0x706F6F6C\n\tldr\tr0, =str_for_err\n\tstmfd\tr13!, {r0}\n\tbl\traise_err\n\tend\n");
 
             try {
                 assert fileWriter != null;
@@ -562,6 +564,22 @@ public class CodeGenerator {
                     }
                     expressionGen(ast, node.getChildren().get(0), register1);
                     appendToBuffer("\tstmfd\tr13!, {r" + returnRegister + "} ; Block for division : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " / " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\tstmfd\tr13!, {r" + register1 + "}\n\tsub\tr13, r13, #4\n\tbl\tdiv\n\tldr r" + returnRegister + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
+                    break;
+                case "rem":
+                    expressionGen(ast, node.getChildren().get(1), returnRegister);
+                    try { // If no register available, we use memory stack
+                        register1 = stackFrames.peek().getRegisterManager().borrowRegister();
+                    } catch (RuntimeException e) {
+                        if (returnRegister != 0) {
+                            register1 = 0;
+                        } else {
+                            register1 = 1;
+                        }
+                        appendToBuffer("\tstmfd\tr13!, {r" + register1 + "} ; No more register available, making space with memory stack\n");
+                        isR1Borrowed = true;
+                    }
+                    expressionGen(ast, node.getChildren().get(0), register1);
+                    appendToBuffer("\tstmfd\tr13!, {r" + returnRegister + "} ; Block for remainder : " + ast.getTree().nodes.get(node.getChildren().get(0)).getLabel() + " rem " + ast.getTree().nodes.get(node.getChildren().get(1)).getLabel() + "\n\tstmfd\tr13!, {r" + register1 + "}\n\tsub\tr13, r13, #4\n\tbl\trem\n\tldr r" + returnRegister + ", [r13]\n\tadd\tr13, r13, #4*3 ; 2 paramètres et 1 valeur de retour\n\n");
                     break;
                 case "+":
                     expressionGen(ast, node.getChildren().get(0), returnRegister);
