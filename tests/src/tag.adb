@@ -34,6 +34,6 @@ WITH
 identificateur
 .
 1
-character'val
+Character'Val
 put
 ..
