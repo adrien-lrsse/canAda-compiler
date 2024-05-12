@@ -14,7 +14,7 @@ procedure UneFin is
         d : Integer;
     end record;
 
-    type Key is record
+    type Key is record -- RSA Key
         pub : PK;
         sec : SK;
     end record;
@@ -44,7 +44,7 @@ procedure UneFin is
         end record;
 
         K   : Key;
-        Phi : Integer; -- := (p - 1) * (q - 1);
+        Phi : Integer := (p - 1) * (q - 1);
         Bez : Bezout;
 
         function Euclide (a : Integer; b : Integer) return Bezout
@@ -72,7 +72,6 @@ procedure UneFin is
         K.sec.p := p;
         K.sec.q := q;
 
-        Phi := (p - 1) * (q - 1);
         Bez := Euclide (Phi, e);
         if Bez.v < 0 then
             K.sec.d := Bez.v + Phi;
@@ -101,11 +100,18 @@ begin
         Put (I);
         Put ('>');
         if Decrypt (Encrypt (I, K.pub), K.sec) = I then
-            Put ('o');
+            Put (character'Val (111)); -- o: ok
+
+            if not (I = 10) and then I >= 0 then
+                Put (' ');
+            end if;
         else
-            Put ('x');
+            Put (character'Val (107)); -- x: error
+
+            if True or else 1 / 0 = 0 then
+                Put (' ');
+            end if;
         end if;
-        Put (' ');
     end loop;
 
 end UneFin;

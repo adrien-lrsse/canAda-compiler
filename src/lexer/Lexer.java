@@ -226,7 +226,7 @@ public class Lexer {
                     reading_word.append(currentChar);
                     character = fileReader.read();
                     currentChar = (char) character;
-                    if (currentChar == 'v') {
+                    if (currentChar == 'V') {
                         reading_word.append(currentChar);
                         character = fileReader.read();
                         currentChar = (char) character;
