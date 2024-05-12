@@ -153,8 +153,21 @@ public class CodeGenerator {
                     if (value == -1) {
                         this.appendToBuffer("\tmov\tr10, #0\n\tstr\tr10, [r13, #" + (lastOffset - offset) + "]");
                     } else {
+                        int exprRegister = 0;
+                        boolean isRegisterBorrowed = false;
+                        try {
+                            exprRegister = this.stackFrames.peek().getRegisterManager().borrowRegister();
+                        } catch (RuntimeException e) {
+                            exprRegister = 0;
+                            this.appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
+                        }
                         expressionGen(ast, value, 10);
-                        this.appendToBuffer("\tstr\tr10, [r13, #" + (lastOffset - offset) + "]");
+                        this.appendToBuffer("\tstr\tr"+exprRegister+", [r13, #" + (lastOffset - offset) + "]");
+                        if (isRegisterBorrowed) {
+                            this.appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n");
+                        } else {
+                            this.stackFrames.peek().getRegisterManager().freeRegister(exprRegister);
+                        }
                     }
                     this.appendToBuffer("\t; Init " + symbol.getName() + "\n");
                 }
