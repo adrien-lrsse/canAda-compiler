@@ -161,7 +161,7 @@ public class CodeGenerator {
                             exprRegister = 0;
                             this.appendToBuffer("\tstmfd\tr13!, {r" + exprRegister + "} ; No more register available, making space with memory stack\n");
                         }
-                        expressionGen(ast, value, 10);
+                        expressionGen(ast, value, exprRegister);
                         this.appendToBuffer("\tstr\tr"+exprRegister+", [r13, #" + (lastOffset - offset) + "]");
                         if (isRegisterBorrowed) {
                             this.appendToBuffer("\tldmfd\tr13!, {r" + exprRegister + "} ; Freeing memory stack\n");
