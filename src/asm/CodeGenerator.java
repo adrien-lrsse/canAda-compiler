@@ -131,6 +131,7 @@ public class CodeGenerator {
     public void varGen(GraphViz ast, List<Symbol> symbolsOfRegion, int lastOffset) {
         if (codeGenOn) {
             isVarGen = true;
+            this.stackFrames.peek().setIsVarGen(true);
             this.appendToBuffer("\t;VARIABLES\n");
             int offset;
 
@@ -159,6 +160,7 @@ public class CodeGenerator {
                 }
             }
             isVarGen = false;
+            this.stackFrames.peek().setIsVarGen(false);
         }
     }
 

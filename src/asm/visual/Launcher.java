@@ -7,7 +7,7 @@ import visual.EmulatorLogFile;
 import visual.HeadlessController;
 public class Launcher {
     public static final int outputBufferLength = 0x100;
-    private static final int instMemSize = 0x1000;
+    private static final int instMemSize = 0x2000;
     /* we make sure that the output buffer is always the first symbol in memory */
     private static final int outputBufferAddress = instMemSize;
     /* VisUAL offsets line numbers by one for some reason */

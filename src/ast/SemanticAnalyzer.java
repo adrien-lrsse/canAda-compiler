@@ -278,6 +278,7 @@ public class SemanticAnalyzer {
                             }
                         }
                         stack.push(tmp);
+                        this.codeGen.varGen(ast, delayedVarGen, this.lastOffset);
 
                         stack.pop();
                         int index = currentDecl.pop();
@@ -287,7 +288,6 @@ public class SemanticAnalyzer {
                             returnNeeded = returnNeeded - 1;
                         }
 
-                        this.codeGen.varGen(ast, delayedVarGen, this.lastOffset);
                         // end of block for code generation
                         this.codeGen.appendToBuffer("\t;END of instructions\n");
                         codeGen.endBlock();
