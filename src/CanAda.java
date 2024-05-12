@@ -1,3 +1,5 @@
+import asm.CodeGenerator;
+import asm.visual.Launcher;
 import ast.SemanticAnalyzer;
 import ast.SemanticException;
 import lexer.Lexer;
@@ -19,13 +21,16 @@ public class CanAda {
     @Option(name = "-s", aliases ="--semantic", usage = "Run the semantic analysis")
     public boolean semantic;
 
+    @Option(name = "-c", aliases = "--compile", usage = "Compile and run the input file")
+    public boolean compile;
+
     @Argument(required = true, usage = "Input file", metaVar = "INPUT")
     public String input;
 
     public static void main(String[] args) throws Exception {
-        System.out.println("--------------------------------");
-        System.out.println("- If you can do it, you \033[1mCanAda\033[0m -");
-        System.out.println("--------------------------------\n");
+        System.out.println("╭──────────────────────────────╮");
+        System.out.println("│ If you can do it, you \033[1mCanAda\033[0m │");
+        System.out.println("╰──────────────────────────────╯\n");
         new CanAda().doMain(args);
     }
 
@@ -37,20 +42,32 @@ public class CanAda {
         }
         try {
             parser.parseArgument(args);
-            if (parse || ast || semantic) {
+            if (parse || ast || semantic || compile) {
                 // print current folder
                 Lexer l = new Lexer(input);
                 Parser p = new Parser(l);
                 p.parse(ast);
                 System.out.println("Parsing completed \033[32msuccessfully\033[0m");
-                System.out.println("  └AST (.dot) generated at \033[4m" + l.getFileName() + "-ast.dot\033[0m");
                 if (ast) {
-                    System.out.println("  AST (.svg) generated at \033[4m" + l.getFileName() + "-ast.svg\033[0m");
+                    System.out.println("  ├ AST (.dot) generated at \033[4m" + l.getFileName() + "-ast.dot\033[0m");
+                    System.out.println("  └ AST (.svg) generated at \033[4m" + l.getFileName() + "-ast.svg\033[0m\n");
+                } else {
+                    System.out.println("  └ AST (.dot) generated at \033[4m" + l.getFileName() + "-ast.dot\033[0m\n");
                 }
                 if (semantic) {
                     SemanticAnalyzer sa = new SemanticAnalyzer(p.getAst());
                     sa.analyze();
-                    System.out.println("Semantic analysis completed \033[32msuccessfully\033[0m");
+                    System.out.println("Semantic analysis completed \033[32msuccessfully\033[0m\n");
+                }
+                if (compile) {
+                    SemanticAnalyzer sa = new SemanticAnalyzer(p.getAst());
+                    CodeGenerator codeGenerator = new CodeGenerator(p.getAst().getFilename(), true, sa.getTds(), sa.getStack());
+                    sa.setCodeGen(codeGenerator);
+                    sa.analyze();
+                    System.out.println("Semantic analysis completed \033[32msuccessfully\033[0m\n");
+                    System.out.println("ASM code generated \033[32msuccessfully\033[0m");
+                    System.out.println("  └ ARM code (.s) generated at \033[4m" + l.getFileName() + "-output.s\033[0m\n");
+                    Launcher.run(p.getAst().getFilename()+ "-output.s");
                 }
             }
         } catch (org.kohsuke.args4j.CmdLineException e) {

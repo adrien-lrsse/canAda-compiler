@@ -16,6 +16,8 @@ build/
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+*.s
+!src/asm/visual/print.s
 
 # AWS User-specific
 .idea/**/aws.xml
@@ -134,6 +136,7 @@ fabric.properties
 
 # Package Files #
 *.jar
+!libs/visual_headless.jar
 *.war
 *.nar
 *.ear

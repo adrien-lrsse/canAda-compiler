@@ -1,6 +1,7 @@
 package demo;
 
 import asm.CodeGenerator;
+import asm.visual.Launcher;
 import ast.SemanticAnalyzer;
 import lexer.Lexer;
 import parser.Parser;
@@ -13,7 +14,9 @@ public class AsmDemo {
         Parser parser = new Parser(lexer);
         parser.parse(true);
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(parser.getAst());
-        semanticAnalyzer.setCodeGen(new CodeGenerator(parser.getAst()));
+        CodeGenerator codeGenerator = new CodeGenerator(parser.getAst().getFilename(), true, semanticAnalyzer.getTds(), semanticAnalyzer.getStack());
+        semanticAnalyzer.setCodeGen(codeGenerator);
         semanticAnalyzer.analyze();
+//        Launcher.run(parser.getAst().getFilename()+ "-output.s");
     }
 }
