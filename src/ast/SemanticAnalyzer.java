@@ -239,7 +239,7 @@ public class SemanticAnalyzer {
                                     throw new SemanticException("Type '" + ast.getTree().nodes.get(child.getChildren().get(1)).getLabel() + "' is not defined", node.getLine());
                                 }
                             }
-                            offset.push(offset.pop() + record.getOffset());
+                            // offset.push(offset.pop() + record.getOffset());
                             TDS.offsets.put(record.getName(), record.getOffset());
                         }
                         tds.addSymbol(stack.lastElement(), record, node.getLine());
