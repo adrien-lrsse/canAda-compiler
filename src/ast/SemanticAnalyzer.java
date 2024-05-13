@@ -19,7 +19,7 @@ public class SemanticAnalyzer {
     private CodeGenerator codeGen;
     private int returnNeeded;
     private int returnNeededTmp;
-    private int lastOffset;
+    private Stack<Integer> offset;
 
     public SemanticAnalyzer(GraphViz ast) {
         this.stack = new Stack<>();
@@ -29,7 +29,7 @@ public class SemanticAnalyzer {
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
         this.codeGen = new CodeGenerator();
-        this.lastOffset = 0;
+        this.offset = new Stack<>();
     }
 
     public void analyze() throws SemanticException {
@@ -52,7 +52,6 @@ public class SemanticAnalyzer {
 
             // DFT on AST
             int tmp;
-            Stack<Integer> offset = new Stack<>();
             List<String> undefinedTypes = new ArrayList<>();
             int fatherInt;
             String fatherName;
@@ -187,7 +186,6 @@ public class SemanticAnalyzer {
                             }
                             offset.push(offset.pop() + TDS.offsets.get(var.getType()));
                             var.setOffset(offset.lastElement());
-                            lastOffset += offset.lastElement();
                             tds.addSymbol(stack.lastElement(), var, node.getLine());
 
                             // assignation in declaration case
@@ -289,7 +287,7 @@ public class SemanticAnalyzer {
                             }
                         }
                         stack.push(tmp);
-                        this.codeGen.varGen(ast, delayedVarGen, this.lastOffset);
+                        this.codeGen.varGen(ast, delayedVarGen, offset.peek());
 
                         stack.pop();
                         int index = currentDecl.pop();
@@ -543,8 +541,8 @@ public class SemanticAnalyzer {
         incr.setProtected(true);
         incr.setName(node.getLabel());
         incr.setType("integer");
-        lastOffset += 8;
-        incr.setOffset(lastOffset);
+        offset.push(offset.pop() + 8);
+        incr.setOffset(offset.peek());
         tds.addSymbol(stack.lastElement(), incr, node.getLine());
 
         codeGen.addInitVar(incr, -1);
@@ -842,20 +840,18 @@ public class SemanticAnalyzer {
             if (symbol instanceof Param) {
                 offset += TDS.offsets.get(((Param) symbol).getType());
                 ((Param) symbol).setOffset(offset);
-                this.lastOffset = offset;
             }
         }
 
         // fake param if no one in order to make the chaining work
         if (offset == firstOffset) {
             int tmp = stack.pop();
-            Param param = new Param(stack.size() + 1, stack.peek());
+            Param param = new Param(stack.size(), stack.peek());
             stack.push(tmp);
             param.setName("#fake");
             param.setType("integer");
             param.setOffset(0);
             tds.addSymbol(region, param, -1);
-            this.lastOffset = 0;
         }
     }
 
