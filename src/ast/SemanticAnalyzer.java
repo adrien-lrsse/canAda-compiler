@@ -553,8 +553,14 @@ public class SemanticAnalyzer {
         boolean reverse = false;
         if (lbl.equals("REVERSE")) {
             reverse = true;
+            if (!typeOfOperands(children.get(1)).equals("integer") || !typeOfOperands(children.get(2)).equals("integer")) {
+                throw new SemanticException("Expected integer in for loop", ast.getTree().nodes.get(nodeInt).getLine());
+            }
             this.codeGen.forInitGen(ast, children, incr.getName(), 3, 2);
         } else {
+            if (!typeOfOperands(children.get(1)).equals("integer") || !typeOfOperands(children.get(2)).equals("integer")) {
+                throw new SemanticException("Expected integer in for loop", ast.getTree().nodes.get(nodeInt).getLine());
+            }
             this.codeGen.forInitGen(ast, children, incr.getName(), 1, 2);
         }
 
