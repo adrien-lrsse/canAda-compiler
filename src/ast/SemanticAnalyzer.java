@@ -19,7 +19,7 @@ public class SemanticAnalyzer {
     private CodeGenerator codeGen;
     private int returnNeeded;
     private int returnNeededTmp;
-    private int lastOffset;
+    private Stack<Integer> offset;
 
     public SemanticAnalyzer(GraphViz ast) {
         this.stack = new Stack<>();
@@ -29,7 +29,7 @@ public class SemanticAnalyzer {
         this.returnNeeded = 0;
         this.returnNeededTmp = 0;
         this.codeGen = new CodeGenerator();
-        this.lastOffset = 0;
+        this.offset = new Stack<>();
     }
 
     public void analyze() throws SemanticException {
@@ -52,7 +52,6 @@ public class SemanticAnalyzer {
 
             // DFT on AST
             int tmp;
-            Stack<Integer> offset = new Stack<>();
             List<String> undefinedTypes = new ArrayList<>();
             int fatherInt;
             String fatherName;
@@ -162,33 +161,43 @@ public class SemanticAnalyzer {
                         stack.push(tmp);
                         break;
                     case "VARIABLE":
-                        tmp = stack.pop();
-                        Var var = new Var(stack.size(), stack.lastElement());
-                        stack.push(tmp);
-                        var.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-                        var.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
-                        if (!(var.getType().equals("boolean") || var.getType().equals("integer") || var.getType().equals("character") || (getSymbolFromLabel(var.getType(), stack.lastElement()) instanceof Record))) {
-                            throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
+                        int nbVars;
+                        Node initVar = null;
+                        if (ast.getTree().nodes.get(node.getChildren().get(node.getChildren().size() - 1)).getLabel().equals("INIT VAL")) {
+                            nbVars = node.getChildren().size() - 2;
+                            initVar = ast.getTree().nodes.get(node.getChildren().get(node.getChildren().size() - 1));
+                        } else {
+                            nbVars = node.getChildren().size() - 1;
                         }
-                        // update offset
-                        if (TDS.offsets.get(var.getType()) == null) {
-                            throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
-                        }
-                        offset.push(offset.pop() + TDS.offsets.get(var.getType()));
-                        var.setOffset(offset.lastElement());
-                        lastOffset += offset.lastElement();
-                        tds.addSymbol(stack.lastElement(), var, node.getLine());
+                        Var var;
+                        for (int i = 0; i < nbVars; i++) {
+                            tmp = stack.pop();
+                            var = new Var(stack.size(), stack.lastElement());
+                            stack.push(tmp);
 
-                        // assignation in declaration case
-                        try {
-                            Node value = ast.getTree().nodes.get(node.getChildren().get(2));
-                            if (!typeOfOperands(value.getId()).equals(var.getType())) {
-                                throw new SemanticException("Expected type " + var.getType() + " for variable '" + var.getName() + "', got " + typeOfOperands(value.getId()), node.getLine());
+                            var.setName(ast.getTree().nodes.get(node.getChildren().get(i)).getLabel());
+                            var.setType(ast.getTree().nodes.get(node.getChildren().get(nbVars)).getLabel());
+                            if (!(var.getType().equals("boolean") || var.getType().equals("integer") || var.getType().equals("character") || (getSymbolFromLabel(var.getType(), stack.lastElement()) instanceof Record))) {
+                                throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
                             }
-                            codeGen.addInitVar(var, value.getId());
-                        } catch (IndexOutOfBoundsException e) {
-                            // no assignation, init to 0
-                            codeGen.addInitVar(var, -1);
+                            // update offset
+                            if (TDS.offsets.get(var.getType()) == null) {
+                                throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
+                            }
+                            offset.push(offset.pop() + TDS.offsets.get(var.getType()));
+                            var.setOffset(offset.lastElement());
+                            tds.addSymbol(stack.lastElement(), var, node.getLine());
+
+                            // assignation in declaration case
+                            if (initVar != null) {
+                                if (!typeOfOperands(initVar.getChildren().get(0)).equals(var.getType())) {
+                                    throw new SemanticException("Expected type " + var.getType() + " for variable '" + var.getName() + "', got " + typeOfOperands(initVar.getId()), node.getLine());
+                                }
+                                codeGen.addInitVar(var, initVar.getChildren().get(0));
+                            } else {
+                                // no assignation, init to 0
+                                codeGen.addInitVar(var, -1);
+                            }
                         }
                         break;
                     case "RETURN_TYPE":
@@ -228,15 +237,16 @@ public class SemanticAnalyzer {
                         record.setOffset(0);
                         if (ast.getTree().nodes.get(node.getChildren().get(1)).getLabel().equals("RECORD")) {
                             Node child;
+                            String type;
                             for (int i = 0; i < ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().size(); i++) {
                                 child = ast.getTree().nodes.get(ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().get(i));
-                                String type = ast.getTree().nodes.get(child.getChildren().get(1)).getLabel();
-                                if (!(type.equals("boolean") || type.equals("integer") || type.equals("character") || (getSymbolFromLabel(type, stack.lastElement()) instanceof Record))) {
-                                    throw new SemanticException("Type '" + type + "' is not defined", node.getLine());
-                                }
-                                record.addField(ast.getTree().nodes.get(child.getChildren().get(0)).getLabel(), type, child.getLine());
-                                if (!(ast.getTree().nodes.get(child.getChildren().get(1)).getLabel().equals("boolean") || ast.getTree().nodes.get(child.getChildren().get(1)).getLabel().equals("integer") || ast.getTree().nodes.get(child.getChildren().get(1)).getLabel().equals("character") || (getSymbolFromLabel(ast.getTree().nodes.get(child.getChildren().get(1)).getLabel(), stack.lastElement()) instanceof Record))) {
-                                    throw new SemanticException("Type '" + ast.getTree().nodes.get(child.getChildren().get(1)).getLabel() + "' is not defined", node.getLine());
+                                nbVars = child.getChildren().size() - 1;
+                                type = ast.getTree().nodes.get(child.getChildren().get(nbVars)).getLabel();
+                                for (int j = 0; j < nbVars; j++) {
+                                    if (!(type.equals("boolean") || type.equals("integer") || type.equals("character") || (getSymbolFromLabel(type, stack.lastElement()) instanceof Record))) {
+                                        throw new SemanticException("Type '" + type + "' is not defined", node.getLine());
+                                    }
+                                    record.addField(ast.getTree().nodes.get(child.getChildren().get(j)).getLabel(), type, child.getLine());
                                 }
                             }
                             // offset.push(offset.pop() + record.getOffset());
@@ -278,7 +288,7 @@ public class SemanticAnalyzer {
                             }
                         }
                         stack.push(tmp);
-                        this.codeGen.varGen(ast, delayedVarGen, this.lastOffset);
+                        this.codeGen.varGen(ast, delayedVarGen, offset.peek());
 
                         stack.pop();
                         int index = currentDecl.pop();
@@ -532,8 +542,8 @@ public class SemanticAnalyzer {
         incr.setProtected(true);
         incr.setName(node.getLabel());
         incr.setType("integer");
-        lastOffset += 8;
-        incr.setOffset(lastOffset);
+        offset.push(offset.pop() + 8);
+        incr.setOffset(offset.peek());
         tds.addSymbol(stack.lastElement(), incr, node.getLine());
 
         codeGen.addInitVar(incr, -1);
@@ -543,8 +553,14 @@ public class SemanticAnalyzer {
         boolean reverse = false;
         if (lbl.equals("REVERSE")) {
             reverse = true;
+            if (!typeOfOperands(children.get(1)).equals("integer") || !typeOfOperands(children.get(2)).equals("integer")) {
+                throw new SemanticException("Expected integer in for loop", ast.getTree().nodes.get(nodeInt).getLine());
+            }
             this.codeGen.forInitGen(ast, children, incr.getName(), 3, 2);
         } else {
+            if (!typeOfOperands(children.get(1)).equals("integer") || !typeOfOperands(children.get(2)).equals("integer")) {
+                throw new SemanticException("Expected integer in for loop", ast.getTree().nodes.get(nodeInt).getLine());
+            }
             this.codeGen.forInitGen(ast, children, incr.getName(), 1, 2);
         }
 
@@ -831,20 +847,18 @@ public class SemanticAnalyzer {
             if (symbol instanceof Param) {
                 offset += TDS.offsets.get(((Param) symbol).getType());
                 ((Param) symbol).setOffset(offset);
-                this.lastOffset = offset;
             }
         }
 
         // fake param if no one in order to make the chaining work
         if (offset == firstOffset) {
             int tmp = stack.pop();
-            Param param = new Param(stack.size() + 1, stack.peek());
+            Param param = new Param(stack.size(), stack.peek());
             stack.push(tmp);
             param.setName("#fake");
             param.setType("integer");
             param.setOffset(0);
             tds.addSymbol(region, param, -1);
-            this.lastOffset = 0;
         }
     }
 

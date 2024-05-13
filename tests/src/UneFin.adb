@@ -4,14 +4,11 @@ procedure UneFin is
 
     -- TYPES
     type PK is record -- Public Key
-        N : Integer;
-        e : Integer;
+        N, e : Integer;
     end record;
 
     type SK is record -- Secret Key
-        p : Integer;
-        q : Integer;
-        d : Integer;
+        p, q, d : Integer;
     end record;
 
     type Key is record -- RSA Key
@@ -38,9 +35,7 @@ procedure UneFin is
     function KeyGen (p : Integer; q : Integer; e : Integer) return Key
     is -- Key generation
         type Bezout is record
-            d : Integer;
-            u : Integer;
-            v : Integer;
+            d, u, v : Integer;
         end record;
 
         K   : Key;
@@ -49,8 +44,7 @@ procedure UneFin is
 
         function Euclide (a : Integer; b : Integer) return Bezout
         is -- Extended Euclidean algorithm
-            tmp : Bezout;
-            Res : Bezout;
+            tmp, Res : Bezout;
         begin
             if b = 0 then
                 Res.d := a;
