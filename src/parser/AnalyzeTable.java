@@ -507,14 +507,6 @@ public class AnalyzeTable {
                 parser.stack.push(current.getTag());
                 current = parser.lexer.scan();
                 this.type();
-                // semantic functions
-                // int ident = parser.ast.buffer.pop();
-                // int type = parser.ast.buffer.pop();
-                // int newNode = parser.ast.addNode("VARIABLE");
-                // parser.ast.addEdge(newNode, ident);
-                // parser.ast.addEdge(newNode, type);
-                // parser.ast.addEdge(parser.ast.buffer.lastElement(), newNode);
-                // end semantic functions
                 this.declaration_with_expression();
                 int temp = parser.stack.pop();
                 if (temp == Tag.DECLARATION_WITH_EXPRESSION) {
@@ -772,7 +764,9 @@ public class AnalyzeTable {
             this.expression();
             // semantic functions
             int expr = parser.ast.buffer.pop();
-            parser.ast.addEdge(parser.ast.buffer.lastElement(), expr);
+            int initNode = parser.ast.addNode("INIT VAL", false);
+            parser.ast.addEdge(initNode, expr);
+            parser.ast.addEdge(parser.ast.buffer.lastElement(), initNode);
             parser.ast.buffer.pop();
             // end semantic functions
             if (current.getTag() == Tag.SYMBOL && current.getStringValue().equals(";")) {

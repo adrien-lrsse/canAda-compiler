@@ -162,33 +162,44 @@ public class SemanticAnalyzer {
                         stack.push(tmp);
                         break;
                     case "VARIABLE":
-                        tmp = stack.pop();
-                        Var var = new Var(stack.size(), stack.lastElement());
-                        stack.push(tmp);
-                        var.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-                        var.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
-                        if (!(var.getType().equals("boolean") || var.getType().equals("integer") || var.getType().equals("character") || (getSymbolFromLabel(var.getType(), stack.lastElement()) instanceof Record))) {
-                            throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
+                        int nbVars;
+                        Node initVar = null;
+                        if (ast.getTree().nodes.get(node.getChildren().get(node.getChildren().size() - 1)).getLabel().equals("INIT VAL")) {
+                            nbVars = node.getChildren().size() - 2;
+                            initVar = ast.getTree().nodes.get(node.getChildren().get(node.getChildren().size() - 1));
+                        } else {
+                            nbVars = node.getChildren().size() - 1;
                         }
-                        // update offset
-                        if (TDS.offsets.get(var.getType()) == null) {
-                            throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
-                        }
-                        offset.push(offset.pop() + TDS.offsets.get(var.getType()));
-                        var.setOffset(offset.lastElement());
-                        lastOffset += offset.lastElement();
-                        tds.addSymbol(stack.lastElement(), var, node.getLine());
+                        Var var;
+                        for (int i = 0; i < nbVars; i++) {
+                            tmp = stack.pop();
+                            var = new Var(stack.size(), stack.lastElement());
+                            stack.push(tmp);
 
-                        // assignation in declaration case
-                        try {
-                            Node value = ast.getTree().nodes.get(node.getChildren().get(2));
-                            if (!typeOfOperands(value.getId()).equals(var.getType())) {
-                                throw new SemanticException("Expected type " + var.getType() + " for variable '" + var.getName() + "', got " + typeOfOperands(value.getId()), node.getLine());
+                            var.setName(ast.getTree().nodes.get(node.getChildren().get(i)).getLabel());
+                            var.setType(ast.getTree().nodes.get(node.getChildren().get(nbVars)).getLabel());
+                            if (!(var.getType().equals("boolean") || var.getType().equals("integer") || var.getType().equals("character") || (getSymbolFromLabel(var.getType(), stack.lastElement()) instanceof Record))) {
+                                throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
                             }
-                            codeGen.addInitVar(var, value.getId());
-                        } catch (IndexOutOfBoundsException e) {
-                            // no assignation, init to 0
-                            codeGen.addInitVar(var, -1);
+                            // update offset
+                            if (TDS.offsets.get(var.getType()) == null) {
+                                throw new SemanticException("Type '" + var.getType() + "' is not defined", node.getLine());
+                            }
+                            offset.push(offset.pop() + TDS.offsets.get(var.getType()));
+                            var.setOffset(offset.lastElement());
+                            lastOffset += offset.lastElement();
+                            tds.addSymbol(stack.lastElement(), var, node.getLine());
+
+                            // assignation in declaration case
+                            if (initVar != null) {
+                                if (!typeOfOperands(initVar.getChildren().get(0)).equals(var.getType())) {
+                                    throw new SemanticException("Expected type " + var.getType() + " for variable '" + var.getName() + "', got " + typeOfOperands(initVar.getId()), node.getLine());
+                                }
+                                codeGen.addInitVar(var, initVar.getChildren().get(0));
+                            } else {
+                                // no assignation, init to 0
+                                codeGen.addInitVar(var, -1);
+                            }
                         }
                         break;
                     case "RETURN_TYPE":

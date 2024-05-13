@@ -49,8 +49,7 @@ procedure UneFin is
 
         function Euclide (a : Integer; b : Integer) return Bezout
         is -- Extended Euclidean algorithm
-            tmp : Bezout;
-            Res : Bezout;
+            tmp, Res : Bezout;
         begin
             if b = 0 then
                 Res.d := a;
