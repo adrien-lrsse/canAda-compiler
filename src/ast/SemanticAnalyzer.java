@@ -237,15 +237,16 @@ public class SemanticAnalyzer {
                         record.setOffset(0);
                         if (ast.getTree().nodes.get(node.getChildren().get(1)).getLabel().equals("RECORD")) {
                             Node child;
+                            String type;
                             for (int i = 0; i < ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().size(); i++) {
                                 child = ast.getTree().nodes.get(ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().get(i));
-                                String type = ast.getTree().nodes.get(child.getChildren().get(1)).getLabel();
-                                if (!(type.equals("boolean") || type.equals("integer") || type.equals("character") || (getSymbolFromLabel(type, stack.lastElement()) instanceof Record))) {
-                                    throw new SemanticException("Type '" + type + "' is not defined", node.getLine());
-                                }
-                                record.addField(ast.getTree().nodes.get(child.getChildren().get(0)).getLabel(), type, child.getLine());
-                                if (!(ast.getTree().nodes.get(child.getChildren().get(1)).getLabel().equals("boolean") || ast.getTree().nodes.get(child.getChildren().get(1)).getLabel().equals("integer") || ast.getTree().nodes.get(child.getChildren().get(1)).getLabel().equals("character") || (getSymbolFromLabel(ast.getTree().nodes.get(child.getChildren().get(1)).getLabel(), stack.lastElement()) instanceof Record))) {
-                                    throw new SemanticException("Type '" + ast.getTree().nodes.get(child.getChildren().get(1)).getLabel() + "' is not defined", node.getLine());
+                                nbVars = child.getChildren().size() - 1;
+                                type = ast.getTree().nodes.get(child.getChildren().get(nbVars)).getLabel();
+                                for (int j = 0; j < nbVars; j++) {
+                                    if (!(type.equals("boolean") || type.equals("integer") || type.equals("character") || (getSymbolFromLabel(type, stack.lastElement()) instanceof Record))) {
+                                        throw new SemanticException("Type '" + type + "' is not defined", node.getLine());
+                                    }
+                                    record.addField(ast.getTree().nodes.get(child.getChildren().get(j)).getLabel(), type, child.getLine());
                                 }
                             }
                             // offset.push(offset.pop() + record.getOffset());
