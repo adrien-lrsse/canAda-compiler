@@ -2732,9 +2732,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Word)current).getStringValue(), true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -2793,9 +2795,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Num)current).getStringValue(), true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -2818,9 +2822,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode("'" + ((Char)current).getStringValue() + "'", true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -2843,9 +2849,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Word)current).getStringValue(), true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -2868,9 +2876,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Word)current).getStringValue(), true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -2893,9 +2903,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Word)current).getStringValue(), true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -5347,9 +5359,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Num)current).getStringValue(), true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -5373,9 +5387,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode("'" + ((Char)current).getStringValue() + "'", true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -5399,9 +5415,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Word)current).getStringValue(), true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -5425,9 +5443,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Word)current).getStringValue(), true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
@@ -5451,9 +5471,11 @@ public class AnalyzeTable {
                 int moins = parser.ast.buffer.pop();
                 int ident = parser.ast.addNode(((Word)current).getStringValue(), true);
                 int tmp = ident;
+                int tmp1;
                 for (int i = 0; i < -moins; i++) {
-                    tmp = parser.ast.addNode("UNARY", false);
-                    parser.ast.addEdge(tmp,ident);
+                    tmp1 = parser.ast.addNode("UNARY", false);
+                    parser.ast.addEdge(tmp1, tmp);
+                    tmp = tmp1;
                 }
                 parser.ast.buffer.push(tmp);
             } else {
