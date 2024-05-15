@@ -119,14 +119,27 @@ public class SemanticAnalyzer {
                         returnNeeded = returnNeeded + 1;
                         break;
                     case "PARAM":
-                        // insert param in TDS
-                        tmp = stack.pop();
-                        Param param = new Param(stack.size(), stack.lastElement());
-                        stack.push(tmp);
-                        if (node.getChildren().size() == 2) {
-                            param.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-                            param.setMode(0);
-                            param.setType(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel());
+                        int nbParams;
+                        String mode = "IN";
+                        String type = ast.getTree().nodes.get(node.getChildren().get(node.getChildren().size() - 1)).getLabel();
+                        if (node.getChildren().size() > 2 && ast.getTree().nodes.get(node.getChildren().get(node.getChildren().size() -2)).getLabel().contains("IN")) {
+                            mode = ast.getTree().nodes.get(node.getChildren().get(node.getChildren().size() - 2)).getLabel();
+                            nbParams = node.getChildren().size() - 2;
+                        } else {
+                            nbParams = node.getChildren().size() - 1;
+                        }
+
+                        Param param;
+                        for (int i = 0; i < nbParams; i++) {
+                            // insert param in TDS
+                            tmp = stack.pop();
+                            param = new Param(stack.size(), stack.lastElement());
+                            stack.push(tmp);
+
+                            param.setName(ast.getTree().nodes.get(node.getChildren().get(i)).getLabel());
+                            param.setMode(mode.equals("IN") ? 0 : 1);
+                            param.setType(type);
+
                             // check if type is defined
                             tmp = stack.pop();
                             if (!(param.getType().equals("boolean") || param.getType().equals("integer") || param.getType().equals("character") || (getSymbolFromLabel(param.getType(), stack.lastElement()) instanceof Record))) {
@@ -134,31 +147,23 @@ public class SemanticAnalyzer {
                             }
                             stack.push(tmp);
 
+                            tds.addSymbol(stack.lastElement(), param, node.getLine());
 
-                        } else {
-                            param.setName(ast.getTree().nodes.get(node.getChildren().get(0)).getLabel());
-                            param.setMode(
-                                    Objects.equals(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel(), null) ? 0 :
-                                            Objects.equals(ast.getTree().nodes.get(node.getChildren().get(1)).getLabel(), "IN") ? 1 : 2
-                            );
-                            param.setType(ast.getTree().nodes.get(node.getChildren().get(2)).getLabel());
+                            // update current declaration
+                            tmp = stack.pop();
+                            if (tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()) instanceof Func) {
+                                ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addType(param.getType());
+                                ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addMode(param.getMode());
+                            } else {
+                                ((Proc) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addType(param.getType());
+                                ((Proc) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addMode(param.getMode());
+                            }
+
+                            // code generation gestion des paramètres
+                            codeGen.appendToBuffer("\t\t;" + param.getType() + "\t" + param.getName() + "\n");
+
+                            stack.push(tmp);
                         }
-                        tds.addSymbol(stack.lastElement(), param, node.getLine());
-
-                        // update current declaration
-                        tmp = stack.pop();
-                        if (tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement()) instanceof Func) {
-                            ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addType(param.getType());
-                            ((Func) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addMode(param.getMode());
-                        } else {
-                            ((Proc) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addType(param.getType());
-                            ((Proc) tds.getTds().get(stack.lastElement()).get(currentDecl.lastElement())).addMode(param.getMode());
-                        }
-
-                        // code generation gestion des paramètres
-                        codeGen.appendToBuffer("\t\t;" + param.getType() + "\t" + param.getName() + "\n");
-
-                        stack.push(tmp);
                         break;
                     case "VARIABLE":
                         int nbVars;
@@ -237,7 +242,6 @@ public class SemanticAnalyzer {
                         record.setOffset(0);
                         if (ast.getTree().nodes.get(node.getChildren().get(1)).getLabel().equals("RECORD")) {
                             Node child;
-                            String type;
                             for (int i = 0; i < ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().size(); i++) {
                                 child = ast.getTree().nodes.get(ast.getTree().nodes.get(node.getChildren().get(1)).getChildren().get(i));
                                 nbVars = child.getChildren().size() - 1;
